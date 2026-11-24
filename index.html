@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#4FAFAD">
-<meta name="description" content="The Case of the Missing Heart: a tiny point-and-click mystery.">
-<title>The Case of the Missing Heart</title>
+<meta name="description" content="Torei: Behind the Last Door, a tiny point-and-click mystery.">
+<title>Torei: Behind the Last Door</title>
 <link rel="icon" href="data:,">
 <style>
 /* =============================================================
-   THE CASE OF THE MISSING HEART: STYLES
+   TOREI: BEHIND THE LAST DOOR: STYLES
    TEAL = interface · PINK = affection · YELLOW = clues · CREAM = base
    ============================================================= */
 :root{
@@ -20,6 +20,7 @@
   --cream:#FFF5E5; --cream-d:#E9D9BE; --cream-l:#FFFAF0;
   --ink:#263B3A; --text:#3A3936; --white:#FFFDF7;
   --mono: ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,Consolas,"DejaVu Sans Mono","Liberation Mono","Courier New",monospace;
+  --type: "American Typewriter","Courier Prime","Courier New",Courier,ui-monospace,"Roboto Mono",monospace;
   --round: ui-rounded,"Hiragino Maru Gothic ProN","Arial Rounded MT Bold","Nunito","Varela Round","Trebuchet MS",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   /* chunky pixel outline with notched corners */
   --pxb: 0 -4px 0 0 var(--ink), 0 4px 0 0 var(--ink), -4px 0 0 0 var(--ink), 4px 0 0 0 var(--ink);
@@ -69,7 +70,7 @@ svg.px{ display:block; shape-rendering:crispEdges; }
 .bg{ position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
 .bg > svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
 .fx{ position:absolute; inset:0; z-index:2; pointer-events:none; overflow:hidden; }
-.top{ position:relative; z-index:3; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px 10px; padding:14px 16px 2px; }
+.top{ position:relative; z-index:3; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px 10px; padding:14px 64px 2px 16px; }
 .stage{ position:relative; z-index:1; flex:1 1 auto; min-height:0; }
 .bottom{ position:relative; z-index:4; padding:0 14px 14px; padding-bottom:max(14px, env(safe-area-inset-bottom)); }
 .is-hidden{ visibility:hidden; opacity:0; }
@@ -141,8 +142,14 @@ svg.px{ display:block; shape-rendering:crispEdges; }
 .dlg-portrait.you svg{ width:70%; height:70%; }
 .dlg-text{
   flex:1; margin:2px 0 0; min-height:3em;
-  font:700 clamp(15.5px, 1.25cqw + 8px, 20px)/1.5 var(--round); color:var(--text);
+  font:700 clamp(15.5px, 1.2cqw + 8.5px, 20px)/1.5 var(--type); color:var(--text); letter-spacing:.01em;
 }
+.caret{
+  display:inline-block; width:.55em; height:1.05em; margin-left:3px; vertical-align:-.18em;
+  background:var(--teal); animation:caret 1.05s steps(2) infinite;
+}
+.dlg.typing .caret{ animation:none; }
+.dlg.static:not(.typing) .caret{ opacity:.35; animation:none; }
 .dlg-next{
   position:absolute; right:10px; bottom:7px; border:0; cursor:pointer;
   background:var(--teal-d); color:var(--cream-l); padding:7px 10px; min-height:32px;
@@ -153,6 +160,7 @@ svg.px{ display:block; shape-rendering:crispEdges; }
 .dlg.narration{ padding-left:18px; }
 .dlg.narration .dlg-portrait, .dlg.narration .dlg-name{ display:none; }
 .dlg.narration .dlg-text{ text-align:center; font-style:italic; color:var(--teal-d); align-self:center; }
+.dlg.narration .caret{ background:var(--pink); }
 
 /* ---------- Sprites ---------- */
 .sprite{
@@ -195,6 +203,18 @@ svg.px{ display:block; shape-rendering:crispEdges; }
 .fly{ position:absolute; z-index:46; pointer-events:none; transform-origin:0 0; transition:transform .55s cubic-bezier(.5,-.25,.6,1), opacity .55s; }
 .fly svg{ width:100%; height:100%; }
 
+/* ---------- Sound toggle ---------- */
+.snd{
+  position:absolute; top:12px; right:12px; z-index:90; width:42px; height:42px; padding:7px; margin:0; border:0; cursor:pointer;
+  background:var(--teal-d); color:var(--cream-l); box-shadow:var(--pxb3), inset 0 -4px 0 0 rgba(38,59,58,.45);
+  touch-action:manipulation; transition:transform .08s steps(2);
+}
+.snd:hover{ transform:translateY(-2px); }
+.snd:active{ transform:translateY(1px); }
+.snd svg{ width:100%; height:100%; display:block; }
+.snd[aria-pressed="false"]{ background:var(--cream-d); color:var(--ink); }
+#game[data-scene="happyEnding"] .snd, #game[data-scene="honestEnding"] .snd{ top:26px; right:26px; }
+
 /* ---------- Pixel wipe transition ---------- */
 #wipe{ position:absolute; inset:0; z-index:100; display:grid; grid-template-columns:repeat(10,1fr); grid-template-rows:repeat(8,1fr); pointer-events:none; }
 #wipe.active{ pointer-events:auto; }
@@ -230,8 +250,15 @@ svg.px{ display:block; shape-rendering:crispEdges; }
     4px 4px 0 var(--ink), -4px 4px 0 var(--ink), 4px -4px 0 var(--ink), -4px -4px 0 var(--ink),
     8px 9px 0 var(--teal);
 }
-.logo-heart{ display:inline-block; width:.95em; filter:drop-shadow(5px 5px 0 var(--teal)); animation:bob 2.4s ease-in-out infinite; }
-.logo-heart svg{ width:100%; height:auto; }
+.logo .big.main{ font-size:56px; font-size:clamp(40px, min(17cqw, 14cqh), 124px); letter-spacing:.06em; }
+.logo .sub{
+  display:inline-flex; align-items:center; gap:.45em; margin:6px 4px 4px;
+  font-size:20px; font-size:clamp(15px, min(5cqw, 4.6cqh), 36px); font-weight:900; letter-spacing:.08em;
+  color:var(--cream-l); background:var(--teal-d); padding:.4em .7em .35em;
+  box-shadow:var(--pxb), 6px 6px 0 4px rgba(242,167,198,.55);
+}
+.logo-door{ display:inline-block; width:1.05em; animation:bob 2.4s ease-in-out infinite; }
+.logo-door svg{ width:100%; height:auto; }
 .subtitle{ margin:0; font:700 16px/1.3 var(--mono); font-size:clamp(14px, min(2.4cqw, 3cqh), 20px); color:var(--teal-d); letter-spacing:.06em; }
 .title-bunny{ height:22vh; height:clamp(64px, 25cqh, 230px); aspect-ratio:200/280; }
 .hint{ margin:0; font:700 12px/1.2 var(--mono); color:var(--teal-d); letter-spacing:.08em; background:var(--cream-l); padding:5px 9px; box-shadow:0 0 0 2px var(--teal-l); }
@@ -410,7 +437,7 @@ svg.px{ display:block; shape-rendering:crispEdges; }
 }
 .frame span{ position:absolute; width:26px; }
 .frame span svg{ width:100%; height:auto; }
-.frame .c1{ left:18px; top:18px; } .frame .c2{ right:18px; top:18px; }
+.frame .c1{ left:18px; top:18px; } .frame .c2{ display:none; }
 .frame .c3{ left:18px; bottom:18px; } .frame .c4{ right:18px; bottom:18px; }
 .scene-end .bottom{ padding:0 30px 30px; }
 .scene-end .top{ padding:30px 30px 0; }
@@ -438,7 +465,7 @@ svg.px{ display:block; shape-rendering:crispEdges; }
   .answers{ grid-template-columns:1fr; gap:6px; }
   .ans{ min-height:50px; }
   .dlg{ gap:10px; padding:14px 12px 34px 10px; min-height:112px; }
-  .top{ padding:12px 12px 0; }
+  .top{ padding:12px 60px 0 12px; }
   .bottom{ padding-left:10px; padding-right:10px; }
   .inv-hint{ font-size:12px; }
 }
@@ -504,6 +531,7 @@ svg.px{ display:block; shape-rendering:crispEdges; }
 @keyframes stamp{ 0%{ transform:translate(-50%,-50%) rotate(-8deg) scale(1.8); opacity:0; } 14%{ transform:translate(-50%,-50%) rotate(-8deg) scale(.95); opacity:1; } 22%{ transform:translate(-50%,-50%) rotate(-8deg) scale(1); opacity:1; } 78%{ opacity:1; transform:translate(-50%,-50%) rotate(-8deg) scale(1); } 100%{ opacity:0; transform:translate(-50%,-50%) rotate(-8deg) scale(1); } }
 @keyframes popIn{ 0%{ transform:scale(.6); opacity:0; } 70%{ transform:scale(1.04); opacity:1; } 100%{ transform:scale(1); opacity:1; } }
 @keyframes tint{ from{ opacity:.55; } to{ opacity:1; } }
+@keyframes caret{ 0%{ opacity:1; } 100%{ opacity:0; } }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce){
@@ -513,8 +541,9 @@ svg.px{ display:block; shape-rendering:crispEdges; }
 </style>
 </head>
 <body>
-<main id="game" aria-label="The Case of the Missing Heart">
+<main id="game" aria-label="Torei: Behind the Last Door">
   <div id="wipe" aria-hidden="true"></div>
+  <button type="button" id="soundBtn" class="snd" aria-pressed="true" aria-label="Sound"></button>
 </main>
 <div id="sr" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 <noscript><p class="noscript">This little game needs JavaScript turned on to play. ♡</p></noscript>
@@ -536,8 +565,22 @@ const HONEST_ENDING_MESSAGE = "Thank you for playing my tiny mystery.";
 // The bunny's real name. It is only ever shown during the confession scene.
 const BUNNY_NAME = "Tobe";
 
+// The name of the person playing (used in the confession).
+const PLAYER_NAME = "Rei";
+
+// Game title shown on the title screen and the browser tab.
+const TITLE_MAIN = "Torei:";
+const TITLE_SUB = "Behind the Last Door";
+
+// Case number shown on the title screen and the chapter tags.
+const CASE_NUMBER = "10";
+
+// Sound volumes (0 = silent, 1 = full). Players can also mute with the speaker button.
+const SOUND_VOLUME = 0.6;
+const MUSIC_VOLUME = 0.28;
+
 // Typewriter speed in milliseconds per letter (0 = show each line instantly).
-const TYPE_SPEED_MS = 24;
+const TYPE_SPEED_MS = 34;
 
 
 /* =============================================================
@@ -593,16 +636,21 @@ const PIXELS = {
     '.wwwwwwwwwwwww',
     'wwwwwwwwwwwwww',
     '.cccccccccccc.'] },
-  qheart: { outline: ['o'], rows: [
-    '.ppp...ppp.',
-    'pkkpp.ppppp',
-    'pkppwwwpppp',
-    'ppppppwpppP',
-    '.ppppwppppP',
-    '..pppppppP.',
-    '...ppwppP..',
-    '....ppP....',
-    '.....P.....'] },
+  door: { outline: ['o'], rows: [
+    '...TTTTT...',
+    '.TTyyyyyTT.',
+    '.TyyyyyyyT.',
+    'TyyYYyYYyyT',
+    'TyyYlyYlyyT',
+    'TyyYYyYYyyT',
+    'TyyyyyyyyyT',
+    'TyyyyyyypyT',
+    'TyyyyyyyyyT',
+    'TyyYYyYYyyT',
+    'TyyYlyYlyyT',
+    'TyyYYyYYyyT',
+    'TyyyyyyyyyT',
+    'TTTTTTTTTTT'] },
   lock: { outline: [], rows: [
     '..ooooo..',
     '.oo...oo.',
@@ -1335,19 +1383,19 @@ const SCRIPT = {
     { who: 'bunny', mood: 'soft', text: "Well... we finally made it." },
     { who: 'bunny', mood: 'normal', text: "I guess this is where the rumor ends." },
     { who: 'bunny', mood: 'blush', text: "There's something I've wanted to tell you." },
-    { who: 'narration', text: "The bunny takes a deep breath.", on: () => playAnim('bunny', 'breath', 1700) }
+    { who: 'narration', speed: 1.6, text: "The bunny takes a deep breath.", on: () => { playAnim('bunny', 'breath', 1700); Sound.play('breath'); } }
   ],
   confession: () => [
     { who: 'bunny', mood: 'soft', text: "You solved the mystery." },
     { who: 'bunny', mood: 'blush', text: "But there was one secret I couldn't put into a clue." },
     { who: 'bunny', mood: 'nervous', text: "I guess I should introduce myself properly." },
-    { who: 'bunny', mood: 'happy', text: `My name is ${BUNNY_NAME}.`, on: revealName },
+    { who: 'bunny', mood: 'happy', speed: 2.2, text: `My name is ${BUNNY_NAME}.`, on: revealName },
     { who: 'revealed', mood: 'blush', text: "I made this little mystery because I've wanted to tell you how I feel for a while now." },
-    { who: 'revealed', mood: 'blush', text: "I like you.", on: heartPulse },
-    { who: 'revealed', mood: 'hopeful', text: "Would you like to go out with me?" }
+    { who: 'revealed', mood: 'blush', speed: 2.4, text: `I like you, ${PLAYER_NAME}!`, on: likeYou },
+    { who: 'revealed', mood: 'hopeful', speed: 1.4, text: "Would you like to go out with me?" }
   ],
   happy: () => [
-    { who: 'revealed', mood: 'excited', prop: 'cheer', text: "WAIT... REALLY?!", on: () => playAnim('bunny', 'jump', 1250) },
+    { who: 'revealed', mood: 'excited', prop: 'cheer', speed: 0.8, text: "WAIT... REALLY?!", on: () => { playAnim('bunny', 'jump', 1250); Sound.play('yay'); } },
     { who: 'revealed', mood: 'love', prop: 'cheer', text: "YOU JUST UNLOCKED THE BEST ENDING!", on: () => { playAnim('bunny', 'jump', 1250); heartPulse(); } }
   ],
   honest: () => [
@@ -1396,6 +1444,237 @@ function later(fn, ms) { const id = setTimeout(() => { timers.delete(id); fn(); 
 function clearTimers() { timers.forEach(id => clearTimeout(id)); timers.clear(); }
 function rand(a, b) { return a + Math.random() * (b - a); }
 function announce(text) { srEl.textContent = ''; setTimeout(() => { srEl.textContent = text; }, 30); }
+
+
+/* =============================================================
+   8b. SOUND: everything is synthesized with the Web Audio API
+   (no audio files, so it works offline and on GitHub Pages).
+   ============================================================= */
+const Sound = (() => {
+  let ctx = null, master = null, sfxBus = null, musicBus = null, noiseBuf = null;
+  let enabled = true;
+  try { if (localStorage.getItem('torei-sound') === 'off') enabled = false; } catch (e) { /* storage may be blocked */ }
+  let track = null, trackName = null, step = 0, nextTime = 0, sched = null;
+
+  const SEMI = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+  function nf(name) {
+    const m = /^([A-G])(#|b)?(\d)$/.exec(name);
+    if (!m) return 0;
+    const n = SEMI[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0) + (Number(m[3]) + 1) * 12;
+    return 440 * Math.pow(2, (n - 69) / 12);
+  }
+
+  function init() {
+    if (ctx) return true;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return false;
+    try { ctx = new AC(); } catch (e) { return false; }
+    master = ctx.createGain(); master.gain.value = enabled ? 1 : 0; master.connect(ctx.destination);
+    sfxBus = ctx.createGain(); sfxBus.gain.value = SOUND_VOLUME; sfxBus.connect(master);
+    musicBus = ctx.createGain(); musicBus.gain.value = MUSIC_VOLUME; musicBus.connect(master);
+    noiseBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.6), ctx.sampleRate);
+    const d = noiseBuf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    return true;
+  }
+  // Browsers only allow sound after the player touches/clicks/presses a key.
+  function unlock() {
+    if (!init()) return;
+    if (enabled && ctx.state === 'suspended') ctx.resume();
+    if (enabled && track && !sched) startMusic();
+  }
+
+  function tone(o) {
+    const t = (o.at != null ? o.at : ctx.currentTime) + (o.delay || 0);
+    const dur = o.dur || 0.1, vol = o.vol == null ? 0.2 : o.vol, a = o.attack || 0.004;
+    const osc = ctx.createOscillator(), g = ctx.createGain();
+    osc.type = o.type || 'square';
+    osc.frequency.setValueAtTime(o.freq, t);
+    if (o.slide) osc.frequency.exponentialRampToValueAtTime(o.slide, t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + a);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(g); g.connect(o.bus || sfxBus);
+    osc.start(t); osc.stop(t + dur + 0.03);
+  }
+  function noise(o) {
+    const t = (o.at != null ? o.at : ctx.currentTime) + (o.delay || 0);
+    const dur = o.dur || 0.05, vol = o.vol == null ? 0.2 : o.vol;
+    const src = ctx.createBufferSource(); src.buffer = noiseBuf;
+    const f = ctx.createBiquadFilter();
+    f.type = o.filter || 'highpass';
+    f.frequency.setValueAtTime(o.freq || 2000, t);
+    if (o.slide) f.frequency.exponentialRampToValueAtTime(o.slide, t + dur);
+    if (o.q) f.Q.value = o.q;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(o.bus || sfxBus);
+    src.start(t, Math.random() * 0.4); src.stop(t + dur + 0.03);
+  }
+  const arp = (notes, gap, o) => notes.forEach((n, i) => tone(Object.assign({ freq: n, delay: i * gap }, o)));
+
+  /* ---- sound effects ---- */
+  const SFX = {
+    key() {            // typewriter key
+      noise({ freq: 2600 + Math.random() * 1800, dur: 0.03, vol: 0.18 });
+      tone({ type: 'square', freq: 150 + Math.random() * 50, dur: 0.025, vol: 0.05 });
+    },
+    ret() {            // carriage return + little bell
+      noise({ filter: 'bandpass', freq: 700, slide: 2400, q: 2, dur: 0.11, vol: 0.12 });
+      tone({ type: 'sine', freq: 2093, dur: 0.32, vol: 0.06, delay: 0.09 });
+    },
+    start()    { arp([523, 659, 784, 1047], 0.06, { type: 'square', dur: 0.12, vol: 0.09 }); },
+    whoosh()   { noise({ filter: 'bandpass', freq: 350, slide: 2600, q: 1.2, dur: 0.45, vol: 0.13 }); },
+    steps()    { [0, 0.2, 0.4, 0.6].forEach((d, i) => noise({ filter: 'lowpass', freq: 520, dur: 0.07, vol: 0.2 - i * 0.04, delay: d })); },
+    poof()     { noise({ filter: 'bandpass', freq: 500, slide: 3200, q: 1, dur: 0.3, vol: 0.18 }); tone({ type: 'triangle', freq: 523, slide: 1568, dur: 0.26, vol: 0.12 }); },
+    clue()     { arp([784, 988, 1175, 1568], 0.055, { type: 'triangle', dur: 0.18, vol: 0.2 }); noise({ freq: 6000, dur: 0.15, vol: 0.05, delay: 0.22 }); },
+    again()    { tone({ type: 'triangle', freq: 660, dur: 0.08, vol: 0.12 }); tone({ type: 'triangle', freq: 523, dur: 0.1, vol: 0.1, delay: 0.07 }); },
+    complete() { arp([523, 659, 784, 1047, 784, 1047, 1319], 0.08, { type: 'square', dur: 0.16, vol: 0.08 }); tone({ type: 'triangle', freq: 2093, dur: 0.6, vol: 0.08, delay: 0.56 }); },
+    boing()    { tone({ type: 'sine', freq: 220, slide: 700, dur: 0.18, vol: 0.22 }); },
+    drama()    {       // trial opening hit
+      tone({ type: 'sine', freq: 120, slide: 40, dur: 0.7, vol: 0.5 });
+      noise({ filter: 'lowpass', freq: 900, slide: 120, dur: 0.45, vol: 0.32 });
+      arp([220, 208], 0.18, { type: 'sawtooth', dur: 0.35, vol: 0.05 });
+    },
+    wrong()    {
+      noise({ filter: 'lowpass', freq: 450, dur: 0.2, vol: 0.38 });
+      tone({ type: 'square', freq: 196, dur: 0.16, vol: 0.12 });
+      tone({ type: 'square', freq: 147, dur: 0.34, vol: 0.12, delay: 0.17 });
+    },
+    correct()  { arp([523, 659, 784, 1047, 1319, 1568], 0.07, { type: 'square', dur: 0.15, vol: 0.09 }); tone({ type: 'triangle', freq: 2093, dur: 0.6, vol: 0.12, delay: 0.45 }); },
+    breath()   { noise({ filter: 'bandpass', freq: 650, slide: 380, q: 0.8, dur: 1.2, vol: 0.08 }); },
+    reveal()   { arp([1047, 1319, 1568, 2093, 2637], 0.08, { type: 'triangle', dur: 0.32, vol: 0.1 }); },
+    heartbeat(){ [0, 0.24, 0.95, 1.19].forEach((d, i) => tone({ type: 'triangle', freq: i % 2 ? 80 : 95, slide: 50, dur: 0.2, vol: 0.5, delay: d })); },
+    yes()      { arp([659, 784, 988, 1319], 0.08, { type: 'triangle', dur: 0.24, vol: 0.18 }); },
+    yay()      { arp([784, 988, 1175, 1568, 1976], 0.05, { type: 'square', dur: 0.12, vol: 0.08 }); },
+    gentle()   { arp([523, 659, 784, 659], 0.22, { type: 'sine', dur: 0.6, vol: 0.13 }); }
+  };
+  function play(name) {
+    if (!enabled || !SFX[name]) return;
+    if (!init()) return;
+    if (ctx.state === 'suspended') ctx.resume();
+    try { SFX[name](); } catch (e) { /* never let sound break the game */ }
+  }
+
+  /* ---- background music: tiny looping chiptunes (eighth-note steps, '-' = rest) ---- */
+  const TRACKS = {
+    title: { bpm: 96, leadType: 'triangle', leadVol: 0.16, leadLen: 1.8, bassVol: 0.2, bassLen: 1.8,
+      lead: ['E5','G5','C6','G5','A5','G5','E5','-','F5','A5','D6','A5','G5','F5','E5','-','D5','F5','B5','F5','G5','F5','D5','-','E5','G5','C6','E6','D6','B5','C6','-'],
+      bass: ['C3','-','G3','-','C3','-','G3','-','F3','-','C4','-','F3','-','C4','-','G3','-','D4','-','G3','-','D4','-','C3','-','G3','-','C3','-','E3','-'] },
+    school: { bpm: 120, leadType: 'square', leadVol: 0.06, leadLen: 1.2, bassVol: 0.18, bassLen: 1.6, hat: true,
+      lead: ['C5','-','E5','G5','-','E5','C5','-','D5','-','F5','A5','-','F5','D5','-','E5','G5','E5','C5','D5','E5','D5','B4','C5','-','G4','-','C5','-','-','-',
+             'A4','-','C5','E5','-','C5','A4','-','F4','-','A4','C5','-','A4','F4','-','G4','B4','D5','G5','F5','E5','D5','B4','C5','-','E5','-','C5','-','-','-'],
+      bass: ['C3','-','G2','-','C3','-','G2','-','D3','-','A2','-','D3','-','A2','-','G2','-','D3','-','G2','-','D3','-','C3','-','G2','-','C3','-','-','-',
+             'A2','-','E3','-','A2','-','E3','-','F2','-','C3','-','F2','-','C3','-','G2','-','D3','-','G2','-','B2','-','C3','-','G2','-','C3','-','-','-'] },
+    trial: { bpm: 132, leadType: 'square', leadVol: 0.06, leadLen: 1, bassType: 'square', bassVol: 0.07, bassLen: 0.8, hat: true, kick: true,
+      lead: ['A4','-','C5','-','E5','-','D5','C5','F5','-','E5','-','C5','-','A4','-','G4','-','B4','-','D5','-','C5','B4','E5','-','-','-','G#4','-','B4','-'],
+      bass: ['A2','A2','-','A2','E3','-','A2','-','F2','F2','-','F2','C3','-','F2','-','G2','G2','-','G2','D3','-','G2','-','E2','E2','-','E2','B2','-','G#2','-'] },
+    room: { bpm: 80, leadType: 'triangle', leadVol: 0.13, leadLen: 2.6, bassType: 'sine', bassVol: 0.2, bassLen: 6,
+      lead: ['F5','A5','C6','A5','F5','A5','C6','A5','E5','G5','C6','G5','E5','G5','C6','G5','D5','F5','A5','F5','D5','F5','A5','F5','C5','E5','G5','B5','C6','-','-','-'],
+      bass: ['F3','-','-','-','C4','-','-','-','E3','-','-','-','C4','-','-','-','D3','-','-','-','A3','-','-','-','C3','-','-','-','G3','-','-','-'] },
+    happy: { bpm: 140, leadType: 'square', leadVol: 0.07, leadLen: 1.2, bassVol: 0.2, bassLen: 1.6, hat: true, kick: true,
+      lead: ['C5','E5','G5','C6','-','G5','C6','E6','D6','-','C6','A5','-','F5','A5','C6','B5','-','G5','D6','-','B5','G5','B5','C6','-','G5','-','C6','-','-','-'],
+      bass: ['C3','-','G3','-','C3','-','G3','-','F3','-','C4','-','F3','-','C4','-','G3','-','D4','-','G3','-','D4','-','C3','-','G3','-','C4','-','-','-'] },
+    honest: { bpm: 72, leadType: 'sine', leadVol: 0.15, leadLen: 2.6, bassType: 'sine', bassVol: 0.17, bassLen: 6,
+      lead: ['A4','C5','E5','C5','A4','C5','E5','-','F4','A4','C5','A4','F4','A4','C5','-','C5','E5','G5','E5','C5','E5','G5','-','G4','B4','D5','B4','G4','-','-','-'],
+      bass: ['A2','-','-','-','E3','-','-','-','F2','-','-','-','C3','-','-','-','C3','-','-','-','G3','-','-','-','G2','-','-','-','D3','-','-','-'] }
+  };
+  function startMusic() {
+    stopMusic();
+    if (!ctx || !track || !enabled) return;
+    nextTime = ctx.currentTime + 0.08;
+    sched = setInterval(scheduleNotes, 25);
+  }
+  function stopMusic() { clearInterval(sched); sched = null; }
+  function scheduleNotes() {
+    if (!ctx || !track) return;
+    const stepDur = 60 / track.bpm / 2;
+    if (nextTime < ctx.currentTime - 0.2) nextTime = ctx.currentTime + 0.05;   // skip ahead after a pause
+    while (nextTime < ctx.currentTime + 0.15) {
+      const i = step % track.lead.length;
+      const L = track.lead[i], B = track.bass[i % track.bass.length];
+      if (L !== '-') tone({ at: nextTime, type: track.leadType, freq: nf(L), dur: stepDur * track.leadLen, vol: track.leadVol, bus: musicBus, attack: 0.008 });
+      if (B !== '-') tone({ at: nextTime, type: track.bassType || 'triangle', freq: nf(B), dur: stepDur * track.bassLen, vol: track.bassVol, bus: musicBus, attack: 0.01 });
+      if (track.hat && i % 2 === 1) noise({ at: nextTime, freq: 7000, dur: 0.03, vol: 0.05, bus: musicBus });
+      if (track.kick && i % 8 === 0) tone({ at: nextTime, type: 'sine', freq: 130, slide: 45, dur: 0.16, vol: 0.35, bus: musicBus });
+      nextTime += stepDur;
+      step++;
+    }
+  }
+  function music(name) {
+    if (name === trackName) return;
+    trackName = name || null;
+    track = TRACKS[trackName] || null;
+    step = 0;
+    stopMusic();
+    if (ctx && track && enabled) startMusic();
+  }
+  // Briefly lower the music (used for the big confession line).
+  function duck(level, ms) {
+    if (!ctx || !enabled) return;
+    const g = musicBus.gain, t = ctx.currentTime;
+    g.cancelScheduledValues(t);
+    g.setValueAtTime(g.value, t);
+    g.linearRampToValueAtTime(MUSIC_VOLUME * level, t + 0.3);
+    g.setValueAtTime(MUSIC_VOLUME * level, t + ms / 1000);
+    g.linearRampToValueAtTime(MUSIC_VOLUME, t + ms / 1000 + 1.2);
+  }
+  function setEnabled(on) {
+    enabled = on;
+    try { localStorage.setItem('torei-sound', on ? 'on' : 'off'); } catch (e) { /* ignore */ }
+    if (on) {
+      if (!init()) return;
+      master.gain.value = 1;
+      if (ctx.state === 'suspended') ctx.resume();
+      if (track) startMusic();
+    } else {
+      if (master) master.gain.value = 0;
+      stopMusic();
+    }
+  }
+  function pageHidden(hidden) {
+    if (!ctx) return;
+    if (hidden) { stopMusic(); if (ctx.state === 'running') ctx.suspend(); }
+    else if (enabled) { ctx.resume(); if (track) startMusic(); }
+  }
+  return { play, music, duck, unlock, setEnabled, pageHidden, get enabled() { return enabled; } };
+})();
+
+// Which music loop plays in each scene.
+const SCENE_MUSIC = {
+  title: 'title', intro: 'school', investigation: 'school', trial: 'trial',
+  secretRoom: 'room', confession: 'room', happyEnding: 'happy', honestEnding: 'honest'
+};
+
+function soundIcon(on) {
+  const body = `<path d="M3 9h4l6-5v16l-6-5H3z" fill="currentColor"/>`;
+  const extra = on
+    ? `<path d="M16 8.5c1.4 1.2 1.4 5.8 0 7M18.6 6c2.8 2.4 2.8 9.6 0 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>`
+    : `<path d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${body}${extra}</svg>`;
+}
+function setupSoundButton() {
+  const btn = document.getElementById('soundBtn');
+  if (!btn) return;
+  const paint = () => {
+    const on = Sound.enabled;
+    btn.innerHTML = soundIcon(on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.setAttribute('aria-label', on ? 'Sound on (tap to mute)' : 'Sound off (tap to turn on)');
+    btn.title = on ? 'Mute sound' : 'Turn sound on';
+  };
+  btn.addEventListener('click', () => {
+    Sound.setEnabled(!Sound.enabled);
+    paint();
+    Sound.play('start');
+  });
+  paint();
+  // unlock audio on the first real interaction (browser autoplay rules)
+  ['pointerup', 'touchend', 'click', 'keydown'].forEach(evt =>
+    document.addEventListener(evt, () => Sound.unlock(), { capture: true, passive: true }));
+  document.addEventListener('visibilitychange', () => Sound.pageHidden(document.hidden));
+}
 
 
 /* =============================================================
@@ -1478,7 +1757,7 @@ function stamp(host, text, cls) {
 }
 function titleDecor(fx) {
   const items = [
-    ['cloud', 5, 8, 76, 'drift'], ['cloud', 72, 4, 96, 'drift'],
+    ['cloud', 5, 8, 76, 'drift'], ['cloud', 58, 4, 96, 'drift'],
     ['heart', 10, 34, 26, 'bob'], ['heart', 87, 27, 30, 'bob'], ['heart', 15, 64, 22, 'bob'], ['heart', 82, 60, 24, 'bob'],
     ['star', 6, 52, 22, 'tw'], ['star', 92, 45, 20, 'tw'], ['star', 26, 12, 18, 'tw'], ['star', 64, 20, 22, 'tw'],
     ['sparkle', 23, 47, 16, 'tw'], ['sparkle', 75, 39, 16, 'tw']
@@ -1502,12 +1781,12 @@ const Dialogue = (() => {
     el.innerHTML =
       '<div class="dlg-name"><span></span></div>' +
       '<div class="dlg-portrait" aria-hidden="true"></div>' +
-      '<p class="dlg-text" aria-hidden="true"></p>' +
+      '<p class="dlg-text" aria-hidden="true"><span class="dlg-typed"></span><span class="caret"></span></p>' +
       '<button type="button" class="dlg-next" aria-label="Continue"><span aria-hidden="true">NEXT</span> <span class="tri" aria-hidden="true">▼</span></button>';
     nameEl = el.querySelector('.dlg-name');
     nameTxt = nameEl.querySelector('span');
     portraitEl = el.querySelector('.dlg-portrait');
-    textEl = el.querySelector('.dlg-text');
+    textEl = el.querySelector('.dlg-typed');
     nextBtn = el.querySelector('.dlg-next');
     el.addEventListener('click', e => { if (e.target.closest('.dlg-next')) return; advance(); });
     nextBtn.addEventListener('click', e => { e.stopPropagation(); advance(); });
@@ -1515,7 +1794,8 @@ const Dialogue = (() => {
   function mount(container) { if (!el) build(); container.appendChild(el); }
   function unmount() { stop(); if (el) el.remove(); }
   function stop() {
-    clearInterval(timer); timer = null;
+    clearTimeout(timer); timer = null;
+    if (el) el.classList.remove('typing');
     typing = false; active = false; lines = []; onDone = null; pendingHold = null;
   }
   // Play a list of lines. `done` runs after the last line (or as soon as it is shown, with holdLast).
@@ -1552,24 +1832,35 @@ const Dialogue = (() => {
     portraitEl.innerHTML = cast.portrait ? cast.portrait(mood) : '';
     announce((name ? name + ': ' : '') + line.text);
     shownAt = performance.now();
-    type(line.text);
+    type(line.text, line.speed || 1);
   }
-  function type(str) {
-    clearInterval(timer);
+  // Typewriter: one letter at a time, a key click per letter, little pauses after punctuation.
+  function type(str, speed) {
+    clearTimeout(timer);
     fullText = str;
-    if (REDUCED || TYPE_SPEED_MS <= 0) { textEl.textContent = str; typing = false; return; }
+    if (REDUCED || TYPE_SPEED_MS <= 0) { textEl.textContent = str; typing = false; el.classList.remove('typing'); return; }
     const chars = Array.from(str);
+    const base = TYPE_SPEED_MS * speed;
     let i = 0;
     typing = true;
+    el.classList.add('typing');
     textEl.textContent = '';
-    timer = setInterval(() => {
+    const tick = () => {
       i++;
       textEl.textContent = chars.slice(0, i).join('');
-      if (i >= chars.length) finishTyping();
-    }, TYPE_SPEED_MS);
+      const ch = chars[i - 1], nx = chars[i];
+      if (ch.trim()) Sound.play('key');
+      if (i >= chars.length) { finishTyping(); return; }
+      let wait = base;
+      if ('.!?'.indexOf(ch) >= 0) wait += (nx === '.' || nx === '!' || nx === '?') ? base * 2.5 : base * 7;
+      else if (ch === ',' || ch === ':') wait += base * 4;
+      timer = setTimeout(tick, wait);
+    };
+    timer = setTimeout(tick, base);
   }
   function finishTyping() {
-    clearInterval(timer); timer = null; typing = false;
+    clearTimeout(timer); timer = null; typing = false;
+    el.classList.remove('typing');
     textEl.textContent = fullText;
     if (pendingHold) firePending();
   }
@@ -1579,6 +1870,7 @@ const Dialogue = (() => {
     if (!active) return;
     if (performance.now() - shownAt < 200) return;   // avoids accidental double-tap skips
     idx++;
+    Sound.play('ret');
     if (idx >= lines.length) {
       active = false;
       el.classList.add('static');
@@ -1595,6 +1887,7 @@ const Dialogue = (() => {
       nameTxt.textContent = newName;
       nameEl.className = 'dlg-name tag-pink revealed flip';
       announce('Name revealed: ' + newName);
+      Sound.play('reveal');
       burstAt(nameEl, { n: 10, kinds: ['heart', 'sparkle', 'star'], spread: 60 });
     }, 230);
   }
@@ -1612,6 +1905,7 @@ const Dialogue = (() => {
    11. SCENE HELPERS (story beats)
    ============================================================= */
 function principalLeaves() {
+  Sound.play('steps');
   const s = sprites.principal;
   if (s) s.el.classList.add('exit-left');
 }
@@ -1622,12 +1916,18 @@ function bunnyAppears() {
   if (!s) return;
   s.el.classList.remove('is-hidden');
   s.el.classList.add('poof');
+  Sound.play('poof');
   later(() => burstAt(s.anim, { n: 12, kinds: ['sparkle', 'star', 'heart'], spread: 110 }), 120);
 }
 function revealName(line) {
   state.nameRevealed = true;
   const at = Dialogue.index;
   later(() => { if (Dialogue.index === at) Dialogue.flipName(BUNNY_NAME.toUpperCase()); }, 700);
+}
+function likeYou() {
+  Sound.play('heartbeat');
+  Sound.duck(0.2, 3200);
+  heartPulse();
 }
 function heartPulse() {
   const s = sprites.bunny;
@@ -1644,10 +1944,12 @@ function inspectClue(id, scene) {
   btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop');
 
   if (state.clues.has(id)) {   // already collected: no double counting
+    Sound.play('again');
     Dialogue.play([{ who: 'you', text: `${clue.lines[0].text} (Already in your case file ✓)` }]);
     return;
   }
   state.clues.add(id);
+  Sound.play('clue');
   btn.classList.add('found');
   btn.setAttribute('aria-label', `${clue.name}: clue collected`);
   burstAt(btn, { n: 10, kinds: ['star', 'sparkle'] });
@@ -1696,6 +1998,7 @@ function unlockContinue(scene) {
   b.querySelector('[data-arrow]').hidden = false;
   scene.querySelector('[data-hint]').textContent = 'Case file complete! ♡';
   scene.querySelector('[data-banner]').classList.add('show');
+  later(() => Sound.play('complete'), 380);
   burstAt(scene.querySelector('[data-room]'), { n: 16, kinds: ['heart', 'star', 'sparkle'], spread: 180 });
 }
 let pokeCount = 0;
@@ -1703,6 +2006,7 @@ function pokeBunny() {
   if (state.busy) return;
   const line = SCRIPT.bunnyPoke[pokeCount++ % SCRIPT.bunnyPoke.length];
   playAnim('bunny', 'hop', 520);
+  Sound.play('boing');
   Dialogue.play([Object.assign({}, line)]);
 }
 function roomFallback(scene) {
@@ -1731,6 +2035,7 @@ function answerTrial(who, scene) {
     btn.querySelector('.ans-mark').textContent = '✗';
     btn.setAttribute('aria-label', btn.querySelector('.ans-label').textContent + ' (wrong answer)');
     stamp(panel, 'WRONG ANSWER!', 'wrong');
+    Sound.play('wrong');
     fb.className = 'feedback bad';
     fb.textContent = '✗ Wrong answer! Try again!';
     setSprite('ghost', { mood: 'laugh' });
@@ -1743,6 +2048,7 @@ function answerTrial(who, scene) {
   state.trialComplete = true;
   state.trialOpen = false;
   state.busy = true;
+  Sound.play('correct');
   btn.classList.add('right');
   btn.querySelector('.ans-mark').textContent = '✓';
   fb.className = 'feedback good';
@@ -1781,6 +2087,7 @@ function chooseEnding(kind) {
   if (state.busy || state.ending) return;
   state.ending = kind;
   state.confessionAnswered = true;
+  Sound.play(kind === 'happy' ? 'yes' : 'gentle');
   goTo(kind === 'happy' ? 'happyEnding' : 'honestEnding', kind === 'happy' ? 'pink' : 'fade');
 }
 function showEndCard(scene, o) {
@@ -1797,6 +2104,7 @@ function showEndCard(scene, o) {
   const b = mount.querySelector('[data-action="replay"]');
   b.addEventListener('click', restart);
   announce(`${o.num} ${o.title}. ${o.msg}`);
+  Sound.play(o.sound);
   later(() => focusKb(b), 90);
 }
 function vnScene(cls, label, bg, tag, extra = '', spriteCls = '') {
@@ -1825,11 +2133,10 @@ const SCENES = {
           <div class="bg">${BG.school()}</div>
           <div class="fx" data-fx></div>
           <div class="title-wrap">
-            <p class="chip">CASE FILE No. 01</p>
+            <p class="chip">CASE FILE No. ${escapeHTML(CASE_NUMBER)}</p>
             <h1 class="logo">
-              <span class="l1">THE CASE OF THE</span>
-              <span class="big">MISSING</span>
-              <span class="big">HEART<span class="logo-heart">${pixelSVG('qheart')}</span></span>
+              <span class="big main">${escapeHTML(TITLE_MAIN)}</span>
+              <span class="sub">${escapeHTML(TITLE_SUB)}<span class="logo-door" aria-hidden="true">${pixelSVG('door')}</span></span>
             </h1>
             <p class="subtitle">A tiny mystery awaits...</p>
             <div class="title-bunny" data-sprite="bunny"><div class="anim"></div></div>
@@ -1843,8 +2150,8 @@ const SCENES = {
     enter(scene) {
       setupSprite(scene, 'bunny', bunnySVG, 'smug', { prop: 'magnifier' }, 'bob');
       titleDecor(scene.querySelector('[data-fx]'));
-      scene.querySelector('[data-action="start"]').addEventListener('click', () => goTo('intro'));
-      announce('The Case of the Missing Heart. A tiny mystery awaits.');
+      scene.querySelector('[data-action="start"]').addEventListener('click', () => { if (!state.busy) Sound.play('start'); goTo('intro'); });
+      announce(`${TITLE_MAIN} ${TITLE_SUB}. A tiny mystery awaits.`);
     }
   },
 
@@ -1854,7 +2161,7 @@ const SCENES = {
       return h(`<section class="scene scene-vn scene-intro" aria-label="School hallway">
           <div class="bg">${BG.hallway()}</div>
           <div class="fx" data-fx></div>
-          <div class="top"><span class="tag">CASE FILE ♡ 01 · THE RUMOR</span></div>
+          <div class="top"><span class="tag">CASE ${escapeHTML(CASE_NUMBER)} ♡ THE RUMOR</span></div>
           <div class="stage">
             <div class="sprite principal" data-sprite="principal"><div class="anim"></div></div>
             <div class="sprite is-hidden" data-sprite="bunny"><div class="anim"></div></div>
@@ -1886,7 +2193,7 @@ const SCENES = {
       return h(`<section class="scene scene-inv" aria-label="Classroom investigation">
           <div class="bg"></div>
           <div class="top">
-            <span class="tag">CASE FILE ♡ 02 · CLASSROOM</span>
+            <span class="tag">CASE ${escapeHTML(CASE_NUMBER)} ♡ CLASSROOM</span>
             <div class="counter" data-counter role="status" aria-live="polite">
               <span class="ico" aria-hidden="true">${pixelSVG('star')}</span><span>CLUES FOUND: <b data-count>0</b>/5</span>
             </div>
@@ -1959,6 +2266,7 @@ const SCENES = {
     },
     enter(scene) {
       setupSprite(scene, 'ghost', ghostSVG, 'smirk', {}, 'float');
+      later(() => Sound.play('drama'), 300);
       setupSprite(scene, 'bunny', bunnySVG, 'nervous', {}, 'bob');
       spawnFloaters(scene.querySelector('[data-fx]'), { count: 12, kinds: ['sparkle', 'star'], mode: 'tw', min: 10, max: 18, opacity: 0.8 });
       scene.querySelectorAll('[data-answer]').forEach(b => b.addEventListener('click', () => answerTrial(b.dataset.answer, scene)));
@@ -1974,7 +2282,7 @@ const SCENES = {
 
   /* ---------- 5. SECRET ROOM ---------- */
   secretRoom: {
-    build() { return vnScene('scene-secret', 'The secret room', BG.secret(), 'CASE FILE ♡ 03 · THE SECRET ROOM'); },
+    build() { return vnScene('scene-secret', 'The secret room', BG.secret(), `CASE ${escapeHTML(CASE_NUMBER)} ♡ SECRET ROOM`); },
     enter(scene) {
       setupSprite(scene, 'bunny', bunnySVG, 'soft', {}, 'bob');
       spawnFloaters(scene.querySelector('[data-fx]'), { count: 12, kinds: ['sparkle', 'heart'], mode: 'up', min: 10, max: 18, opacity: 0.7 });
@@ -2009,7 +2317,7 @@ const SCENES = {
       scene.querySelector('.stage').addEventListener('click', () => Dialogue.advance());
       Dialogue.play(SCRIPT.happy(), () => showEndCard(scene, {
         num: 'ENDING 01:', title: 'THE HAPPY ENDING ♡', msg: HAPPY_ENDING_MESSAGE,
-        btnClass: 'pink', mood: 'shy', prop: 'heart'
+        btnClass: 'pink', mood: 'shy', prop: 'heart', sound: 'complete'
       }));
     }
   },
@@ -2024,7 +2332,7 @@ const SCENES = {
       scene.querySelector('.stage').addEventListener('click', () => Dialogue.advance());
       Dialogue.play(SCRIPT.honest(), () => showEndCard(scene, {
         num: 'ENDING 02:', title: 'THE HONEST ENDING', msg: HONEST_ENDING_MESSAGE,
-        btnClass: '', mood: 'happy', prop: null
+        btnClass: '', mood: 'happy', prop: null, sound: 'gentle'
       }));
     }
   }
@@ -2084,6 +2392,7 @@ function goTo(name, style = 'pixel') {
   if (state.busy) return false;
   if (!SCENES[name] || !canEnter(name)) return false;
   state.busy = true;
+  if (style !== 'none') Sound.play('whoosh');
   transition(style, () => {
     clearTimers();
     Dialogue.stop();
@@ -2094,7 +2403,9 @@ function goTo(name, style = 'pixel') {
     const def = SCENES[name];
     const el = def.build();
     root.insertBefore(el, wipeEl);
+    root.dataset.scene = name;
     current = el;
+    Sound.music(SCENE_MUSIC[name]);
     def.enter(el);
   }).then(() => {
     state.busy = false;
@@ -2116,6 +2427,7 @@ function restart() {
   if (state.busy) return;
   state = freshState();
   pokeCount = 0;
+  Sound.play('start');
   goTo('title', 'pixel');
 }
 
@@ -2138,7 +2450,10 @@ document.addEventListener('keydown', e => {
 (function boot() {
   buildWipe();
   const icon = document.querySelector('link[rel="icon"]');
-  if (icon) icon.href = 'data:image/svg+xml,' + encodeURIComponent(pixelSVG('heart'));
+  if (icon) icon.href = 'data:image/svg+xml,' + encodeURIComponent(pixelSVG('door'));
+  document.title = `${TITLE_MAIN} ${TITLE_SUB}`;
+  root.setAttribute('aria-label', document.title);
+  setupSoundButton();
   goTo('title', 'none');
 })();
 </script>
