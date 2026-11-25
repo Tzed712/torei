@@ -225,6 +225,8 @@ svg.px{ display:block; shape-rendering:crispEdges; }
 #wipe.reveal i{ animation:cellOut .2s steps(4) var(--d) both; }
 #wipe.fade{ background:var(--cream-l); opacity:0; transition:opacity .3s ease; }
 #wipe.fade.on{ opacity:1; }
+#wipe.fade.dark{ background:#16302F; transition-duration:.65s; }
+#wipe.fade.light{ background:#FFF7DF; transition-duration:.45s; }
 #wipe.fade i{ visibility:hidden; }
 
 /* ---------- TITLE ---------- */
@@ -343,6 +345,90 @@ svg.px{ display:block; shape-rendering:crispEdges; }
 .btn .lock{ width:16px; display:inline-block; }
 .btn .lock svg{ width:100%; height:auto; }
 .btn.ready{ animation:ready 1.6s ease-in-out infinite; }
+
+/* ---------- SPOOKY CUTSCENE ---------- */
+.scene-haunt .shade{
+  position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0; transition:opacity 1.4s ease;
+  background:radial-gradient(circle at 62% 34%, rgba(28,78,78,.62), rgba(10,22,21,.97) 70%);
+}
+.scene-haunt .shade.lv1{ opacity:.4; }
+.scene-haunt .shade.lv2{ opacity:.93; }
+.scene-haunt .shade.lv3{ opacity:.72; }
+.scene-haunt .shade.flicker{ animation:flicker 2.4s linear; }
+.scene-haunt .sprite.bunny{ left:1%; right:auto; margin:0; width:min(50%, 320px); height:84%; }
+.scene-haunt .sprite.ghost{ right:0; left:auto; margin:0; width:min(58%, 380px); height:90%; bottom:-20px; }
+.scene-haunt .sprite.ghost .anim{ filter:drop-shadow(0 0 16px rgba(191,229,223,.75)); }
+.scene-haunt .sprite.bunny .anim{ transition:filter 1.4s ease; }
+.scene-haunt.dim .sprite.bunny .anim{ filter:brightness(.72) saturate(.8); }
+.sprite.boo{ animation:boo .5s cubic-bezier(.2,1.5,.4,1) both; }
+.ghost-eyes{ position:absolute; z-index:2; left:62%; top:16%; display:flex; gap:26px; opacity:0; transition:opacity 1.2s ease; pointer-events:none; }
+.ghost-eyes.on{ opacity:1; }
+.ghost-eyes i{ display:block; width:15px; height:22px; border-radius:50%; background:var(--teal-l); box-shadow:0 0 14px 5px rgba(191,229,223,.7); animation:blink 4.5s ease-in-out infinite; }
+.scene.shake{ animation:shake .45s linear; }
+.dlg-portrait.dark{ background:#16302F; }
+
+/* ---------- THE LAST DOOR ---------- */
+.scene-door .bg > svg{ transform-origin:50% 51%; transition:transform .8s cubic-bezier(.3,.7,.3,1); }
+.scene-door.lv1 .bg > svg{ transform:scale(1.07); }
+.scene-door.lv2 .bg > svg{ transform:scale(1.16); }
+.scene-door.lv3 .bg > svg{ transform:scale(1.27); }
+.scene-door.lv4 .bg > svg{ transform:scale(1.4); }
+.door-glow{ opacity:.45; transition:opacity .7s ease; transform-box:fill-box; transform-origin:center; animation:glowPulse 2.6s ease-in-out infinite; }
+.door-beam{ opacity:.2; transition:opacity .7s ease; }
+.scene-door.lv1 .door-glow{ opacity:.6; }   .scene-door.lv1 .door-beam{ opacity:.28; }
+.scene-door.lv2 .door-glow{ opacity:.75; }  .scene-door.lv2 .door-beam{ opacity:.36; }
+.scene-door.lv3 .door-glow{ opacity:.88; }  .scene-door.lv3 .door-beam{ opacity:.45; }
+.scene-door.lv4 .door-glow{ opacity:1; }    .scene-door.lv4 .door-beam{ opacity:.55; }
+.door-panel{ transform-box:fill-box; transform-origin:0% 50%; transition:transform 1.1s cubic-bezier(.5,0,.3,1); }
+.scene-door.opened .door-panel{ transform:scaleX(.08); }
+.door-light{ transition:fill .6s ease; }
+.scene-door.opened .door-light{ fill:#FFFDF7; }
+.scene-door .sprite.bunny{ left:1%; right:auto; margin:0; width:min(36%, 260px); height:72%; }
+.scene-door .sprite.ghost{ right:0; left:auto; margin:0; width:min(38%, 280px); height:78%; }
+.scene-door .sprite.ghost .anim{ filter:drop-shadow(0 0 14px rgba(191,229,223,.7)); }
+.sprite.vanish{ animation:vanish 1s ease forwards; }
+.countdown{ position:absolute; inset:0; z-index:7; display:grid; place-items:center; pointer-events:none; }
+.countdown span{
+  font:900 120px/1 var(--mono); font-size:clamp(84px, min(26cqw, 26cqh), 200px); color:var(--yellow);
+  text-shadow:5px 0 0 var(--ink), -5px 0 0 var(--ink), 0 5px 0 var(--ink), 0 -5px 0 var(--ink),
+              5px 5px 0 var(--ink), -5px 5px 0 var(--ink), 5px -5px 0 var(--ink), -5px -5px 0 var(--ink), 10px 11px 0 var(--pink-d);
+  animation:countPop .8s ease-out both;
+}
+.door-prompt{
+  position:absolute; z-index:8; left:0; right:0; top:max(14px, 7%); width:max-content; margin:0 auto; white-space:nowrap;
+  font:900 clamp(13px, 2.6cqw, 18px)/1 var(--mono); letter-spacing:.1em; color:var(--ink);
+  background:var(--yellow); padding:10px 14px 9px; box-shadow:var(--pxb), 6px 6px 0 4px rgba(0,0,0,.25);
+  animation:ready 1.6s ease-in-out infinite;
+}
+.door-btn{
+  position:absolute; z-index:8; padding:0; margin:0; border:0; cursor:pointer; background:rgba(255,240,181,.08);
+  box-shadow:0 0 0 4px var(--yellow), 0 0 26px 10px rgba(255,240,181,.75);
+  animation:doorBtn 1.4s ease-in-out infinite;
+}
+.door-btn::after{ content:""; position:absolute; inset:-14px; }
+.door-btn:focus-visible{ outline:3px dashed var(--yellow); outline-offset:10px; }
+.flood{
+  position:absolute; inset:0; z-index:20; pointer-events:none; opacity:0; transform:scale(.35);
+  background:radial-gradient(circle at 50% 50%, #FFFDF7 0%, #FFF0B5 45%, rgba(255,240,181,0) 72%);
+  transition:opacity 1s ease .35s, transform 1.3s ease .35s;
+}
+.scene-door.opened .flood{ opacity:1; transform:scale(2.6); }
+
+/* ---------- ENDINGS: whole cast ---------- */
+.scene-end .sprite.main{ z-index:2; width:min(50%, 380px); }
+.scene-end .sprite.side{ z-index:1; width:min(38%, 290px); height:80%; bottom:-24px; }
+.scene-end .sprite.side.left{ left:0; right:auto; margin:0; }
+.scene-end .sprite.side.right{ right:0; left:auto; margin:0; }
+.scene-end .sprite.ghost .anim, .scene-end .sprite.side.right .anim{ filter:drop-shadow(0 0 12px rgba(191,229,223,.6)); }
+.cast-label{ margin:12px 0 7px; font:900 11px/1 var(--mono); letter-spacing:.32em; color:var(--teal-d); }
+.cast-row{ display:flex; justify-content:center; flex-wrap:wrap; gap:clamp(10px, 2.6cqw, 22px); }
+.cast{ display:flex; flex-direction:column; align-items:center; gap:6px; }
+.cast-face{ width:clamp(40px, 7cqw, 56px); aspect-ratio:1/1; background:var(--teal-l); box-shadow:0 0 0 3px var(--ink); overflow:hidden; display:grid; place-items:center; }
+.cast-face svg{ width:100%; height:100%; display:block; }
+.cast-face.bunny{ background:var(--pink-l); }
+.cast-face.you{ background:var(--yellow-l); }
+.cast-face.you svg{ width:70%; height:70%; }
+.cast-name{ font:900 11px/1 var(--mono); letter-spacing:.1em; color:var(--ink); }
 
 /* ---------- TRIAL ---------- */
 .trial-bg{ background:radial-gradient(120% 90% at 50% 32%, #2F8384 0%, #286F70 42%, #1B4A4B 100%); }
@@ -483,7 +569,7 @@ svg.px{ display:block; shape-rendering:crispEdges; }
   .choices .btn{ min-height:52px; }
   .end-card{ padding:12px 14px 14px; margin-top:16px; }
   .end-card .msg{ margin:8px auto 10px; }
-  .end-hearts{ display:none; }
+  .end-hearts, .cast-label, .cast-row{ display:none; }
   .top{ padding-top:8px; }
 }
 @container game (max-height: 560px) and (min-aspect-ratio: 3/2){
@@ -531,6 +617,14 @@ svg.px{ display:block; shape-rendering:crispEdges; }
 @keyframes stamp{ 0%{ transform:translate(-50%,-50%) rotate(-8deg) scale(1.8); opacity:0; } 14%{ transform:translate(-50%,-50%) rotate(-8deg) scale(.95); opacity:1; } 22%{ transform:translate(-50%,-50%) rotate(-8deg) scale(1); opacity:1; } 78%{ opacity:1; transform:translate(-50%,-50%) rotate(-8deg) scale(1); } 100%{ opacity:0; transform:translate(-50%,-50%) rotate(-8deg) scale(1); } }
 @keyframes popIn{ 0%{ transform:scale(.6); opacity:0; } 70%{ transform:scale(1.04); opacity:1; } 100%{ transform:scale(1); opacity:1; } }
 @keyframes tint{ from{ opacity:.55; } to{ opacity:1; } }
+@keyframes flicker{ 0%{ opacity:0; } 15%{ opacity:.45; } 30%{ opacity:.1; } 55%{ opacity:.5; } 70%{ opacity:.22; } 100%{ opacity:.4; } }
+@keyframes boo{ 0%{ transform:scale(.3) translateY(30%); opacity:0; } 60%{ transform:scale(1.12); opacity:1; } 100%{ transform:scale(1); opacity:1; } }
+@keyframes blink{ 0%,90%,100%{ transform:scaleY(1); } 94%{ transform:scaleY(.12); } }
+@keyframes shake{ 0%,100%{ transform:translate(0,0); } 20%{ transform:translate(-6px,3px); } 40%{ transform:translate(6px,-3px); } 60%{ transform:translate(-4px,2px); } 80%{ transform:translate(4px,-2px); } }
+@keyframes glowPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.07); } }
+@keyframes vanish{ to{ opacity:0; transform:translateY(-34px) scale(.9); } }
+@keyframes countPop{ 0%{ transform:scale(2.4); opacity:0; } 35%{ transform:scale(.92); opacity:1; } 55%{ transform:scale(1.04); } 80%{ opacity:1; } 100%{ transform:scale(1); opacity:.9; } }
+@keyframes doorBtn{ 0%,100%{ box-shadow:0 0 0 4px var(--yellow), 0 0 22px 8px rgba(255,240,181,.6); } 50%{ box-shadow:0 0 0 4px var(--yellow), 0 0 34px 16px rgba(255,240,181,.95); } }
 @keyframes caret{ 0%{ opacity:1; } 100%{ opacity:0; } }
 
 /* ---------- Reduced motion ---------- */
@@ -577,7 +671,7 @@ const CASE_NUMBER = "10";
 
 // Sound volumes (0 = silent, 1 = full). Players can also mute with the speaker button.
 const SOUND_VOLUME = 0.6;
-const MUSIC_VOLUME = 0.28;
+const MUSIC_VOLUME = 0.4;
 
 // Typewriter speed in milliseconds per letter (0 = show each line instantly).
 const TYPE_SPEED_MS = 34;
@@ -626,6 +720,14 @@ const PIXELS = {
     'YywyY',
     '..y..',
     '..Y..'] },
+  qmark: { outline: ['o'], rows: [
+    '.yyyy.',
+    'yl..yy',
+    '....yy',
+    '...yy.',
+    '..yy..',
+    '......',
+    '..yy..'] },
   petal: { outline: [], rows: [
     '.kp',
     'kpP',
@@ -863,6 +965,9 @@ function bunnySVG(opt = {}) {
   const halfLid = x => `<path d="M${x - 7} ${EY - 1} Q${x} ${EY + 12} ${x + 7} ${EY - 1} Z" fill="${O}"/><path d="M${x - 9} ${EY - 2} L${x + 9} ${EY - 3.5}" fill="none" ${S(3.6)}/><circle cx="${x + 2}" cy="${EY + 2.5}" r="1.6" fill="${W}"/>`;
   const small = x => `<ellipse cx="${x - 2.5}" cy="${EY + 1}" rx="4.4" ry="5.8" fill="${O}"/><circle cx="${x - 1}" cy="${EY - 1.5}" r="1.6" fill="${W}"/>`;
   const down = x => `<ellipse cx="${x}" cy="${EY + 2.5}" rx="6" ry="7.2" fill="${O}"/><circle cx="${x + 2}" cy="${EY}" r="2.2" fill="${W}"/>`;
+  const wide = x => `<circle cx="${x}" cy="${EY}" r="8" fill="${W}" ${S(2.6)}/><circle cx="${x}" cy="${EY + 1}" r="2.8" fill="${O}"/>`;
+  const mO = `<ellipse cx="100" cy="166" rx="6" ry="7.5" fill="${PAL.P}" ${S(3.2)}/>`;
+  const shockLines = `<path d="M150 74 l8 -10 M160 84 l12 -6 M140 68 l2 -12" fill="none" ${S(3)}/>`;
   const heartEye = x => `<path d="${heartPath(x, EY, 10)}" fill="${PAL.P}" ${S(2.4)}/><circle cx="${x - 3.5}" cy="${EY - 3.5}" r="1.8" fill="${W}"/>`;
 
   const mOmega = `<path d="M90 162 Q95 168.5 100 162 Q105 168.5 110 162" fill="none" ${S(3.4)}/>`;
@@ -886,7 +991,8 @@ function bunnySVG(opt = {}) {
     blush:   [down(LX) + down(RX), mTiny, 1, hatch],
     hopeful: [sparkly(LX) + sparkly(RX), mSoft, 1, hatch],
     love:    [heartEye(LX) + heartEye(RX), mOpen, 1, hatch + stars],
-    shy:     [happyArc(LX) + happyArc(RX), mSoft, 1, hatch]
+    shy:     [happyArc(LX) + happyArc(RX), mSoft, 1, hatch],
+    shock:   [wide(LX) + wide(RX), mO, .5, sweat + shockLines]
   };
   const [eyes, mouth, blushOp, extra] = MOODS[mood] || MOODS.normal;
 
@@ -974,6 +1080,7 @@ function ghostSVG(opt = {}) {
   let eyes = half(LX) + half(RX), mouth = mSmirk;
   if (mood === 'delight') { eyes = starEye(LX) + starEye(RX); mouth = mGrin; }
   if (mood === 'laugh') { eyes = laughEye(LX) + laughEye(RX); mouth = mGrin; }
+  if (mood === 'boo') { mouth = `<path d="M96 129 Q112 152 128 129 Z" fill="${PAL.P}" ${S(3.4)}/><path d="M101 131 H123" stroke="${W}" stroke-width="2.6"/>`; }
   if (mood === 'point') { mouth = mGrin; }
 
   const arm = d => `<path d="${d}" fill="none" stroke="${O}" stroke-width="22" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${PAL.T}" stroke-width="13" stroke-linecap="round"/>`;
@@ -982,7 +1089,7 @@ function ghostSVG(opt = {}) {
   if (mood === 'point') {
     arms = arm('M74 156 Q58 172 62 188') + hand(62, 193) +
            arm('M146 154 Q168 146 184 124') + `<path d="M191 116 l9 -8" stroke="${O}" stroke-width="9" stroke-linecap="round"/><path d="M191 116 l9 -8" stroke="${SK}" stroke-width="3.6" stroke-linecap="round"/>` + hand(188, 120);
-  } else if (mood === 'delight') {
+  } else if (mood === 'delight' || mood === 'boo') {
     arms = arm('M74 154 Q54 140 50 118') + hand(49, 112) + arm('M146 154 Q166 140 170 118') + hand(171, 112);
   } else {
     arms = arm('M74 156 Q58 172 62 188') + hand(62, 193) + arm('M146 156 Q162 172 158 188') + hand(158, 193);
@@ -1133,7 +1240,7 @@ const BG = {
       <g transform="rotate(-6 182 72)"><rect x="166" y="60" width="34" height="26" fill="${PAL.p}" stroke="${o}" stroke-width="2"/><text x="183" y="71" text-anchor="middle" font-family="monospace" font-size="7" font-weight="700" fill="${o}">RUMOR</text><text x="183" y="81" text-anchor="middle" font-family="monospace" font-size="8" font-weight="700" fill="${o}">?!</text></g>
       <g transform="rotate(5 220 72)"><rect x="206" y="60" width="28" height="26" fill="${PAL.y}" stroke="${o}" stroke-width="2"/><text x="220" y="79" text-anchor="middle" font-family="monospace" font-size="14" font-weight="700" fill="${o}">?</text></g>
       <g transform="rotate(-3 184 104)"><rect x="170" y="92" width="30" height="24" fill="${PAL.b}" stroke="${o}" stroke-width="2"/><path d="M176 100 H194 M176 105 H190 M176 110 H192" stroke="${PAL.T}" stroke-width="1.5"/></g>
-      <g transform="rotate(4 220 104)"><rect x="206" y="92" width="28" height="24" fill="${PAL.L}" stroke="${o}" stroke-width="2"/><path d="${heartPath(220, 104, 6)}" fill="${PAL.p}" stroke="${o}" stroke-width="1.2"/></g>
+      <g transform="rotate(4 220 104)"><rect x="206" y="92" width="28" height="24" fill="${PAL.L}" stroke="${o}" stroke-width="2"/><path d="${star5(220, 104, 7, 3)}" fill="${PAL.y}" stroke="${o}" stroke-width="1.2"/></g>
       <circle cx="183" cy="61" r="2.5" fill="${PAL.P}"/><circle cx="220" cy="61" r="2.5" fill="${PAL.T}"/><circle cx="185" cy="93" r="2.5" fill="${PAL.Y}"/><circle cx="220" cy="93" r="2.5" fill="${PAL.P}"/>
       <rect y="166" width="400" height="48" fill="${PAL.b}"/>
       <rect y="164" width="400" height="4" fill="${PAL.t}"/>
@@ -1149,7 +1256,7 @@ const BG = {
   },
 
   /* the classroom (exactly 4:3, so clue positions line up) */
-  classroom() {
+  classroom(fit) {
     const o = PAL.o;
     let flags = '';
     const fc = [PAL.p, PAL.y, PAL.t, PAL.k];
@@ -1178,7 +1285,7 @@ const BG = {
       <rect x="${x}" y="212" width="110" height="11" fill="${PAL.l}" stroke="${o}" stroke-width="3"/>`;
     let planks = '';
     for (let y = 230; y < 300; y += 17) planks += `<path d="M0 ${y} H400" stroke="#D9C6A2" stroke-width="1.5"/>`;
-    return `<svg viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    return `<svg viewBox="0 0 400 300" preserveAspectRatio="${fit || 'none'}" aria-hidden="true" focusable="false">
       <defs><linearGradient id="crSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${PAL.b}"/><stop offset="1" stop-color="${PAL.L}"/></linearGradient></defs>
       <rect width="400" height="300" fill="${PAL.c}"/>
       <rect width="400" height="5" fill="${PAL.t}"/>
@@ -1222,7 +1329,7 @@ const BG = {
       <circle cx="306" cy="114" r="5" fill="${PAL.t}" stroke="${o}" stroke-width="1.5"/><circle cx="315" cy="110" r="5.5" fill="${PAL.t}" stroke="${o}" stroke-width="1.5"/><circle cx="318" cy="117" r="4.5" fill="${PAL.t}" stroke="${o}" stroke-width="1.5"/>
       <rect x="164" y="138" width="72" height="8" fill="${PAL.C}" stroke="${o}" stroke-width="2.5"/>
       <path d="M170 146 H230 L226 210 H174 Z" fill="${PAL.Y}" stroke="${o}" stroke-width="3" stroke-linejoin="round"/>
-      <path d="${heartPath(200, 176, 9)}" fill="${PAL.p}" stroke="${o}" stroke-width="1.8"/>
+      <path d="${star5(200, 176, 10, 4.2)}" fill="${PAL.y}" stroke="${o}" stroke-width="1.8"/>
       <path d="M197 124 L191 110 M200 124 V104 M203 124 L209 112" stroke="${PAL.T}" stroke-width="2"/>
       <path d="M192 138 L194 124 H206 L208 138 Z" fill="${PAL.t}" stroke="${o}" stroke-width="2"/>
       <circle cx="191" cy="108" r="5" fill="${PAL.p}" stroke="${o}" stroke-width="1.5"/><circle cx="200" cy="101" r="5.5" fill="${PAL.y}" stroke="${o}" stroke-width="1.5"/><circle cx="209" cy="110" r="5" fill="${PAL.k}" stroke="${o}" stroke-width="1.5"/>
@@ -1231,8 +1338,75 @@ const BG = {
     </svg>`;
   },
 
+  /* a long, dim hallway with one glowing door at the end */
+  lastDoor() {
+    const o = PAL.o;
+    const FL = 148, FR = 252, FT = 64, FB = 196;   // far wall edges
+    const yTop = x => FT * x / FL;
+    const yBot = x => 300 - (300 - FB) * x / FL;
+    const pt = (x, f, right) => `${(right ? 400 - x : x).toFixed(1)},${(yTop(x) + (yBot(x) - yTop(x)) * f).toFixed(1)}`;
+    const quad = (x1, x2, f1, f2, right) => `${pt(x1, f1, right)} ${pt(x2, f1, right)} ${pt(x2, f2, right)} ${pt(x1, f2, right)}`;
+    let walls = '';
+    [[10, 50], [70, 100], [114, 132]].forEach(([a, b]) => {
+      walls += `<polygon points="${quad(a, b, 0.16, 0.5)}" fill="${PAL.b}" opacity=".8" stroke="${o}" stroke-width="2"/>`;
+      walls += `<polyline points="${pt((a + b) / 2, 0.16)} ${pt((a + b) / 2, 0.5)}" stroke="${PAL.t}" stroke-width="2.5" fill="none"/>`;
+    });
+    [[12, 54], [74, 104], [118, 136]].forEach(([a, b]) => {
+      walls += `<polygon points="${quad(a, b, 0.3, 1, true)}" fill="#8E7432" stroke="${o}" stroke-width="2"/>`;
+      walls += `<polygon points="${quad(a + (b - a) * 0.25, a + (b - a) * 0.75, 0.38, 0.55, true)}" fill="${PAL.t}" opacity=".7"/>`;
+    });
+    walls += `<polyline points="${pt(0, 0.62)} ${pt(FL, 0.62)}" stroke="${PAL.t}" stroke-width="3" fill="none"/>`;
+    walls += `<polyline points="${pt(0, 0.62, true)} ${pt(FL, 0.62, true)}" stroke="${PAL.t}" stroke-width="3" fill="none"/>`;
+    let floorLines = '';
+    for (let xb = -200; xb <= 600; xb += 40) floorLines += `<line x1="${xb}" y1="300" x2="${(200 + (xb - 200) * 0.26).toFixed(1)}" y2="${FB}" stroke="#5A5243" stroke-width="1.5"/>`;
+    let beams = '';
+    [0.3, 0.55, 0.78].forEach(t => { const y = FT * t, x = FL * t; beams += `<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(400 - x).toFixed(1)}" y2="${y.toFixed(1)}" stroke="#2B5352" stroke-width="2"/>`; });
+    let lamps = '';
+    [[0.25, 8], [0.58, 5], [0.84, 3]].forEach(([t, r]) => {
+      const yc = FT * t, y = yc + r * 1.6;
+      lamps += `<line x1="200" y1="${yc.toFixed(1)}" x2="200" y2="${y.toFixed(1)}" stroke="${o}" stroke-width="1.5"/>` +
+               `<circle cx="200" cy="${y.toFixed(1)}" r="${r * 3.4}" fill="${PAL.l}" opacity=".28"/>` +
+               `<circle cx="200" cy="${y.toFixed(1)}" r="${r}" fill="${PAL.y}" stroke="${o}" stroke-width="1.2"/>`;
+    });
+    return `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      <defs>
+        <clipPath id="ldFloor"><polygon points="0,300 ${FL},${FB} ${FR},${FB} 400,300"/></clipPath>
+        <radialGradient id="ldGlow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="${PAL.l}" stop-opacity=".95"/><stop offset=".55" stop-color="${PAL.y}" stop-opacity=".35"/><stop offset="1" stop-color="${PAL.y}" stop-opacity="0"/></radialGradient>
+        <radialGradient id="ldVig" cx=".5" cy=".5" r=".72"><stop offset=".45" stop-color="#0E1F1E" stop-opacity="0"/><stop offset="1" stop-color="#0E1F1E" stop-opacity=".78"/></radialGradient>
+      </defs>
+      <rect width="400" height="300" fill="#1F3D3C"/>
+      <polygon points="0,0 400,0 ${FR},${FT} ${FL},${FT}" fill="#1F3D3C"/>
+      ${beams}
+      <polygon points="0,0 ${FL},${FT} ${FL},${FB} 0,300" fill="#2E5655"/>
+      <polygon points="400,0 ${FR},${FT} ${FR},${FB} 400,300" fill="#2E5655"/>
+      <polygon points="0,300 ${FL},${FB} ${FR},${FB} 400,300" fill="#6A6150"/>
+      <g clip-path="url(#ldFloor)">${floorLines}</g>
+      <polygon points="146,300 254,300 214,${FB} 186,${FB}" fill="${PAL.T}"/>
+      <path d="M146 300 L186 ${FB} M254 300 L214 ${FB}" stroke="${PAL.Y}" stroke-width="2.5"/>
+      ${walls}
+      <rect x="${FL}" y="${FT}" width="${FR - FL}" height="${FB - FT}" fill="#3A6766"/>
+      <polygon class="door-beam" points="177,197 223,197 256,252 144,252" fill="${PAL.l}"/>
+      <ellipse class="door-glow" cx="200" cy="152" rx="70" ry="88" fill="url(#ldGlow)"/>
+      <rect x="172" y="102" width="56" height="96" fill="${o}"/>
+      <rect class="door-light" x="177" y="107" width="46" height="89" fill="${PAL.l}"/>
+      <g class="door-panel">
+        <rect x="177" y="107" width="46" height="89" fill="${PAL.Y}" stroke="${o}" stroke-width="2"/>
+        <rect x="182" y="113" width="16" height="32" fill="#B7953A" stroke="${o}" stroke-width="1.2"/>
+        <rect x="202" y="113" width="16" height="32" fill="#B7953A" stroke="${o}" stroke-width="1.2"/>
+        <rect x="182" y="151" width="16" height="38" fill="#B7953A" stroke="${o}" stroke-width="1.2"/>
+        <rect x="202" y="151" width="16" height="38" fill="#B7953A" stroke="${o}" stroke-width="1.2"/>
+        <circle cx="216" cy="150" r="2.6" fill="${PAL.y}" stroke="${o}" stroke-width="1.2"/>
+      </g>
+      <path class="door-seam" d="M177 196.5 H223" stroke="${PAL.l}" stroke-width="2.4"/>
+      <rect x="189" y="86" width="22" height="12" fill="${PAL.c}" stroke="${o}" stroke-width="1.5"/>
+      <text x="200" y="95.5" text-anchor="middle" font-family="monospace" font-size="9" font-weight="700" fill="${PAL.T}">?</text>
+      ${lamps}
+      <rect width="400" height="300" fill="url(#ldVig)"/>
+    </svg>`;
+  },
+
   /* the cozy secret room (also used for the confession and endings) */
-  secret() {
+  secret(romantic) {
     const o = PAL.o;
     let lights = '';
     for (let i = 0; i < 15; i++) {
@@ -1246,7 +1420,7 @@ const BG = {
       <defs>
         <pattern id="srWall" width="30" height="30" patternUnits="userSpaceOnUse">
           <rect width="30" height="30" fill="${PAL.c}"/>
-          <path d="${heartPath(8, 9, 4.5)}" fill="${PAL.k}"/>
+          ${romantic ? `<path d="${heartPath(8, 9, 4.5)}" fill="${PAL.k}"/>` : `<path d="${star5(8, 9, 4.5, 2)}" fill="${PAL.b}"/>`}
           <rect x="21" y="20" width="3" height="3" fill="${PAL.l}"/>
         </pattern>
         <linearGradient id="srSky" x1="0" y1="0" x2="0" y2="1">
@@ -1288,11 +1462,11 @@ const BG = {
       <rect x="58" y="40" width="24" height="6" fill="${PAL.T}" stroke="${o}" stroke-width="2"/>
       <ellipse cx="70" cy="66" rx="20" ry="22" fill="${PAL.L}" stroke="${o}" stroke-width="3"/>
       <path d="M52 58 H88 M51 66 H89 M52 74 H88" stroke="${PAL.t}" stroke-width="1.6"/>
-      <path d="${heartPath(70, 66, 6)}" fill="${PAL.p}" stroke="${o}" stroke-width="1.2"/>
+      ${romantic ? `<path d="${heartPath(70, 66, 6)}" fill="${PAL.p}" stroke="${o}" stroke-width="1.2"/>` : `<path d="${star5(70, 66, 7, 3)}" fill="${PAL.y}" stroke="${o}" stroke-width="1.2"/>`}
       <rect x="58" y="86" width="24" height="6" fill="${PAL.T}" stroke="${o}" stroke-width="2"/>
       <path d="M70 92 V104" stroke="${PAL.P}" stroke-width="3"/>
       <g transform="translate(10 0)"><rect x="338" y="86" width="28" height="30" fill="${PAL.L}" stroke="${o}" stroke-width="2.5"/>
-      <path d="${heartPath(352, 101, 8)}" fill="${PAL.p}" stroke="${o}" stroke-width="1.5"/>
+      ${romantic ? `<path d="${heartPath(352, 101, 8)}" fill="${PAL.p}" stroke="${o}" stroke-width="1.5"/>` : `<path d="${star5(352, 101, 9, 3.8)}" fill="${PAL.y}" stroke="${o}" stroke-width="1.5"/>`}
       <rect x="296" y="118" width="84" height="7" fill="${PAL.Y}" stroke="${o}" stroke-width="2.5"/>
       <rect x="302" y="98" width="7" height="20" fill="${PAL.t}" stroke="${o}" stroke-width="1.5"/><rect x="310" y="102" width="7" height="16" fill="${PAL.p}" stroke="${o}" stroke-width="1.5"/><rect x="318" y="96" width="7" height="22" fill="${PAL.y}" stroke="${o}" stroke-width="1.5"/>
       <rect x="296" y="168" width="84" height="7" fill="${PAL.Y}" stroke="${o}" stroke-width="2.5"/>
@@ -1325,6 +1499,7 @@ const CAST = {
   revealed:  { name: () => BUNNY_NAME.toUpperCase(), tag: 'tag-pink revealed', sprite: 'bunny', portrait: m => bunnySVG({ mood: m, crop: true }) },
   ghost:     { name: 'GHOST',     tag: 'tag-teal',   sprite: 'ghost',     portrait: m => ghostSVG({ mood: m, crop: true }) },
   you:       { name: 'YOU',       tag: 'tag-mint',   portraitClass: 'you', portrait: () => pixelSVG('magnifier') },
+  mystery:   { name: '???', tag: 'tag-teal', portraitClass: 'dark', portrait: () => eyesPortrait() },
   narration: { name: '', narration: true }
 };
 
@@ -1336,7 +1511,7 @@ const CLUES = [
     lines: [{ who: 'you', text: "Another piece of evidence. How suspicious!" }] },
   { id: 'sticker',  name: 'Heart sticker', x: 65,   y: 17.5,
     lines: [{ who: 'you', text: "A heart? Hm. Strange." },
-            { who: 'bunny', mood: 'nervous', text: "Ha ha... very strange. Totally random heart." }] },
+            { who: 'bunny', mood: 'nervous', text: "Ha ha... yep. Super strange. Let's keep looking!" }] },
   { id: 'notebook', name: 'Notebook',      x: 62.5, y: 63.5,
     lines: [{ who: 'you', text: "There's a mysterious note inside: 'The truth is waiting behind the last door.'" }] },
   { id: 'plushie',  name: 'Bunny plushie', x: 13.5, y: 15.5,
@@ -1365,6 +1540,17 @@ const SCRIPT = {
   bunnyPoke: [
     { who: 'bunny', mood: 'nervous', text: "H-hey! I'm not evidence... probably." },
     { who: 'bunny', mood: 'smug', text: "Focus, detective! The clues sparkle. I just look cute." }
+  ],
+  haunting: () => [
+    { who: 'narration', text: "As you close your case file, the lights begin to flicker...", on: () => { hauntLights(1, true); Sound.play('flicker'); } },
+    { who: 'narration', text: "The classroom grows cold. And very, very quiet.", on: () => { hauntLights(2); Sound.play('wind'); Sound.music('haunt'); } },
+    { who: 'bunny', mood: 'nervous', text: "H-hey... did it just get colder in here?" },
+    { who: 'mystery', speed: 2, text: "Detective...", on: () => { ghostEyes(true); Sound.play('whisper'); } },
+    { who: 'mystery', speed: 1.3, text: "Five clues already? How very... interesting." },
+    { who: 'bunny', mood: 'nervous', text: "W-who's there?! Show yourself!", on: () => { ghostEyes(false); Sound.music(null); } },
+    { who: 'ghost', mood: 'boo', speed: 0.7, text: "BOO!", on: ghostBoo },
+    { who: 'ghost', mood: 'laugh', text: "Ahaha! Sorry, sorry. I couldn't resist.", on: () => { Sound.play('giggle'); Sound.music('haunt'); setSprite('bunny', { mood: 'nervous' }); } },
+    { who: 'ghost', mood: 'point', text: "Now then... let the mini class trial begin!" }
   ],
   trialStart: () => [
     { who: 'ghost', mood: 'smirk', text: "Well, well... you've gathered quite a few clues." },
@@ -1396,12 +1582,24 @@ const SCRIPT = {
   ],
   happy: () => [
     { who: 'revealed', mood: 'excited', prop: 'cheer', speed: 0.8, text: "WAIT... REALLY?!", on: () => { playAnim('bunny', 'jump', 1250); Sound.play('yay'); } },
-    { who: 'revealed', mood: 'love', prop: 'cheer', text: "YOU JUST UNLOCKED THE BEST ENDING!", on: () => { playAnim('bunny', 'jump', 1250); heartPulse(); } }
+    { who: 'revealed', mood: 'love', prop: 'cheer', text: "YOU JUST UNLOCKED THE BEST ENDING!", on: () => { playAnim('bunny', 'jump', 1250); heartPulse(); } },
+    { who: 'principal', mood: 'wave', text: `Congratulations, ${PLAYER_NAME} and ${BUNNY_NAME}! So THAT's what the hidden room was for.`, on: castJoin },
+    { who: 'ghost', mood: 'delight', text: "What a wonderful ending! Best case I've ever haunted." }
   ],
   honest: () => [
     { who: 'revealed', mood: 'soft', text: "Thank you for hearing me out." },
     { who: 'revealed', mood: 'happy', text: "I'm happy I got to tell you how I feel." },
-    { who: 'revealed', mood: 'soft', text: "I hope we can still be friends." }
+    { who: 'revealed', mood: 'soft', text: "I hope we can still be friends." },
+    { who: 'principal', mood: 'smile', text: `That took real courage, ${BUNNY_NAME}. And thank you for being honest, ${PLAYER_NAME}.`, on: castJoin },
+    { who: 'ghost', mood: 'smirk', text: "Every good case deserves an honest ending. You two still make a great team." }
+  ],
+  lastDoor: () => [
+    { who: 'narration', text: "The ghost floats ahead, leading you both down a hallway you've never seen before...", on: () => Sound.play('steps') },
+    { who: 'ghost', mood: 'point', text: "Every rumor ends somewhere. And this one ends... right over there.", on: () => { doorLevel(1); Sound.play('shimmer'); } },
+    { who: 'narration', text: "At the very end of the hall waits a single door. A warm light spills out from underneath it." },
+    { who: 'bunny', mood: 'nervous', text: "Th-this is it... the last door." },
+    { who: 'ghost', mood: 'delight', text: "My work here is done. Good luck, you two~", on: ghostVanish },
+    { who: 'bunny', mood: 'excited', text: "Okay, detective. Let's open it together. On the count of three!" }
   ]
 };
 
@@ -1415,9 +1613,11 @@ function freshState() {
     dialogueIndex: 0,        // current line in the active dialogue
     clues: new Set(),        // unique clue ids collected
     trialOpen: false,        // answers can be chosen
+    hauntingSeen: false,     // spooky cutscene finished
     trialComplete: false,    // correct answer given
     wrongAnswers: new Set(), // wrong answers tried
     selectedAnswer: null,    // last answer clicked in the trial
+    doorOpened: false,       // the last door has been opened
     secretRoomSeen: false,   // secret room dialogue finished
     nameRevealed: false,     // true after the confession reveal
     confessionAnswered: false,
@@ -1436,7 +1636,8 @@ const wipeEl = document.getElementById('wipe');
 const srEl = document.getElementById('sr');
 let current = null;
 const timers = new Set();
-let keyboardMode = false;   // true while the player is using the keyboard
+let keyboardMode = false;
+const sceneCleanup = [];    // functions run when a scene closes   // true while the player is using the keyboard
 function focusKb(el) { if (keyboardMode && el && el.isConnected) el.focus({ preventScroll: true }); }
 
 function h(html) { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; }
@@ -1472,7 +1673,7 @@ const Sound = (() => {
     master = ctx.createGain(); master.gain.value = enabled ? 1 : 0; master.connect(ctx.destination);
     sfxBus = ctx.createGain(); sfxBus.gain.value = SOUND_VOLUME; sfxBus.connect(master);
     musicBus = ctx.createGain(); musicBus.gain.value = MUSIC_VOLUME; musicBus.connect(master);
-    noiseBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.6), ctx.sampleRate);
+    noiseBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 1.5), ctx.sampleRate);
     const d = noiseBuf.getChannelData(0);
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     return true;
@@ -1484,9 +1685,11 @@ const Sound = (() => {
     if (enabled && track && !sched) startMusic();
   }
 
+  // One note. `h` adds a soft octave overtone, which makes triangle waves sound like a little piano.
   function tone(o) {
     const t = (o.at != null ? o.at : ctx.currentTime) + (o.delay || 0);
-    const dur = o.dur || 0.1, vol = o.vol == null ? 0.2 : o.vol, a = o.attack || 0.004;
+    const dur = o.dur || 0.1, vol = o.vol == null ? 0.2 : o.vol;
+    const a = Math.min(o.attack || 0.004, dur * 0.5);
     const osc = ctx.createOscillator(), g = ctx.createGain();
     osc.type = o.type || 'square';
     osc.frequency.setValueAtTime(o.freq, t);
@@ -1494,61 +1697,102 @@ const Sound = (() => {
     g.gain.setValueAtTime(0.0001, t);
     g.gain.exponentialRampToValueAtTime(vol, t + a);
     g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    osc.connect(g); g.connect(o.bus || sfxBus);
+    osc.connect(g);
+    if (o.h) {
+      const o2 = ctx.createOscillator(), g2 = ctx.createGain();
+      o2.type = 'sine';
+      o2.frequency.setValueAtTime(o.freq * 2, t);
+      g2.gain.value = o.h;
+      o2.connect(g2); g2.connect(g);
+      o2.start(t); o2.stop(t + dur + 0.03);
+    }
+    g.connect(o.bus || sfxBus);
     osc.start(t); osc.stop(t + dur + 0.03);
   }
   function noise(o) {
     const t = (o.at != null ? o.at : ctx.currentTime) + (o.delay || 0);
     const dur = o.dur || 0.05, vol = o.vol == null ? 0.2 : o.vol;
-    const src = ctx.createBufferSource(); src.buffer = noiseBuf;
+    const src = ctx.createBufferSource();
+    src.buffer = noiseBuf; src.loop = true;
     const f = ctx.createBiquadFilter();
     f.type = o.filter || 'highpass';
     f.frequency.setValueAtTime(o.freq || 2000, t);
     if (o.slide) f.frequency.exponentialRampToValueAtTime(o.slide, t + dur);
     if (o.q) f.Q.value = o.q;
     const g = ctx.createGain();
-    g.gain.setValueAtTime(vol, t);
+    const a = Math.min(o.attack || 0.002, dur * 0.5);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + a);
     g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     src.connect(f); f.connect(g); g.connect(o.bus || sfxBus);
-    src.start(t, Math.random() * 0.4); src.stop(t + dur + 0.03);
+    src.start(t, Math.random()); src.stop(t + dur + 0.03);
   }
-  const arp = (notes, gap, o) => notes.forEach((n, i) => tone(Object.assign({ freq: n, delay: i * gap }, o)));
+  const arp = (notes, gap, o) => notes.forEach((n, i) => tone(Object.assign({}, o, { freq: n, delay: (o.delay || 0) + i * gap })));
+  // a big drum hit + rising chord for the door countdown
+  function countHit(chord) {
+    tone({ type: 'sine', freq: 110, slide: 48, dur: 0.35, vol: 0.5 });
+    noise({ filter: 'lowpass', freq: 1000, slide: 200, dur: 0.22, vol: 0.28 });
+    chord.forEach(f => tone({ type: 'triangle', h: 0.3, freq: f, dur: 0.6, vol: 0.09 }));
+    chord.forEach(f => tone({ type: 'square', freq: f * 2, dur: 0.25, vol: 0.022 }));
+  }
 
   /* ---- sound effects ---- */
   const SFX = {
-    key() {            // typewriter key
-      noise({ freq: 2600 + Math.random() * 1800, dur: 0.03, vol: 0.18 });
-      tone({ type: 'square', freq: 150 + Math.random() * 50, dur: 0.025, vol: 0.05 });
+    key() {            // soft typewriter tap (muffled, not clicky)
+      noise({ filter: 'lowpass', freq: 1400 + Math.random() * 400, dur: 0.025, vol: 0.05 });
+      tone({ type: 'sine', freq: 330 + Math.random() * 50, slide: 210, dur: 0.04, vol: 0.04 });
     },
-    ret() {            // carriage return + little bell
-      noise({ filter: 'bandpass', freq: 700, slide: 2400, q: 2, dur: 0.11, vol: 0.12 });
-      tone({ type: 'sine', freq: 2093, dur: 0.32, vol: 0.06, delay: 0.09 });
+    ret() {            // gentle carriage return + quiet bell
+      noise({ filter: 'lowpass', freq: 700, slide: 1300, dur: 0.09, vol: 0.04, attack: 0.02 });
+      tone({ type: 'sine', freq: 1568, dur: 0.28, vol: 0.025, delay: 0.07 });
     },
-    start()    { arp([523, 659, 784, 1047], 0.06, { type: 'square', dur: 0.12, vol: 0.09 }); },
-    whoosh()   { noise({ filter: 'bandpass', freq: 350, slide: 2600, q: 1.2, dur: 0.45, vol: 0.13 }); },
+    start()    { arp([523, 659, 784, 1047], 0.06, { type: 'triangle', h: 0.3, dur: 0.16, vol: 0.13 }); },
+    whoosh()   { noise({ filter: "bandpass", freq: 350, slide: 2200, q: 1.2, dur: 0.45, vol: 0.07, attack: 0.08 }); },
     steps()    { [0, 0.2, 0.4, 0.6].forEach((d, i) => noise({ filter: 'lowpass', freq: 520, dur: 0.07, vol: 0.2 - i * 0.04, delay: d })); },
-    poof()     { noise({ filter: 'bandpass', freq: 500, slide: 3200, q: 1, dur: 0.3, vol: 0.18 }); tone({ type: 'triangle', freq: 523, slide: 1568, dur: 0.26, vol: 0.12 }); },
-    clue()     { arp([784, 988, 1175, 1568], 0.055, { type: 'triangle', dur: 0.18, vol: 0.2 }); noise({ freq: 6000, dur: 0.15, vol: 0.05, delay: 0.22 }); },
+    poof()     { noise({ filter: 'bandpass', freq: 500, slide: 3000, q: 1, dur: 0.3, vol: 0.15 }); tone({ type: 'triangle', freq: 523, slide: 1568, dur: 0.26, vol: 0.12 }); },
+    clue()     { arp([784, 988, 1175, 1568], 0.055, { type: 'triangle', h: 0.3, dur: 0.2, vol: 0.18 }); },
     again()    { tone({ type: 'triangle', freq: 660, dur: 0.08, vol: 0.12 }); tone({ type: 'triangle', freq: 523, dur: 0.1, vol: 0.1, delay: 0.07 }); },
-    complete() { arp([523, 659, 784, 1047, 784, 1047, 1319], 0.08, { type: 'square', dur: 0.16, vol: 0.08 }); tone({ type: 'triangle', freq: 2093, dur: 0.6, vol: 0.08, delay: 0.56 }); },
-    boing()    { tone({ type: 'sine', freq: 220, slide: 700, dur: 0.18, vol: 0.22 }); },
+    complete() { arp([523, 659, 784, 1047, 784, 1047, 1319], 0.08, { type: 'triangle', h: 0.3, dur: 0.2, vol: 0.13 }); tone({ type: 'sine', freq: 2093, dur: 0.6, vol: 0.07, delay: 0.56 }); },
+    boing()    { tone({ type: 'sine', freq: 220, slide: 700, dur: 0.18, vol: 0.2 }); },
+    flicker()  { [0, 0.35, 0.6, 1.3].forEach(d => tone({ type: 'sawtooth', freq: 118, dur: 0.12, vol: 0.035, delay: d })); },
+    wind()     { noise({ filter: 'bandpass', freq: 260, slide: 900, q: 0.8, dur: 2.6, vol: 0.12, attack: 0.9 }); },
+    whisper()  { noise({ filter: 'bandpass', freq: 3200, slide: 1700, q: 4, dur: 1.1, vol: 0.07, attack: 0.3 }); arp([1245, 1175], 0.25, { type: 'sine', dur: 0.7, vol: 0.04 }); },
+    boo()      {       // the jump-scare sting (loud-ish but short)
+      tone({ type: 'sine', freq: 110, slide: 38, dur: 0.8, vol: 0.55 });
+      noise({ filter: 'lowpass', freq: 1400, slide: 180, dur: 0.55, vol: 0.32 });
+      tone({ type: 'sawtooth', freq: 233, dur: 0.55, vol: 0.07 });
+      tone({ type: 'sawtooth', freq: 247, dur: 0.55, vol: 0.07 });
+      tone({ type: 'square', freq: 659, slide: 1319, dur: 0.25, vol: 0.05, delay: 0.05 });
+    },
+    giggle()   { arp([1047, 880, 988, 831, 932, 784], 0.075, { type: 'triangle', dur: 0.09, vol: 0.09 }); },
     drama()    {       // trial opening hit
-      tone({ type: 'sine', freq: 120, slide: 40, dur: 0.7, vol: 0.5 });
-      noise({ filter: 'lowpass', freq: 900, slide: 120, dur: 0.45, vol: 0.32 });
-      arp([220, 208], 0.18, { type: 'sawtooth', dur: 0.35, vol: 0.05 });
+      tone({ type: 'sine', freq: 120, slide: 40, dur: 0.7, vol: 0.45 });
+      noise({ filter: 'lowpass', freq: 900, slide: 120, dur: 0.45, vol: 0.28 });
+      arp([294, 277], 0.2, { type: 'triangle', h: 0.3, dur: 0.5, vol: 0.1 });
     },
     wrong()    {
-      noise({ filter: 'lowpass', freq: 450, dur: 0.2, vol: 0.38 });
-      tone({ type: 'square', freq: 196, dur: 0.16, vol: 0.12 });
-      tone({ type: 'square', freq: 147, dur: 0.34, vol: 0.12, delay: 0.17 });
+      noise({ filter: 'lowpass', freq: 450, dur: 0.2, vol: 0.3 });
+      tone({ type: 'square', freq: 196, dur: 0.16, vol: 0.09 });
+      tone({ type: 'square', freq: 147, dur: 0.34, vol: 0.09, delay: 0.17 });
     },
-    correct()  { arp([523, 659, 784, 1047, 1319, 1568], 0.07, { type: 'square', dur: 0.15, vol: 0.09 }); tone({ type: 'triangle', freq: 2093, dur: 0.6, vol: 0.12, delay: 0.45 }); },
-    breath()   { noise({ filter: 'bandpass', freq: 650, slide: 380, q: 0.8, dur: 1.2, vol: 0.08 }); },
-    reveal()   { arp([1047, 1319, 1568, 2093, 2637], 0.08, { type: 'triangle', dur: 0.32, vol: 0.1 }); },
-    heartbeat(){ [0, 0.24, 0.95, 1.19].forEach((d, i) => tone({ type: 'triangle', freq: i % 2 ? 80 : 95, slide: 50, dur: 0.2, vol: 0.5, delay: d })); },
-    yes()      { arp([659, 784, 988, 1319], 0.08, { type: 'triangle', dur: 0.24, vol: 0.18 }); },
-    yay()      { arp([784, 988, 1175, 1568, 1976], 0.05, { type: 'square', dur: 0.12, vol: 0.08 }); },
-    gentle()   { arp([523, 659, 784, 659], 0.22, { type: 'sine', dur: 0.6, vol: 0.13 }); }
+    correct()  { arp([523, 659, 784, 1047, 1319, 1568], 0.07, { type: 'triangle', h: 0.3, dur: 0.2, vol: 0.13 }); tone({ type: 'sine', freq: 2093, dur: 0.6, vol: 0.09, delay: 0.45 }); },
+    breath()   { noise({ filter: 'bandpass', freq: 650, slide: 380, q: 0.8, dur: 1.2, vol: 0.07, attack: 0.3 }); },
+    reveal()   { arp([1047, 1319, 1568, 2093, 2637], 0.08, { type: 'triangle', dur: 0.32, vol: 0.09 }); },
+    heartbeat(){ [0, 0.24, 0.95, 1.19].forEach((d, i) => tone({ type: 'triangle', freq: i % 2 ? 80 : 95, slide: 50, dur: 0.2, vol: 0.45, delay: d })); },
+    yes()      { arp([659, 784, 988, 1319], 0.08, { type: 'triangle', h: 0.3, dur: 0.26, vol: 0.16 }); },
+    yay()      { arp([784, 988, 1175, 1568, 1976], 0.05, { type: 'triangle', h: 0.3, dur: 0.14, vol: 0.12 }); },
+    gentle()   { arp([523, 659, 784, 659], 0.22, { type: 'sine', dur: 0.6, vol: 0.12 }); },
+    shimmer()  { arp([1319, 1568, 1760, 2093, 2637], 0.07, { type: 'sine', dur: 0.5, vol: 0.05 }); },
+    vanish()   { arp([2093, 1760, 1319, 1047, 880], 0.06, { type: 'sine', dur: 0.35, vol: 0.06 }); noise({ filter: 'bandpass', freq: 2500, slide: 600, q: 1, dur: 0.6, vol: 0.05, attack: 0.1 }); },
+    count1()   { countHit([220, 277, 330]); },
+    count2()   { countHit([247, 311, 370]); },
+    count3()   { countHit([277, 349, 415]); noise({ freq: 5000, dur: 1.4, vol: 0.09, attack: 0.01 }); },
+    doorOpen() {
+      tone({ type: 'triangle', freq: 160, slide: 95, dur: 0.6, vol: 0.12 });
+      noise({ filter: 'bandpass', freq: 300, slide: 4200, q: 0.9, dur: 1.4, vol: 0.13, attack: 1.0 });
+      arp([880, 1109, 1319, 1760, 2217, 2637, 3520], 0.08, { type: 'triangle', h: 0.25, dur: 0.6, vol: 0.08, delay: 0.5 });
+      tone({ type: 'sine', freq: 110, slide: 55, dur: 1.2, vol: 0.3, delay: 0.5 });
+    }
   };
   function play(name) {
     if (!enabled || !SFX[name]) return;
@@ -1557,29 +1801,90 @@ const Sound = (() => {
     try { SFX[name](); } catch (e) { /* never let sound break the game */ }
   }
 
-  /* ---- background music: tiny looping chiptunes (eighth-note steps, '-' = rest) ---- */
-  const TRACKS = {
-    title: { bpm: 96, leadType: 'triangle', leadVol: 0.16, leadLen: 1.8, bassVol: 0.2, bassLen: 1.8,
-      lead: ['E5','G5','C6','G5','A5','G5','E5','-','F5','A5','D6','A5','G5','F5','E5','-','D5','F5','B5','F5','G5','F5','D5','-','E5','G5','C6','E6','D6','B5','C6','-'],
-      bass: ['C3','-','G3','-','C3','-','G3','-','F3','-','C4','-','F3','-','C4','-','G3','-','D4','-','G3','-','D4','-','C3','-','G3','-','C3','-','E3','-'] },
-    school: { bpm: 120, leadType: 'square', leadVol: 0.06, leadLen: 1.2, bassVol: 0.18, bassLen: 1.6, hat: true,
-      lead: ['C5','-','E5','G5','-','E5','C5','-','D5','-','F5','A5','-','F5','D5','-','E5','G5','E5','C5','D5','E5','D5','B4','C5','-','G4','-','C5','-','-','-',
-             'A4','-','C5','E5','-','C5','A4','-','F4','-','A4','C5','-','A4','F4','-','G4','B4','D5','G5','F5','E5','D5','B4','C5','-','E5','-','C5','-','-','-'],
-      bass: ['C3','-','G2','-','C3','-','G2','-','D3','-','A2','-','D3','-','A2','-','G2','-','D3','-','G2','-','D3','-','C3','-','G2','-','C3','-','-','-',
-             'A2','-','E3','-','A2','-','E3','-','F2','-','C3','-','F2','-','C3','-','G2','-','D3','-','G2','-','B2','-','C3','-','G2','-','C3','-','-','-'] },
-    trial: { bpm: 132, leadType: 'square', leadVol: 0.06, leadLen: 1, bassType: 'square', bassVol: 0.07, bassLen: 0.8, hat: true, kick: true,
-      lead: ['A4','-','C5','-','E5','-','D5','C5','F5','-','E5','-','C5','-','A4','-','G4','-','B4','-','D5','-','C5','B4','E5','-','-','-','G#4','-','B4','-'],
-      bass: ['A2','A2','-','A2','E3','-','A2','-','F2','F2','-','F2','C3','-','F2','-','G2','G2','-','G2','D3','-','G2','-','E2','E2','-','E2','B2','-','G#2','-'] },
-    room: { bpm: 80, leadType: 'triangle', leadVol: 0.13, leadLen: 2.6, bassType: 'sine', bassVol: 0.2, bassLen: 6,
-      lead: ['F5','A5','C6','A5','F5','A5','C6','A5','E5','G5','C6','G5','E5','G5','C6','G5','D5','F5','A5','F5','D5','F5','A5','F5','C5','E5','G5','B5','C6','-','-','-'],
-      bass: ['F3','-','-','-','C4','-','-','-','E3','-','-','-','C4','-','-','-','D3','-','-','-','A3','-','-','-','C3','-','-','-','G3','-','-','-'] },
-    happy: { bpm: 140, leadType: 'square', leadVol: 0.07, leadLen: 1.2, bassVol: 0.2, bassLen: 1.6, hat: true, kick: true,
-      lead: ['C5','E5','G5','C6','-','G5','C6','E6','D6','-','C6','A5','-','F5','A5','C6','B5','-','G5','D6','-','B5','G5','B5','C6','-','G5','-','C6','-','-','-'],
-      bass: ['C3','-','G3','-','C3','-','G3','-','F3','-','C4','-','F3','-','C4','-','G3','-','D4','-','G3','-','D4','-','C3','-','G3','-','C4','-','-','-'] },
-    honest: { bpm: 72, leadType: 'sine', leadVol: 0.15, leadLen: 2.6, bassType: 'sine', bassVol: 0.17, bassLen: 6,
-      lead: ['A4','C5','E5','C5','A4','C5','E5','-','F4','A4','C5','A4','F4','A4','C5','-','C5','E5','G5','E5','C5','E5','G5','-','G4','B4','D5','B4','G4','-','-','-'],
-      bass: ['A2','-','-','-','E3','-','-','-','F2','-','-','-','C3','-','-','-','C3','-','-','-','G3','-','-','-','G2','-','-','-','D3','-','-','-'] }
+  /* ---- music ----
+     Original little tunes. Each track is a list of voices that step together.
+     Notes are written as text: one token per step, '-' = rest, 'C4+E4' = chord, '|' = bar line. */
+  const seq = s => s.replace(/\|/g, ' ').trim().split(/\s+/);
+  const CH = {   // [bass on beat 1, bass on beat 3, offbeat chord]
+    C:  ['C3', 'G2', 'E4+G4'],  Am: ['A2', 'E3', 'E4+A4'],  F:  ['F2', 'C3', 'F4+A4'],  G:  ['G2', 'D3', 'G4+B4'],
+    Dm: ['D3', 'A2', 'F4+A4'],  Bb: ['Bb2', 'F2', 'F4+Bb4'], Gm: ['G2', 'D3', 'G4+Bb4'], D:  ['D3', 'A2', 'F#4+A4'],
+    Em: ['E3', 'B2', 'E4+G4']
   };
+  // bouncy "oom-pah" left hand: bass on 1 and 3, little chord on the offbeats
+  function oompah(halfBars) {
+    const bass = [], stab = [];
+    halfBars.forEach((c, i) => { const d = CH[c]; bass.push(i % 2 ? d[1] : d[0], '-', '-', '-'); stab.push('-', '-', d[2], '-'); });
+    return { bass, stab };
+  }
+  function sparse(n, map) { const a = new Array(n).fill('-'); Object.keys(map).forEach(k => { a[Number(k)] = map[k]; }); return a; }
+  // cheerful piano-pop style: piano melody + oom-pah + a glockenspiel twinkle as the little twist
+  function cheerful(stepSec, melody, halfBars, twinkle, perc) {
+    const op = oompah(halfBars);
+    const n = halfBars.length * 4;
+    return { step: stepSec, bar: 8, perc: perc || { hat: true, kick: [0, 4] }, voices: [
+      { notes: seq(melody), type: 'triangle', h: 0.35, vol: 0.13, len: 2 },
+      { notes: op.bass, type: 'triangle', vol: 0.2, len: 1.8 },
+      { notes: op.stab, type: 'triangle', h: 0.2, vol: 0.05, len: 0.9 },
+      { notes: sparse(n, twinkle), type: 'sine', vol: 0.05, len: 3 }
+    ] };
+  }
+  const CONFESS_ARP = { A: 'A2 E3 A3 C#4 A3 E3', A7: 'A2 E3 G3 C#4 G3 E3', D: 'D3 A3 D4 F#4 D4 A3', Dm: 'D3 A3 D4 F4 D4 A3' };
+  const CONFESS_CHORDS = ['A', 'A', 'A', 'A7', 'D', 'Dm', 'A', 'A'];   // I  I  I  I7 | IV  iv  I  I
+
+  const TRACKS = {
+    title: cheerful(0.22,
+      'E5 - G5 E5 C5 - D5 E5 | C5 - A4 - E5 - D5 C5 | A4 - C5 F5 E5 - C5 A4 | B4 - D5 - G5 - F5 D5 | E5 G5 C6 - B5 G5 E5 G5 | A5 - E5 - C5 E5 A5 G5 | F5 E5 F5 A5 G5 F5 D5 B4 | C5 - G4 - C5 - - -',
+      ['C', 'C', 'Am', 'Am', 'F', 'F', 'G', 'G', 'C', 'C', 'Am', 'Am', 'F', 'G', 'C', 'C'],
+      { 7: 'G6', 23: 'D6', 39: 'E6', 55: 'B5', 61: 'C7' }),
+    school: cheerful(0.24,
+      'C5 - A4 C5 F5 - E5 F5 | D5 - A4 - F4 - A4 D5 | D5 - Bb4 D5 F5 - D5 Bb4 | C5 - E5 G5 - E5 C5 - | F5 - E5 F5 A5 - G5 F5 | D5 - F5 A5 - F5 D5 - | G4 Bb4 D5 G5 E5 C5 G4 Bb4 | A4 - C5 - F5 - - -',
+      ['F', 'F', 'Dm', 'Dm', 'Bb', 'Bb', 'C', 'C', 'F', 'F', 'Dm', 'Dm', 'Gm', 'C', 'F', 'F'],
+      { 7: 'C6', 23: 'D6', 39: 'A5', 55: 'F6' }),
+    haunt: { step: 0.42, bar: 8, perc: {}, voices: [
+      { notes: seq('A5 - - - - - - - | Bb5 - - - - - - - | E5 - - - - - - - | F5 - - - E5 - - -'), type: 'triangle', h: 0.25, vol: 0.08, len: 5 },
+      { notes: seq('D3+A3 - - - - - - - | D3+A3 - - - - - - - | C#3+G3 - - - - - - - | D3+A3 - - - - - - -'), type: 'sine', vol: 0.07, len: 8, attack: 0.6 }
+    ] },
+    trial: { step: 0.27, bar: 8, perc: { clock: true }, voices: [
+      { notes: seq('D5 - - F5 - - E5 - | A4 - - - - - - - | Bb4 - - D5 - - C#5 - | D5 - - - A4 - - - | G4 - - Bb4 - - A4 - | G4 - F4 - E4 - - - | A4 - C#5 - E5 - G5 - | F5 - E5 - C#5 - - -'),
+        type: 'triangle', h: 0.3, vol: 0.11, len: 3.5 },
+      { notes: seq('D3 - D3 - D3 - D3 - | D3 - D3 - D3 - D3 - | Bb2 - Bb2 - Bb2 - Bb2 - | D3 - D3 - D3 - D3 - | G2 - G2 - G2 - G2 - | G2 - G2 - G2 - G2 - | A2 - A2 - A2 - A2 - | A2 - A2 - G#2 - A2 -'),
+        type: 'triangle', vol: 0.15, len: 0.7 },
+      { notes: seq('D4+F4+A4 - - - - - - - | D4+F4+A4 - - - - - - - | Bb3+D4+F4 - - - - - - - | D4+F4+A4 - - - - - - - | G3+Bb3+D4 - - - - - - - | G3+Bb3+D4 - - - - - - - | A3+C#4+E4 - - - - - - - | A3+C#4+G4 - - - - - - -'),
+        type: 'sine', vol: 0.03, len: 8, attack: 0.35 },
+      { notes: sparse(64, { 15: 'G#6', 47: 'C#7', 62: 'G#6' }), type: 'sine', vol: 0.03, len: 4 }
+    ] },
+    room: { step: 0.37, bar: 8, perc: {}, voices: [
+      { notes: seq('F5 A5 C6 A5 F5 A5 C6 A5 | E5 G5 C6 G5 E5 G5 C6 G5 | D5 F5 A5 F5 D5 F5 A5 F5 | C5 E5 G5 B5 C6 - - -'), type: 'triangle', h: 0.2, vol: 0.1, len: 2.6 },
+      { notes: seq('F3 - - - C4 - - - | E3 - - - C4 - - - | D3 - - - A3 - - - | C3 - - - G3 - - -'), type: 'sine', vol: 0.18, len: 6 }
+    ] },
+    // 6/8 piano ballad on the I - I - I - I7 - IV - iv - I - I progression, with an original melody
+    confess: { step: 0.3, bar: 6, perc: {}, voices: [
+      { notes: seq('E5 - - C#5 - D5 | E5 - - A4 - - | C#5 - B4 A4 - B4 | C#5 - - G4 - - | F#5 - - E5 - D5 | F5 - - E5 - D5 | C#5 - - E5 - - | A4 - - - - - | ' +
+                   'A5 - - G#5 - F#5 | E5 - - C#5 - - | D5 - C#5 B4 - C#5 | E5 - - D5 - C#5 | D5 - - F#5 - A5 | F5 - - D5 - B4 | C#5 - - B4 - E5 | A4 - - - - -'),
+        type: 'triangle', h: 0.35, vol: 0.13, len: 3.2 },
+      { notes: seq(CONFESS_CHORDS.concat(CONFESS_CHORDS).map(c => CONFESS_ARP[c]).join(' ')), type: 'triangle', h: 0.2, vol: 0.055, len: 2.4 }
+    ] },
+    happy: cheerful(0.2,
+      'G5 - B5 G5 D5 - G5 B5 | A5 - F#5 D5 A4 - D5 F#5 | E5 - G5 E5 C5 - E5 G5 | F#5 E5 D5 C5 B4 - A4 - | G4 B4 D5 G5 B5 - A5 G5 | E5 - G5 - C6 - B5 A5 | B5 A5 G5 F#5 E5 - F#5 A5 | G5 - D5 - G5 - - -',
+      ['G', 'G', 'D', 'D', 'C', 'C', 'D', 'D', 'G', 'G', 'C', 'C', 'Em', 'D', 'G', 'G'],
+      { 7: 'D7', 15: 'A6', 39: 'G6', 63: 'B6' }, { hat: true, kick: [0, 4], clap: [2, 6] }),
+    honest: { step: 0.42, bar: 8, perc: {}, voices: [
+      { notes: seq('A4 C5 E5 C5 A4 C5 E5 - | F4 A4 C5 A4 F4 A4 C5 - | C5 E5 G5 E5 C5 E5 G5 - | G4 B4 D5 B4 G4 - - -'), type: 'sine', vol: 0.14, len: 2.6 },
+      { notes: seq('A2 - - - E3 - - - | F2 - - - C3 - - - | C3 - - - G3 - - - | G2 - - - D3 - - -'), type: 'sine', vol: 0.16, len: 6 }
+    ] },
+    // walking to the last door: driving octave pulse + rising bells
+    hall: { step: 0.25, bar: 8, perc: { hat: true, kick: [0, 4] }, voices: [
+      { notes: seq('A2 A3 A2 A3 A2 A3 A2 A3 | F2 F3 F2 F3 F2 F3 F2 F3 | G2 G3 G2 G3 G2 G3 G2 G3 | E2 E3 E2 E3 E2 E3 G#2 G#3'), type: 'triangle', vol: 0.14, len: 0.8 },
+      { notes: seq('E5 - - - A5 - - - | C6 - - - A5 - - - | B5 - - - D6 - - - | E6 - - - - - - -'), type: 'triangle', h: 0.3, vol: 0.09, len: 3 },
+      { notes: seq('A3+C4+E4 - - - - - - - | F3+A3+C4 - - - - - - - | G3+B3+D4 - - - - - - - | E3+G#3+B3 - - - - - - -'), type: 'sine', vol: 0.03, len: 8, attack: 0.3 }
+    ] },
+    // waiting at the door: soft sparkling glockenspiel
+    doorwait: { step: 0.2, bar: 8, perc: {}, voices: [
+      { notes: seq('A5 C#6 E6 A6 E6 C#6 A5 C#6 | D6 F#6 A6 D7 A6 F#6 D6 F#6'), type: 'sine', vol: 0.05, len: 2 },
+      { notes: seq('A3+E4 - - - - - - - | D4+F#4 - - - - - - -'), type: 'sine', vol: 0.04, len: 8, attack: 0.4 }
+    ] }
+  };
+
   function startMusic() {
     stopMusic();
     if (!ctx || !track || !enabled) return;
@@ -1589,21 +1894,26 @@ const Sound = (() => {
   function stopMusic() { clearInterval(sched); sched = null; }
   function scheduleNotes() {
     if (!ctx || !track) return;
-    const stepDur = 60 / track.bpm / 2;
+    const sd = track.step;
     if (nextTime < ctx.currentTime - 0.2) nextTime = ctx.currentTime + 0.05;   // skip ahead after a pause
     while (nextTime < ctx.currentTime + 0.15) {
-      const i = step % track.lead.length;
-      const L = track.lead[i], B = track.bass[i % track.bass.length];
-      if (L !== '-') tone({ at: nextTime, type: track.leadType, freq: nf(L), dur: stepDur * track.leadLen, vol: track.leadVol, bus: musicBus, attack: 0.008 });
-      if (B !== '-') tone({ at: nextTime, type: track.bassType || 'triangle', freq: nf(B), dur: stepDur * track.bassLen, vol: track.bassVol, bus: musicBus, attack: 0.01 });
-      if (track.hat && i % 2 === 1) noise({ at: nextTime, freq: 7000, dur: 0.03, vol: 0.05, bus: musicBus });
-      if (track.kick && i % 8 === 0) tone({ at: nextTime, type: 'sine', freq: 130, slide: 45, dur: 0.16, vol: 0.35, bus: musicBus });
-      nextTime += stepDur;
+      for (const v of track.voices) {
+        const tok = v.notes[step % v.notes.length];
+        if (tok && tok !== '-') {
+          tok.split('+').forEach(n => tone({ at: nextTime, type: v.type, freq: nf(n), dur: sd * v.len, vol: v.vol, h: v.h, attack: v.attack || 0.006, bus: musicBus }));
+        }
+      }
+      const p = track.perc || {}, b = step % (track.bar || 8);
+      if (p.hat && b % 2 === 1) noise({ at: nextTime, freq: 7000, dur: 0.025, vol: 0.03, bus: musicBus });
+      if (p.kick && p.kick.indexOf(b) >= 0) tone({ at: nextTime, type: 'sine', freq: 120, slide: 45, dur: 0.14, vol: 0.26, bus: musicBus });
+      if (p.clap && p.clap.indexOf(b) >= 0) noise({ at: nextTime, filter: 'bandpass', freq: 1500, q: 1, dur: 0.08, vol: 0.06, bus: musicBus });
+      if (p.clock && b % 2 === 0) tone({ at: nextTime, type: 'sine', freq: b % 4 === 0 ? 1650 : 1250, dur: 0.03, vol: 0.045, bus: musicBus });
+      nextTime += sd;
       step++;
     }
   }
   function music(name) {
-    if (name === trackName) return;
+    if ((name || null) === trackName) return;
     trackName = name || null;
     track = TRACKS[trackName] || null;
     step = 0;
@@ -1638,13 +1948,14 @@ const Sound = (() => {
     if (hidden) { stopMusic(); if (ctx.state === 'running') ctx.suspend(); }
     else if (enabled) { ctx.resume(); if (track) startMusic(); }
   }
-  return { play, music, duck, unlock, setEnabled, pageHidden, get enabled() { return enabled; } };
+  return { play, music, duck, unlock, setEnabled, pageHidden, get enabled() { return enabled; }, _tracks: TRACKS };
 })();
 
-// Which music loop plays in each scene.
+// Which music loop plays in each scene (null = silence).
 const SCENE_MUSIC = {
-  title: 'title', intro: 'school', investigation: 'school', trial: 'trial',
-  secretRoom: 'room', confession: 'room', happyEnding: 'happy', honestEnding: 'honest'
+  title: 'title', intro: 'school', investigation: 'school', haunting: null, trial: 'trial', lastDoor: 'hall',
+  // after the door opens, only the ballad plays (it carries on without restarting)
+  secretRoom: 'confess', confession: 'confess', happyEnding: 'confess', honestEnding: 'confess'
 };
 
 function soundIcon(on) {
@@ -1758,7 +2069,7 @@ function stamp(host, text, cls) {
 function titleDecor(fx) {
   const items = [
     ['cloud', 5, 8, 76, 'drift'], ['cloud', 58, 4, 96, 'drift'],
-    ['heart', 10, 34, 26, 'bob'], ['heart', 87, 27, 30, 'bob'], ['heart', 15, 64, 22, 'bob'], ['heart', 82, 60, 24, 'bob'],
+    ['qmark', 10, 34, 20, 'bob'], ['qmark', 87, 27, 22, 'bob'], ['star', 15, 64, 22, 'bob'], ['qmark', 82, 60, 18, 'bob'],
     ['star', 6, 52, 22, 'tw'], ['star', 92, 45, 20, 'tw'], ['star', 26, 12, 18, 'tw'], ['star', 64, 20, 22, 'tw'],
     ['sparkle', 23, 47, 16, 'tw'], ['sparkle', 75, 39, 16, 'tw']
   ];
@@ -1849,7 +2160,7 @@ const Dialogue = (() => {
       i++;
       textEl.textContent = chars.slice(0, i).join('');
       const ch = chars[i - 1], nx = chars[i];
-      if (ch.trim()) Sound.play('key');
+      if (ch.trim() && (speed >= 1.8 || i % 2 === 1)) Sound.play('key');
       if (i >= chars.length) { finishTyping(); return; }
       let wait = base;
       if ('.!?'.indexOf(ch) >= 0) wait += (nx === '.' || nx === '!' || nx === '?') ? base * 2.5 : base * 7;
@@ -1917,7 +2228,7 @@ function bunnyAppears() {
   s.el.classList.remove('is-hidden');
   s.el.classList.add('poof');
   Sound.play('poof');
-  later(() => burstAt(s.anim, { n: 12, kinds: ['sparkle', 'star', 'heart'], spread: 110 }), 120);
+  later(() => burstAt(s.anim, { n: 12, kinds: ['sparkle', 'star'], spread: 110 }), 120);
 }
 function revealName(line) {
   state.nameRevealed = true;
@@ -1933,6 +2244,40 @@ function heartPulse() {
   const s = sprites.bunny;
   playAnim('bunny', 'hop', 520);
   if (s) burstAt(s.anim, { n: 14, kinds: ['heart', 'heart', 'sparkle'], spread: 140 });
+}
+
+/* ---- Spooky cutscene ---- */
+function eyesPortrait() {
+  return `<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><rect width="100" height="100" fill="#16302F"/>
+    <circle cx="36" cy="52" r="15" fill="${PAL.b}" opacity=".25"/><circle cx="64" cy="52" r="15" fill="${PAL.b}" opacity=".25"/>
+    <ellipse cx="36" cy="52" rx="6" ry="9" fill="${PAL.b}"/><ellipse cx="64" cy="52" rx="6" ry="9" fill="${PAL.b}"/></svg>`;
+}
+function hauntLights(level, flicker) {
+  if (!current) return;
+  const shade = current.querySelector('[data-shade]');
+  if (!shade) return;
+  shade.classList.remove('lv1', 'lv2', 'lv3');
+  shade.classList.add('lv' + level);
+  current.classList.toggle('dim', level >= 2);
+  if (flicker && !REDUCED) { shade.classList.remove('flicker'); void shade.offsetWidth; shade.classList.add('flicker'); }
+}
+function ghostEyes(on) {
+  const e = current && current.querySelector('[data-eyes]');
+  if (e) e.classList.toggle('on', on);
+}
+function ghostBoo() {
+  ghostEyes(false);
+  Sound.play('boo');
+  hauntLights(3);
+  setSprite('bunny', { mood: 'shock' });
+  playAnim('bunny', 'jump', 700);
+  const g = sprites.ghost;
+  if (g) {
+    g.el.classList.remove('is-hidden');
+    g.el.classList.add('boo');
+    later(() => burstAt(g.anim, { n: 12, kinds: ['sparkle', 'star'], spread: 140 }), 150);
+  }
+  if (!REDUCED && current) { current.classList.remove('shake'); void current.offsetWidth; current.classList.add('shake'); }
 }
 
 /* ---- Investigation ---- */
@@ -1996,10 +2341,10 @@ function unlockContinue(scene) {
   b.classList.add('ready');
   b.querySelector('[data-lock]').hidden = true;
   b.querySelector('[data-arrow]').hidden = false;
-  scene.querySelector('[data-hint]').textContent = 'Case file complete! ♡';
+  scene.querySelector('[data-hint]').textContent = 'Case file complete! ★';
   scene.querySelector('[data-banner]').classList.add('show');
   later(() => Sound.play('complete'), 380);
-  burstAt(scene.querySelector('[data-room]'), { n: 16, kinds: ['heart', 'star', 'sparkle'], spread: 180 });
+  burstAt(scene.querySelector('[data-room]'), { n: 16, kinds: ['star', 'sparkle'], spread: 180 });
 }
 let pokeCount = 0;
 function pokeBunny() {
@@ -2061,17 +2406,111 @@ function answerTrial(who, scene) {
     playAnim('ghost', 'twirl', 950);
     setSprite('bunny', { mood: 'nervous' });
     playAnim('bunny', 'shiver', 850);
-    spawnFloaters(scene.querySelector('[data-fx]'), { count: 18, kinds: ['star', 'heart', 'sparkle'], mode: 'fall', min: 14, max: 24 });
-    burstAt(panel, { n: 16, kinds: ['star', 'sparkle', 'heart'], spread: 200 });
+    spawnFloaters(scene.querySelector('[data-fx]'), { count: 18, kinds: ['star', 'sparkle'], mode: 'fall', min: 14, max: 24 });
+    burstAt(panel, { n: 16, kinds: ['star', 'sparkle'], spread: 200 });
   }, 380);
   later(() => {
     state.busy = false;
-    Dialogue.play(SCRIPT.trialWin(), () => goTo('secretRoom', 'pink'));
+    Dialogue.play(SCRIPT.trialWin(), () => goTo('lastDoor', 'darkfade'));
     focusKb(Dialogue.nextBtn);
   }, 1950);
 }
 
+/* ---- The last door ---- */
+function doorLevel(n) {
+  if (!current) return;
+  current.classList.remove('lv1', 'lv2', 'lv3', 'lv4');
+  current.classList.add('lv' + n);
+}
+function ghostVanish() {
+  const g = sprites.ghost;
+  if (!g) return;
+  later(() => {
+    burstAt(g.anim, { n: 12, kinds: ['sparkle', 'star'], spread: 120 });
+    Sound.play('vanish');
+    g.el.classList.add('vanish');
+  }, 900);
+}
+function doorCountdown(scene) {
+  Sound.music(null);
+  const cd = scene.querySelector('[data-countdown]');
+  ['1', '2', '3!'].forEach((t, i) => later(() => {
+    cd.innerHTML = `<span>${t}</span>`;
+    Sound.play('count' + (i + 1));
+    doorLevel(i + 2);
+    setSprite('bunny', { mood: i === 2 ? 'excited' : 'nervous' });
+    if (i === 2) later(() => burstAt(scene.querySelector('.door-light'), { n: 14, kinds: ['sparkle', 'star'], spread: 160 }), 300);
+  }, 350 + i * 900));
+  later(() => { cd.innerHTML = ''; showDoorPrompt(scene); }, 350 + 3 * 900 + 250);
+}
+function placeDoorButton(scene) {
+  const btn = scene.querySelector('[data-door-btn]'), tgt = scene.querySelector('.door-light');
+  if (!btn || !tgt) return;
+  const sr = scene.getBoundingClientRect(), r = tgt.getBoundingClientRect();
+  Object.assign(btn.style, { left: (r.left - sr.left) + 'px', top: (r.top - sr.top) + 'px', width: r.width + 'px', height: r.height + 'px' });
+}
+function showDoorPrompt(scene) {
+  Dialogue.unmount();   // nothing covers the door now
+  scene.classList.add('ready');
+  Sound.music('doorwait');
+  const btn = scene.querySelector('[data-door-btn]');
+  placeDoorButton(scene);
+  btn.hidden = false;
+  scene.querySelector('[data-door-prompt]').hidden = false;
+  announce('Tap the door to open it.');
+  later(() => focusKb(btn), 60);
+}
+function openDoor(scene) {
+  if (state.busy || state.doorOpened || !scene.classList.contains('ready')) return;
+  state.doorOpened = true;
+  Sound.music(null);
+  Sound.play('doorOpen');
+  scene.querySelector('[data-door-btn]').hidden = true;
+  scene.querySelector('[data-door-prompt]').hidden = true;
+  setSprite('bunny', { mood: 'happy' });
+  scene.classList.add('opened');
+  later(() => goTo('secretRoom', 'light'), REDUCED ? 500 : 1500);
+}
+
 /* ---- Confession & endings ---- */
+function castJoin() {
+  let joined = false;
+  ['principal', 'ghost'].forEach((n, i) => {
+    const s = sprites[n];
+    if (!s || !s.el.classList.contains('is-hidden')) return;
+    joined = true;
+    later(() => {
+      s.el.classList.remove('is-hidden');
+      s.el.classList.add('poof');
+      burstAt(s.anim, { n: 10, kinds: ['sparkle', 'star', 'heart'], spread: 90 });
+    }, i * 260);
+  });
+  if (joined) Sound.play('poof');
+}
+function castRow(o) {
+  const people = [
+    ['principal', principalSVG({ crop: true, mood: o.principal }), 'PRINCIPAL'],
+    ['ghost', ghostSVG({ crop: true, mood: o.ghost }), 'GHOST'],
+    ['bunny', bunnySVG({ crop: true, mood: o.mood }), escapeHTML(BUNNY_NAME.toUpperCase())],
+    ['you', pixelSVG('magnifier'), escapeHTML(PLAYER_NAME.toUpperCase())]
+  ];
+  return `<p class="cast-label">STARRING</p><div class="cast-row" role="list">` +
+    people.map(([k, svg, label]) => `<div class="cast" role="listitem"><span class="cast-face ${k}" aria-hidden="true">${svg}</span><span class="cast-name">${label}</span></div>`).join('') +
+    `</div>`;
+}
+function endingScene(cls, label, extra) {
+  return h(`<section class="scene scene-vn scene-end ${cls}" aria-label="${label}">
+      <div class="bg">${BG.secret(true)}</div>
+      ${extra}
+      <div class="fx" data-fx></div>
+      <div class="stage">
+        <div class="sprite side left is-hidden" data-sprite="principal"><div class="anim"></div></div>
+        <div class="sprite side right is-hidden" data-sprite="ghost"><div class="anim"></div></div>
+        <div class="sprite main" data-sprite="bunny"><div class="anim"></div></div>
+      </div>
+      <div class="bottom"><div data-dlg></div></div>
+    </section>`);
+}
 function showConfessionChoices() {
   if (!current) return;
   const box = current.querySelector('[data-choices]');
@@ -2092,18 +2531,22 @@ function chooseEnding(kind) {
 }
 function showEndCard(scene, o) {
   Dialogue.unmount();
+  castJoin();
   setSprite('bunny', { mood: o.mood, prop: o.prop });
+  setSprite('principal', { mood: o.principal });
+  setSprite('ghost', { mood: o.ghost });
   const mount = scene.querySelector('[data-dlg]');
   const hearts = `<div class="end-hearts" aria-hidden="true"><span>${pixelSVG('heart')}</span><span>${pixelSVG('star')}</span><span>${pixelSVG('heart')}</span></div>`;
   mount.innerHTML = `<div class="end-card" role="group" aria-labelledby="endTitle">
       ${hearts}
       <h2 id="endTitle"><span class="num">${o.num}</span> <span>${o.title}</span></h2>
+      ${castRow(o)}
       <p class="msg">${escapeHTML(o.msg)}</p>
       <button type="button" class="btn big ${o.btnClass}" data-action="replay">PLAY AGAIN</button>
     </div>`;
   const b = mount.querySelector('[data-action="replay"]');
   b.addEventListener('click', restart);
-  announce(`${o.num} ${o.title}. ${o.msg}`);
+  announce(`${o.num} ${o.title}. Starring the principal, the ghost, ${BUNNY_NAME} and ${PLAYER_NAME}. ${o.msg}`);
   Sound.play(o.sound);
   later(() => focusKb(b), 90);
 }
@@ -2143,7 +2586,6 @@ const SCENES = {
             <button type="button" class="btn big" data-action="start" data-autofocus>
               <span class="btn-ico" aria-hidden="true">${pixelSVG('star')}</span>START GAME<span class="btn-ico" aria-hidden="true">${pixelSVG('star')}</span>
             </button>
-            <p class="hint">A 3-minute mystery ♡</p>
           </div>
         </section>`);
     },
@@ -2161,7 +2603,7 @@ const SCENES = {
       return h(`<section class="scene scene-vn scene-intro" aria-label="School hallway">
           <div class="bg">${BG.hallway()}</div>
           <div class="fx" data-fx></div>
-          <div class="top"><span class="tag">CASE ${escapeHTML(CASE_NUMBER)} ♡ THE RUMOR</span></div>
+          <div class="top"><span class="tag">CASE ${escapeHTML(CASE_NUMBER)} · THE RUMOR</span></div>
           <div class="stage">
             <div class="sprite principal" data-sprite="principal"><div class="anim"></div></div>
             <div class="sprite is-hidden" data-sprite="bunny"><div class="anim"></div></div>
@@ -2193,7 +2635,7 @@ const SCENES = {
       return h(`<section class="scene scene-inv" aria-label="Classroom investigation">
           <div class="bg"></div>
           <div class="top">
-            <span class="tag">CASE ${escapeHTML(CASE_NUMBER)} ♡ CLASSROOM</span>
+            <span class="tag">CASE ${escapeHTML(CASE_NUMBER)} · CLASSROOM</span>
             <div class="counter" data-counter role="status" aria-live="polite">
               <span class="ico" aria-hidden="true">${pixelSVG('star')}</span><span>CLUES FOUND: <b data-count>0</b>/5</span>
             </div>
@@ -2225,11 +2667,38 @@ const SCENES = {
       scene.querySelectorAll('[data-clue]').forEach(b => b.addEventListener('click', () => inspectClue(b.dataset.clue, scene)));
       scene.querySelector('.room-bunny').addEventListener('click', pokeBunny);
       scene.querySelector('[data-action="continue"]').addEventListener('click', () => {
-        if (state.clues.size === CLUES.length) goTo('trial', 'dark');
+        if (state.clues.size === CLUES.length) goTo('haunting', 'fade');
       });
       Dialogue.mount(scene.querySelector('[data-dlg]'));
       Dialogue.play(SCRIPT.investigationStart());
       roomFallback(scene);
+    }
+  },
+
+  /* ---------- 3b. SPOOKY CUTSCENE ---------- */
+  haunting: {
+    build() {
+      return h(`<section class="scene scene-vn scene-haunt" aria-label="The classroom goes dark">
+          <div class="bg">${BG.classroom('xMidYMax slice')}</div>
+          <div class="shade" data-shade></div>
+          <div class="fx" data-fx></div>
+          <div class="stage">
+            <div class="ghost-eyes" data-eyes aria-hidden="true"><i></i><i></i></div>
+            <div class="sprite bunny" data-sprite="bunny"><div class="anim"></div></div>
+            <div class="sprite ghost is-hidden" data-sprite="ghost"><div class="anim"></div></div>
+          </div>
+          <div class="bottom"><div data-dlg></div></div>
+        </section>`);
+    },
+    enter(scene) {
+      setupSprite(scene, 'bunny', bunnySVG, 'normal', {}, 'bob');
+      setupSprite(scene, 'ghost', ghostSVG, 'boo', {}, 'float');
+      Dialogue.mount(scene.querySelector('[data-dlg]'));
+      scene.querySelector('.stage').addEventListener('click', () => Dialogue.advance());
+      later(() => Dialogue.play(SCRIPT.haunting(), () => {
+        state.hauntingSeen = true;
+        goTo('trial', 'darkfade');
+      }), 250);
     }
   },
 
@@ -2248,7 +2717,7 @@ const SCENES = {
           <div class="stage trial-stage">
             <h2 class="trial-title"><small>♦ IN SESSION ♦</small>MINI CLASS TRIAL</h2>
             <div class="trial-cast">
-              <div class="trial-bunny" data-sprite="bunny"><div class="anim"></div><div class="podium" aria-hidden="true">${pixelSVG('heart')}</div></div>
+              <div class="trial-bunny" data-sprite="bunny"><div class="anim"></div><div class="podium" aria-hidden="true">${pixelSVG('star')}</div></div>
               <div class="trial-ghost" data-sprite="ghost"><div class="anim"></div></div>
             </div>
             <div class="trial-panel is-hidden" data-panel tabindex="-1" aria-labelledby="qtext">
@@ -2280,12 +2749,44 @@ const SCENES = {
     }
   },
 
+  /* ---------- 4b. THE LAST DOOR (build-up cutscene) ---------- */
+  lastDoor: {
+    build() {
+      return h(`<section class="scene scene-vn scene-door" aria-label="The last door">
+          <div class="bg">${BG.lastDoor()}</div>
+          <div class="fx" data-fx></div>
+          <div class="stage">
+            <div class="sprite bunny" data-sprite="bunny"><div class="anim"></div></div>
+            <div class="sprite ghost" data-sprite="ghost"><div class="anim"></div></div>
+          </div>
+          <div class="countdown" data-countdown aria-live="assertive"></div>
+          <p class="door-prompt" data-door-prompt hidden>★ TAP THE DOOR! ★</p>
+          <button type="button" class="door-btn" data-door-btn aria-label="Open the door" hidden></button>
+          <div class="flood" aria-hidden="true"></div>
+          <div class="bottom"><div data-dlg></div></div>
+        </section>`);
+    },
+    enter(scene) {
+      setupSprite(scene, 'bunny', bunnySVG, 'nervous', {}, 'bob');
+      setupSprite(scene, 'ghost', ghostSVG, 'smirk', {}, 'float');
+      spawnFloaters(scene.querySelector('[data-fx]'), { count: 14, kinds: ['sparkle', 'star'], mode: 'up', min: 8, max: 14, opacity: 0.7 });
+      const btn = scene.querySelector('[data-door-btn]');
+      btn.addEventListener('click', () => openDoor(scene));
+      Dialogue.mount(scene.querySelector('[data-dlg]'));
+      scene.querySelector('.stage').addEventListener('click', () => Dialogue.advance());
+      const onResize = () => { if (!btn.hidden) placeDoorButton(scene); };
+      window.addEventListener('resize', onResize);
+      sceneCleanup.push(() => window.removeEventListener('resize', onResize));
+      later(() => Dialogue.play(SCRIPT.lastDoor(), () => doorCountdown(scene)), 300);
+    }
+  },
+
   /* ---------- 5. SECRET ROOM ---------- */
   secretRoom: {
-    build() { return vnScene('scene-secret', 'The secret room', BG.secret(), `CASE ${escapeHTML(CASE_NUMBER)} ♡ SECRET ROOM`); },
+    build() { return vnScene('scene-secret', 'The secret room', BG.secret(), `CASE ${escapeHTML(CASE_NUMBER)} · SECRET ROOM`); },
     enter(scene) {
       setupSprite(scene, 'bunny', bunnySVG, 'soft', {}, 'bob');
-      spawnFloaters(scene.querySelector('[data-fx]'), { count: 12, kinds: ['sparkle', 'heart'], mode: 'up', min: 10, max: 18, opacity: 0.7 });
+      spawnFloaters(scene.querySelector('[data-fx]'), { count: 12, kinds: ['sparkle', 'star'], mode: 'up', min: 10, max: 18, opacity: 0.7 });
       Dialogue.mount(scene.querySelector('[data-dlg]'));
       scene.querySelector('.stage').addEventListener('click', () => Dialogue.advance());
       Dialogue.play(SCRIPT.secret(), () => {
@@ -2297,7 +2798,7 @@ const SCENES = {
 
   /* ---------- 6. CONFESSION ---------- */
   confession: {
-    build() { return vnScene('scene-confess', 'Confession', BG.secret(), '', '<div class="tint"></div><div class="vignette"></div>'); },
+    build() { return vnScene('scene-confess', 'Confession', BG.secret(true), '', '<div class="tint"></div><div class="vignette"></div>'); },
     enter(scene) {
       setupSprite(scene, 'bunny', bunnySVG, 'blush', { prop: 'heart' }, 'bob');
       spawnFloaters(scene.querySelector('[data-fx]'), { count: 18, kinds: ['heart', 'heart', 'sparkle'], mode: 'up', min: 14, max: 28 });
@@ -2309,30 +2810,34 @@ const SCENES = {
 
   /* ---------- 7. YES ENDING ---------- */
   happyEnding: {
-    build() { return vnScene('scene-end scene-happy', 'Happy ending', BG.secret(), '', '<div class="sunburst"></div>' + frameCorners()); },
+    build() { return endingScene('scene-happy', 'Happy ending', '<div class="sunburst"></div>' + frameCorners()); },
     enter(scene) {
       setupSprite(scene, 'bunny', bunnySVG, 'excited', { prop: 'cheer' }, 'bob');
+      setupSprite(scene, 'principal', principalSVG, 'wave', {}, 'bob');
+      setupSprite(scene, 'ghost', ghostSVG, 'delight', {}, 'float');
       spawnFloaters(scene.querySelector('[data-fx]'), { count: 24, kinds: ['heart', 'star', 'heart', 'sparkle'], mode: 'fall', min: 14, max: 28 });
       Dialogue.mount(scene.querySelector('[data-dlg]'));
       scene.querySelector('.stage').addEventListener('click', () => Dialogue.advance());
       Dialogue.play(SCRIPT.happy(), () => showEndCard(scene, {
         num: 'ENDING 01:', title: 'THE HAPPY ENDING ♡', msg: HAPPY_ENDING_MESSAGE,
-        btnClass: 'pink', mood: 'shy', prop: 'heart', sound: 'complete'
+        btnClass: 'pink', mood: 'shy', prop: 'heart', sound: 'complete', principal: 'wink', ghost: 'delight'
       }));
     }
   },
 
   /* ---------- 8. NO ENDING ---------- */
   honestEnding: {
-    build() { return vnScene('scene-end scene-honest', 'Honest ending', BG.secret(), '', '<div class="soft-veil"></div>' + frameCorners()); },
+    build() { return endingScene('scene-honest', 'Honest ending', '<div class="soft-veil"></div>' + frameCorners()); },
     enter(scene) {
       setupSprite(scene, 'bunny', bunnySVG, 'soft', {}, 'bob');
+      setupSprite(scene, 'principal', principalSVG, 'smile', {}, 'bob');
+      setupSprite(scene, 'ghost', ghostSVG, 'smirk', {}, 'float');
       spawnFloaters(scene.querySelector('[data-fx]'), { count: 12, kinds: ['petal', 'sparkle'], mode: 'fall', min: 10, max: 16, opacity: 0.8 });
       Dialogue.mount(scene.querySelector('[data-dlg]'));
       scene.querySelector('.stage').addEventListener('click', () => Dialogue.advance());
       Dialogue.play(SCRIPT.honest(), () => showEndCard(scene, {
         num: 'ENDING 02:', title: 'THE HONEST ENDING', msg: HONEST_ENDING_MESSAGE,
-        btnClass: '', mood: 'happy', prop: null, sound: 'gentle'
+        btnClass: '', mood: 'happy', prop: null, sound: 'gentle', principal: 'smile', ghost: 'smirk'
       }));
     }
   }
@@ -2355,8 +2860,10 @@ function buildWipe() {
 // Scenes can only be entered in story order, so nothing can be skipped.
 function canEnter(name) {
   switch (name) {
-    case 'trial':        return state.clues.size === CLUES.length;
-    case 'secretRoom':   return state.trialComplete;
+    case 'haunting':     return state.clues.size === CLUES.length;
+    case 'trial':        return state.hauntingSeen;
+    case 'lastDoor':     return state.trialComplete;
+    case 'secretRoom':   return state.doorOpened;
     case 'confession':   return state.secretRoomSeen;
     case 'happyEnding':  return state.confessionAnswered && state.ending === 'happy';
     case 'honestEnding': return state.confessionAnswered && state.ending === 'honest';
@@ -2367,15 +2874,17 @@ function canEnter(name) {
 function transition(style, swap) {
   return new Promise(resolve => {
     if (style === 'none') { swap(); resolve(); return; }
-    if (style === 'fade' || REDUCED) {
-      wipeEl.className = 'fade active';
+    if (style === 'fade' || style === 'darkfade' || style === 'light' || REDUCED) {
+      const tint = style === 'darkfade' ? ' dark' : style === 'light' ? ' light' : '';
+      const ms = REDUCED ? 330 : style === 'darkfade' ? 650 : style === 'light' ? 450 : 330;
+      wipeEl.className = 'fade active' + tint;
       void wipeEl.offsetWidth;
       wipeEl.classList.add('on');
       setTimeout(() => {
         swap();
         wipeEl.classList.remove('on');
-        setTimeout(() => { wipeEl.className = ''; resolve(); }, 330);
-      }, 330);
+        setTimeout(() => { wipeEl.className = ''; resolve(); }, ms);
+      }, ms);
       return;
     }
     const total = (WIPE_COLS + WIPE_ROWS - 2) * WIPE_STEP + 220;
@@ -2397,6 +2906,7 @@ function goTo(name, style = 'pixel') {
     clearTimers();
     Dialogue.stop();
     Object.keys(sprites).forEach(k => delete sprites[k]);
+    sceneCleanup.splice(0).forEach(fn => fn());
     root.querySelectorAll('.scene, .fly, .burst').forEach(n => n.remove());
     state.scene = name;
     state.dialogueIndex = 0;
