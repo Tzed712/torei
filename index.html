@@ -213,7 +213,6 @@ svg.px{ display:block; shape-rendering:crispEdges; }
 .snd:active{ transform:translateY(1px); }
 .snd svg{ width:100%; height:100%; display:block; }
 .snd[aria-pressed="false"]{ background:var(--cream-d); color:var(--ink); }
-#game[data-scene="happyEnding"] .snd, #game[data-scene="honestEnding"] .snd{ top:26px; right:26px; }
 
 /* ---------- Pixel wipe transition ---------- */
 #wipe{ position:absolute; inset:0; z-index:100; display:grid; grid-template-columns:repeat(10,1fr); grid-template-rows:repeat(8,1fr); pointer-events:none; }
@@ -279,7 +278,7 @@ svg.px{ display:block; shape-rendering:crispEdges; }
 .counter .ico svg{ width:100%; height:auto; }
 .counter.bump{ animation:pop .4s steps(4); }
 .counter.done{ background:var(--pink); }
-.slots{ list-style:none; margin:0; padding:6px 14px 2px; display:flex; justify-content:center; gap:clamp(6px, 1.4cqw, 12px); position:relative; z-index:3; }
+.slots{ list-style:none; margin:0; padding:6px 14px 2px; display:flex; justify-content:center; gap:clamp(9px, 1.6cqw, 14px); position:relative; z-index:3; }
 .slot{
   position:relative; margin:4px; width:clamp(36px, 6cqw, 50px); aspect-ratio:1/1;
   display:grid; place-items:center; background:var(--cream-l);
@@ -580,6 +579,225 @@ svg.px{ display:block; shape-rendering:crispEdges; }
   .answers{ gap:8px; }
 }
 
+/* ---------- CREEPY GLITCHES (no strobing: short shifts and colour tears only) ---------- */
+.glitch{ animation:glitch .5s steps(2) 1; }
+.glitch-bars{
+  position:absolute; inset:0; z-index:95; pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,0) 0 22px, rgba(79,175,173,.28) 22px 25px, rgba(0,0,0,0) 25px 51px, rgba(201,108,151,.26) 51px 54px);
+  animation:bars .5s steps(3) forwards;
+}
+.dlg-name.glitchy{ animation:nameGlitch .45s steps(2) 3; }
+.subtitle.glitching{ color:#A84B78; text-shadow:2px 0 0 rgba(79,175,173,.8), -2px 0 0 rgba(201,108,151,.8); transform:translateX(2px) skewX(-8deg); }
+.room.chalk-red .chalk-top, .room.chalk-red .chalk-main{ fill:#E89090; }
+.tag-cat{ background:#26282D; color:var(--yellow); }
+
+/* ---------- INVESTIGATION LABELS ---------- */
+.slot-wrap{ display:flex; flex-direction:column; align-items:center; gap:9px; }
+.slot-label{ font:900 clamp(7.5px, 2cqw, 10px)/1 var(--mono); letter-spacing:.02em; color:#8F826A; min-height:10px; white-space:nowrap; }
+.slot-label.found{ color:var(--teal-d); }
+.clue-tag{
+  position:absolute; left:50%; top:100%; margin-top:3px; transform:translateX(-50%); display:none; white-space:nowrap; z-index:3;
+  font:900 clamp(8px, 1.5cqw, 11px)/1 var(--mono); letter-spacing:.04em; color:var(--ink);
+  background:var(--yellow); padding:3px 5px 2px; box-shadow:0 0 0 2px var(--ink);
+}
+.clue.found .clue-tag{ display:block; }
+
+/* ---------- THE TRAP ---------- */
+.scene-door.trap .door-light{ fill:#050707; }
+.scene-door.trap .door-glow, .scene-door.trap .door-beam{ opacity:0 !important; animation:none; }
+.scene-door.trap .door-panel{ transform:scaleX(.08); }
+.scene-door.trap .bg > svg{ filter:brightness(.5) saturate(.55); transition:filter 1.3s ease, transform .8s cubic-bezier(.3,.7,.3,1); }
+.scene-door .sprite.ghost.loom{ right:4%; width:min(64%, 440px); height:100%; bottom:-20px; animation:loom .6s cubic-bezier(.2,1.4,.4,1) both; }
+.scene-door .sprite.ghost.loom .anim{ filter:drop-shadow(0 0 22px rgba(191,229,223,.9)) brightness(1.08); }
+.scene-door.pushed .bg > svg{ transform:scale(2.6) !important; transition:transform .65s ease-in, filter .65s ease-in; filter:brightness(.2); }
+.scene-door.pushed .stage{ transform:translateY(40px) scale(1.15); opacity:.3; transition:transform .6s ease-in, opacity .6s ease-in; }
+
+/* ---------- THE FALL ---------- */
+.fall-bg{ background:radial-gradient(ellipse at 50% 40%, #232A28 0%, #121615 55%, #070908 100%); }
+.streak{ position:absolute; bottom:-20%; width:2px; height:var(--h); background:linear-gradient(rgba(191,229,223,0), rgba(191,229,223,.35)); animation:rise var(--d) linear var(--dl) infinite; }
+.debris{ position:absolute; bottom:-30%; width:var(--s); opacity:.85; animation:riseSpin var(--d) linear var(--dl) infinite; }
+.debris svg{ width:100%; height:auto; display:block; }
+.scene-fall .fx, .scene-fall .stage{ transition:filter 2.4s ease; filter:saturate(.85); }
+.scene-fall.drained .fx, .scene-fall.drained .stage{ filter:saturate(.15) brightness(.72); }
+.scene-fall .sprite{ height:64%; bottom:10%; width:min(64%, 320px); }
+.anim.spin{ animation:tumble 2.4s linear infinite; transform-origin:50% 55%; }
+
+/* ---------- UNDERGROUND STYLE (dark, muted, grainy) ---------- */
+.ln .stage .anim{ filter:saturate(.62) brightness(.8) contrast(1.06) drop-shadow(0 6px 10px rgba(0,0,0,.55)); }
+.ln .stage .sprite.cat .anim{ filter:drop-shadow(0 0 12px rgba(244,215,106,.35)); }
+.grain{
+  position:absolute; inset:-60px; z-index:3; pointer-events:none; opacity:.1;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 1s steps(4) infinite;
+}
+.ln .dlg{ background:#F1E9D8; box-shadow:var(--pxb), inset 0 0 0 4px #9AA9A4, 8px 8px 0 4px rgba(0,0,0,.45); }
+.ln .dlg-portrait{ background:#B5C7C2; }
+.ln .dlg-portrait.dark{ background:#16302F; }
+.scene-pit .stage{ position:static; }                     /* the bunny is placed against the whole scene, like the balls */
+.scene-pit .sprite.bunny{ bottom:9%; height:min(62cqh, 126cqw); width:auto; aspect-ratio:200 / 280; }
+.pit-front{ position:absolute; inset:0; z-index:2; pointer-events:none; }
+.pit-front svg{ width:100%; height:100%; display:block; filter:saturate(.75); }
+.scene-backrooms .sprite.bunny{ left:2%; right:auto; margin:0; width:min(48%, 320px); height:84%; }
+.scene-backrooms .sprite.cat{ right:4%; left:auto; margin:0; width:min(34%, 220px); height:46%; bottom:-14px; transition:transform 2.2s ease; }
+.scene-backrooms .bg > svg{ transition:transform 2.6s ease; transform-origin:50% 48%; }
+.scene-backrooms.walking .bg > svg{ transform:scale(1.4); }
+.scene-backrooms.walking .sprite.cat{ transform:translateX(-35%); }
+.cat-eyes{ position:absolute; z-index:2; right:14%; bottom:24%; display:flex; gap:16px; opacity:0; transition:opacity 1.1s ease; pointer-events:none; }
+.cat-eyes.on{ opacity:1; }
+.cat-eyes i{ display:block; width:12px; height:16px; border-radius:50%; background:var(--yellow); box-shadow:0 0 12px 4px rgba(244,215,106,.6); animation:blink 4s ease-in-out infinite; }
+.tube{ animation:tube 5s steps(1) infinite; }
+.tube-b{ animation-delay:-2.2s; } .tube-c{ animation-delay:-3.7s; }
+.memflash{ position:absolute; z-index:6; left:50%; top:36%; width:min(56%, 320px); aspect-ratio:4/3; pointer-events:none; opacity:0; transform:translate(-50%,-50%); }
+.memflash.on{ animation:memflash 2.3s ease both; }
+.mem-pic{ position:absolute; inset:0; overflow:hidden; background:#EDE4CF; border:8px solid #EDE4CF; border-bottom-width:22px; box-shadow:0 12px 32px rgba(0,0,0,.65); filter:sepia(.55) saturate(.7) contrast(1.05); }
+.mem-pic > svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+
+/* ---------- THE TOWER ---------- */
+.scene-obby{ background:#090B0A; }
+.obby-wrap{ position:relative; z-index:1; flex:1 1 auto; min-height:0; touch-action:none; }
+.obby-wrap canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+.open-btn{ position:absolute; z-index:3; transform:translate(-50%, -100%); padding:8px 14px; font:900 15px/1 var(--mono); letter-spacing:.08em;
+  color:#3A3936; background:var(--yellow); border:0; box-shadow:var(--pxb), 0 0 18px 4px rgba(255,240,181,.55); cursor:pointer; animation:openBob 1.6s ease-in-out infinite; }
+.open-btn:hover{ background:var(--yellow-l, #FFF0B5); }
+@keyframes openBob{ 0%,100%{ margin-top:0; } 50%{ margin-top:-4px; } }
+.obby-hud{ position:absolute; z-index:6; left:0; right:0; top:14px; display:flex; flex-direction:column; align-items:center; gap:8px; padding:0 64px; pointer-events:none; text-align:center; }
+.obby-tip{ margin:0; font:800 13px/1.35 var(--mono); color:var(--cream-l); background:rgba(14,18,17,.85); padding:8px 12px 7px; box-shadow:var(--pxb3); }
+.lava-alert{ margin:0; font:900 clamp(15px, 3.4cqw, 26px)/1.1 var(--mono); letter-spacing:.06em; color:#2A0E04; background:#F4A23C; padding:12px 16px 10px; box-shadow:var(--pxb), 0 0 34px 10px rgba(244,120,40,.45); }
+.lava-alert.show{ animation:alertPop 2.9s ease both; }
+.scene-obby .bottom{ padding-top:6px; }
+.pad{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.pad-move{ display:flex; gap:10px; }
+.pad button{
+  -webkit-appearance:none; appearance:none; border:0; margin:4px; cursor:pointer; touch-action:none;
+  user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
+  min-width:76px; min-height:66px; font:900 24px/1 var(--mono); color:var(--cream-l); background:#286F70;
+  box-shadow:var(--pxb), inset 0 -5px 0 0 rgba(0,0,0,.3), inset 0 4px 0 0 rgba(191,229,223,.25);
+}
+.pad .pad-jump{ min-width:130px; font-size:19px; letter-spacing:.06em; background:#B9708F; }
+.pad button.on{ transform:translateY(3px); filter:brightness(1.25); }
+.pad-hint{ margin:6px 0 0; text-align:center; font:700 12px/1.3 var(--mono); color:#B9B2A3; }
+@media (pointer:coarse){ .pad-hint{ display:none; } }
+.ov{ position:absolute; inset:0; z-index:40; display:grid; place-items:center; padding:12px; background:rgba(5,7,7,.5); }
+.ov .panel{
+  width:min(100%, 340px); max-height:100%; overflow:auto; text-align:center; background:var(--cream-l); color:var(--ink);
+  padding:18px 16px 14px; box-shadow:var(--pxb), 10px 10px 0 4px rgba(0,0,0,.45); animation:popIn .4s steps(4) both;
+}
+.dead-title{ margin:0 0 6px; font:900 20px/1.2 var(--mono); color:#A8401F; letter-spacing:.04em; }
+.dead-sub{ margin:0 0 14px; font:700 15px/1.45 var(--round); }
+.kp-lock{ width:24px; margin:0 auto 4px; }
+.kp-lock svg{ width:100%; height:auto; }
+.kp-title{ margin:4px 0 4px; font:900 18px/1.2 var(--mono); letter-spacing:.06em; }
+.kp-hint{ margin:0 0 10px; font:700 14px/1.45 var(--round); }
+.kp-extra{ margin:-4px 0 10px; font:700 13px/1.4 var(--round); color:#A84B78; }
+.kp-display{ display:flex; justify-content:center; gap:10px; margin:0 0 12px; }
+.kp-display span{ width:52px; height:58px; display:grid; place-items:center; font:900 32px/1 var(--mono); background:#16302F; color:var(--yellow); box-shadow:var(--pxb3); }
+.kp-display.shake{ animation:shake .4s linear; }
+.kp-display.ok span{ background:var(--teal-d); color:var(--cream-l); }
+.kp-keys{ display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; }
+.kp-keys button{
+  -webkit-appearance:none; appearance:none; border:0; margin:3px; min-height:48px; cursor:pointer;
+  font:900 20px/1 var(--mono); background:var(--cream); color:var(--ink); box-shadow:var(--pxb3), inset 0 -4px 0 0 var(--cream-d);
+}
+.kp-keys button:active{ transform:translateY(2px); }
+.kp-keys .kp-ok{ background:var(--yellow); }
+.kp-keys .kp-del{ background:var(--pink-l); }
+.kp-msg{ min-height:1.3em; margin:10px 0 0; font:800 14px/1.3 var(--mono); }
+.kp-msg.bad{ color:#A84B78; } .kp-msg.good{ color:var(--teal-d); }
+
+/* ---------- REMEMBERING ---------- */
+.rec-bg{ background:radial-gradient(ellipse at 50% 40%, #2A2622 0%, #141210 70%, #0A0908 100%); }
+.polaroids{ position:absolute; inset:0; display:grid; place-items:center; transition:transform 1.8s ease; }
+.scene-recollect.breathe .polaroids{ transform:scale(1.05); }
+.polaroid{
+  position:absolute; margin:0; width:min(68%, 360px, 52cqh); aspect-ratio:1/1.08; background:#F6F0E2; padding:12px 12px 42px;
+  box-shadow:0 18px 40px rgba(0,0,0,.6); transform:translateX(var(--dx)) rotate(var(--rot));
+  animation:dropIn .7s cubic-bezier(.2,1.2,.4,1) both; transition:filter .6s ease;
+}
+.polaroid .pic{ position:relative; width:100%; height:100%; overflow:hidden; background:#222; filter:sepia(.35) saturate(.85); }
+.polaroid .pic > svg{ position:absolute; inset:0; width:100%; height:100%; }
+.polaroid.old{ filter:brightness(.5); }
+.pic-trial{ position:absolute; inset:0; background:radial-gradient(circle at 50% 40%, #2F8384, #1B4A4B); }
+.pic-char{ position:absolute; bottom:0; left:20%; width:60%; height:85%; }
+.pic-cat{ position:absolute; bottom:0; right:4%; width:40%; height:50%; }
+.pic-char svg, .pic-cat svg{ width:100%; height:100%; display:block; }
+.pic-lava{ position:absolute; inset:0; background:linear-gradient(#141816 0 56%, #FFB347 57%, #E2531F 70%, #4A1406 100%); }
+.pic-bunny{ position:absolute; left:40%; top:28%; width:20%; }
+.pic-bunny svg{ width:100%; height:auto; }
+
+/* ---------- THE FINALE ---------- */
+.stage.pan{ transition:transform 1.4s cubic-bezier(.3,.7,.3,1), filter 1.2s ease; transform-origin:50% 70%; }
+.stage.pan.pan-away{ transform:translateY(6%) scale(.84); filter:blur(3px) brightness(.8); }
+.letter-layer{ position:absolute; inset:0; z-index:30; display:grid; place-items:center; padding:14px; background:rgba(22,48,47,.35); }
+.letter-wrap{ position:relative; width:min(94%, 540px); animation:unfold .6s cubic-bezier(.2,1.2,.4,1) both; }
+.peony{ position:absolute; right:-22px; bottom:-30px; width:clamp(78px, 15cqw, 124px); transform:rotate(-8deg); pointer-events:none; filter:drop-shadow(4px 6px 0 rgba(0,0,0,.25)); }
+.peony svg{ width:100%; height:auto; display:block; }
+.letter{
+  position:relative; width:100%; max-height:calc(100cqh - 56px); overflow:auto; text-align:left;
+  background-color:#FFFDF6; background-image:repeating-linear-gradient(transparent 0 29px, rgba(79,175,173,.22) 29px 30px);
+  background-position:0 20px; padding:30px 26px 20px; box-shadow:var(--pxb), 12px 14px 0 4px rgba(0,0,0,.3);
+}
+.letter-text{ margin:4px 0 16px; white-space:pre-wrap; font:700 clamp(15.5px, 1.2cqw + 9px, 19px)/30px var(--type); color:#2E2C29; display:grid; }
+.letter-text > span{ grid-area:1 / 1; }
+.letter-text .lt-full{ visibility:hidden; }
+.letter-seal{ position:absolute; top:6px; left:50%; width:30px; transform:translateX(-50%); }
+.letter-seal svg{ width:100%; height:auto; }
+.letter .btn{ display:flex; margin:0 auto; }
+.letter-layer.folding .letter-wrap{ animation:fold .6s ease forwards; }
+.sprite.glowing .anim{ filter:drop-shadow(0 0 12px #FFF0B5) brightness(1.12); transition:filter 1s ease; }
+.sprite.vanish-up{ animation:vanishUp 1.6s ease forwards; }
+.anim{ position:relative; }
+.white-copy{ position:absolute; inset:0; opacity:0; pointer-events:none; filter:brightness(0) invert(1) drop-shadow(0 0 6px #FFF0B5); transition:opacity .8s ease; }
+.white-copy > svg{ width:100%; height:100%; display:block; overflow:visible; }
+.white-copy.on{ opacity:1; }
+.white-copy.instant{ transition:none; }
+.sprite .anim{ transition:filter 1s ease; }
+.magic{ position:absolute; left:50%; bottom:4%; width:min(62cqw, 70cqh); aspect-ratio:1; transform:translateX(-50%); pointer-events:none; }
+.magic::before{ content:''; position:absolute; inset:0; border-radius:50%; opacity:0;
+  background:radial-gradient(circle, rgba(255,253,247,.95) 0%, rgba(255,240,181,.7) 28%, rgba(242,167,198,.3) 52%, transparent 70%);
+  animation:magicGlow 3.4s ease forwards; }
+.magic i{ position:absolute; inset:var(--in); border-radius:50%; border:3px dotted rgba(255,240,181,.9); opacity:0;
+  animation:magicSpin var(--t) linear infinite var(--dir, normal), magicFade 3.4s ease forwards; }
+.end-card.the-end h2{ font-size:clamp(30px, 6cqw, 52px); letter-spacing:.16em; }
+.scene-finale .tint.soft{ opacity:.6; }
+
+@container game (max-height: 560px){
+  .kp-lock{ display:none; }
+  .kp-title{ font-size:15px; }
+  .kp-hint{ font-size:12px; margin-bottom:6px; }
+  .kp-display{ margin-bottom:6px; }
+  .kp-display span{ width:40px; height:40px; font-size:24px; }
+  .kp-keys{ gap:2px; }
+  .kp-keys button{ min-height:32px; font-size:15px; }
+  .ov .panel{ padding:10px 12px; }
+  .pad button{ min-height:52px; min-width:64px; }
+  .scene-pit .sprite.bunny{ bottom:29%; height:56cqh; }
+  .letter-wrap{ width:min(96%, 760px); }
+  .peony{ width:70px; right:-10px; bottom:-14px; }
+  .letter{ max-height:calc(100cqh - 24px); padding:18px 18px 10px; background-image:repeating-linear-gradient(transparent 0 21px, rgba(79,175,173,.22) 21px 22px); background-position:0 16px; }
+  .letter-text{ font-size:14px; line-height:22px; margin-bottom:8px; }
+  .letter-seal{ width:22px; top:2px; }
+  .memflash{ width:min(40%, 240px); }
+}
+
+@keyframes glitch{ 0%,100%{ transform:none; filter:none; } 20%{ transform:translate(-7px,0) skewX(-4deg); filter:hue-rotate(60deg) saturate(1.3); } 40%{ transform:translate(6px,1px) skewX(3deg); } 60%{ transform:translate(-3px,-1px); filter:hue-rotate(-40deg) contrast(1.2); } 80%{ transform:translate(2px,0) skewX(-2deg); } }
+@keyframes bars{ 0%{ transform:translateY(0); opacity:.9; } 50%{ transform:translateY(17px); opacity:.6; } 100%{ transform:translateY(-9px); opacity:0; } }
+@keyframes nameGlitch{ 0%,100%{ transform:none; } 50%{ transform:translate(2px,-1px) skewX(-10deg); } }
+@keyframes loom{ 0%{ transform:scale(.6) translateY(20%); opacity:0; } 100%{ transform:none; opacity:1; } }
+@keyframes rise{ from{ transform:translateY(0); } to{ transform:translateY(-170vh); } }
+@keyframes riseSpin{ from{ transform:translateY(0) rotate(0deg); } to{ transform:translateY(-170vh) rotate(var(--r)); } }
+@keyframes tumble{ 0%{ transform:rotate(0) translateY(0); } 50%{ transform:rotate(180deg) translateY(-10px); } 100%{ transform:rotate(360deg) translateY(0); } }
+@keyframes grain{ 0%{ transform:translate(0,0); } 25%{ transform:translate(-20px,12px); } 50%{ transform:translate(14px,-18px); } 75%{ transform:translate(-8px,-6px); } 100%{ transform:translate(0,0); } }
+@keyframes tube{ 0%,93%,100%{ opacity:1; } 95%{ opacity:.4; } 97%{ opacity:.9; } }
+@keyframes memflash{ 0%{ opacity:0; transform:translate(-50%,-50%) scale(1.15) rotate(-4deg); } 15%{ opacity:.95; transform:translate(-50%,-50%) scale(1) rotate(-2deg); } 75%{ opacity:.9; } 100%{ opacity:0; transform:translate(-50%,-52%) scale(.96) rotate(-1deg); } }
+@keyframes alertPop{ 0%{ transform:scale(.3); opacity:0; } 10%{ transform:scale(1.12); opacity:1; } 18%{ transform:scale(1); } 85%{ opacity:1; } 100%{ opacity:0; transform:translateY(-10px); } }
+@keyframes dropIn{ from{ opacity:0; transform:translateX(var(--dx)) translateY(-40px) rotate(calc(var(--rot) * 2.5)) scale(1.1); } to{ opacity:1; transform:translateX(var(--dx)) rotate(var(--rot)); } }
+@keyframes unfold{ from{ transform:scaleY(.1) rotate(-3deg); opacity:0; } to{ transform:none; opacity:1; } }
+@keyframes fold{ to{ transform:scaleY(.05) translateY(40%) rotate(3deg); opacity:0; } }
+@keyframes magicGlow{ 0%{ opacity:0; transform:scale(.6); } 40%{ opacity:1; transform:scale(1); } 70%{ opacity:.85; } 100%{ opacity:0; transform:scale(1.15); } }
+@keyframes magicSpin{ to{ transform:rotate(360deg); } }
+@keyframes magicFade{ 0%{ opacity:0; } 25%, 70%{ opacity:1; } 100%{ opacity:0; } }
+@keyframes vanishUp{ to{ opacity:0; transform:translateY(-60px) scale(.94); filter:blur(4px); } }
+
 /* ---------- Keyframes ---------- */
 @keyframes sceneIn{ from{ opacity:0; } to{ opacity:1; } }
 @keyframes cellIn{ from{ transform:scale(0); } to{ transform:scale(1.04); } }
@@ -630,7 +848,7 @@ svg.px{ display:block; shape-rendering:crispEdges; }
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{ animation-duration:.001ms!important; animation-iteration-count:1!important; animation-delay:0s!important; transition-duration:.001ms!important; }
-  .floater, .deco, .rays, .sunburst, .clue-glow, .clue-art, .clue-spark{ animation:none!important; }
+  .floater, .deco, .rays, .sunburst, .clue-glow, .clue-art, .clue-spark, .grain, .debris, .streak, .tube{ animation:none!important; }
 }
 </style>
 </head>
@@ -650,17 +868,26 @@ svg.px{ display:block; shape-rendering:crispEdges; }
    Change these lines to personalize the game.
    ============================================================= */
 
-// Message shown in the YES ending (ENDING 01).
-const HAPPY_ENDING_MESSAGE = "I hope this is the beginning of something sweet. ♡";
-
-// Message shown in the NO ending (ENDING 02).
-const HONEST_ENDING_MESSAGE = "Thank you for playing my tiny mystery.";
-
-// The bunny's real name. It is only ever shown during the confession scene.
+// The bunny's real name. It is only ever shown near the very end.
 const BUNNY_NAME = "Tobe";
 
-// The name of the person playing (used in the confession).
+// The name of the person playing (used in the letter at the end).
 const PLAYER_NAME = "Rei";
+
+// The letter the bunny hands over at the end. "\n\n" starts a new paragraph.
+const LETTER_TEXT =
+  `Hi, ${PLAYER_NAME}, I like you.\n\n` +
+  `I've wanted to say this for a long time but I just couldn't build the courage to do so. So I'd thought that I would make a game to tell you.\n\n` +
+  `Honestly, I don't mind if you like me back or not, I just want to get this out of my chest.\n\n` +
+  `I hope you enjoyed playing!`;
+
+// Shown on the very last screen.
+const END_MESSAGE = "Thank you for playing. ♡";
+
+// The 2-digit code for the glowing door at the top of the tower, plus its hints.
+const DOOR_CODE = "15";
+const DOOR_HINT = "a number between 1 and 31.";
+const DOOR_EXTRA_HINT = "Psst... it's right in the middle of the month.";   // shown after 3 wrong tries ("" = off)
 
 // Game title shown on the title screen and the browser tab.
 const TITLE_MAIN = "Torei:";
@@ -688,7 +915,8 @@ const PAL = {
   p: '#F2A7C6', P: '#C96C97', k: '#F8D6E5',  // pink / dark pink / light pink
   y: '#F4D76A', Y: '#C9A83F', l: '#FFF0B5',  // yellow / dark yellow / light yellow
   t: '#4FAFAD', T: '#286F70', b: '#BFE5DF',  // teal / dark teal / light teal
-  r: '#D2556A'                               // small red accents on the bunny's uniform
+  r: '#D2556A',                              // small red accents on the bunny's uniform
+  u: '#24302F'                               // the dark school uniform
 };
 const REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
@@ -778,6 +1006,19 @@ const PIXELS = {
     '.........oYYo.',
     '..........oYo.',
     '...........o..'] },
+  /* ---- tower sprites (drawn 2x on the canvas) ---- */
+  rei: { outline: ['o'], rows: [
+    '..xxxxxx..', '.xxxxxxxx.', 'xxxxxxxxxx', 'xxxxxuxxxx', 'xxxxxccxxx', 'xxcoccocxx', 'xxkcccckxx', 'xx.cccc.xx',
+    'xxTwyywTxx', '.xTttttTx.', '.cTttttTc.', '.TTTTTTTT.', '..TTTTTT..', '..cc..cc..', '..PP..PP..'] },
+  reiWalk: { outline: ['o'], rows: [
+    '..xxxxxx..', '.xxxxxxxx.', 'xxxxxxxxxx', 'xxxxxuxxxx', 'xxxxxccxxx', 'xxcoccocxx', 'xxkcccckxx', 'xx.cccc.xx',
+    'xxTwyywTxx', '.xTttttTx.', '.cTttttTc.', '.TTTTTTTT.', '..TTTTTT..', '.cc....cc.', '.PP....PP.'] },
+  reiJump: { outline: ['o'], rows: [
+    '..xxxxxx..', '.xxxxxxxx.', 'xxxxxxxxxx', 'xxxxxuxxxx', 'xxxxxccxxx', 'xxcoccocxx', 'xxkcccckxx', 'xx.cccc.xx',
+    'xxTwyywTxx', '.xTttttTx.', '.cTttttTc.', '.TTTTTTTT.', '..TTTTTT..', '...cccc...', '...PPPP...'] },
+  bunnyMini: { outline: ['o'], rows: [
+    '..ww..ww..', '..wk..kw..', '..wk..kw..', '..ww..ww..', '.uuuuuuuu.', 'wwwwwwwwww', 'wwoowwooww',
+    'wkwwwwwwkw', '.wwwwwwww.', '..uurruu..', '.uuuuuuuu.', '.uuuyuuuu.', '..ww..ww..'] },
   /* ---- the five clues ---- */
   mango: { outline: [], rows: [
     '................',
@@ -968,6 +1209,8 @@ function bunnySVG(opt = {}) {
   const wide = x => `<circle cx="${x}" cy="${EY}" r="8" fill="${W}" ${S(2.6)}/><circle cx="${x}" cy="${EY + 1}" r="2.8" fill="${O}"/>`;
   const mO = `<ellipse cx="100" cy="166" rx="6" ry="7.5" fill="${PAL.P}" ${S(3.2)}/>`;
   const shockLines = `<path d="M150 74 l8 -10 M160 84 l12 -6 M140 68 l2 -12" fill="none" ${S(3)}/>`;
+  const pinch = (x, d) => `<path d="M${x - 7 * d} ${EY - 7} L${x + 7 * d} ${EY} L${x - 7 * d} ${EY + 7}" fill="none" ${S(4)}/>`;
+  const painLines = `<path d="M40 82 l-11 -8 M34 98 l-14 -2 M48 68 l-4 -13" fill="none" ${S(3)}/>`;
   const heartEye = x => `<path d="${heartPath(x, EY, 10)}" fill="${PAL.P}" ${S(2.4)}/><circle cx="${x - 3.5}" cy="${EY - 3.5}" r="1.8" fill="${W}"/>`;
 
   const mOmega = `<path d="M90 162 Q95 168.5 100 162 Q105 168.5 110 162" fill="none" ${S(3.4)}/>`;
@@ -992,7 +1235,8 @@ function bunnySVG(opt = {}) {
     hopeful: [sparkly(LX) + sparkly(RX), mSoft, 1, hatch],
     love:    [heartEye(LX) + heartEye(RX), mOpen, 1, hatch + stars],
     shy:     [happyArc(LX) + happyArc(RX), mSoft, 1, hatch],
-    shock:   [wide(LX) + wide(RX), mO, .5, sweat + shockLines]
+    shock:   [wide(LX) + wide(RX), mO, .5, sweat + shockLines],
+    hurt:    [pinch(LX, 1) + pinch(RX, -1), mWobble, .9, sweat + painLines]
   };
   const [eyes, mouth, blushOp, extra] = MOODS[mood] || MOODS.normal;
 
@@ -1011,6 +1255,9 @@ function bunnySVG(opt = {}) {
     arms = arm('M70 198 Q64 222 84 230') + arm('M130 198 Q136 222 116 230');
     front = `<path d="${heartPath(100, 225, 22)}" fill="${PAL.p}" ${S(4.5)}/><ellipse cx="89" cy="215" rx="4" ry="2.6" fill="${W}" transform="rotate(-30 89 215)"/>` +
             cuff(80, 229) + cuff(120, 229) + paw(86, 232, 9) + paw(114, 232, 9);
+  } else if (prop === 'head') {
+    arms = arm('M70 198 Q56 214 57 232') + cuff(57, 233) + paw(57, 241) + arm('M130 198 Q168 178 160 140');
+    front = cuff(160, 146) + paw(160, 130);
   } else if (prop === 'cheer') {
     arms = arm('M70 198 Q50 186 46 164') + cuff(46, 166) + paw(46, 157) +
            arm('M130 198 Q150 186 154 164') + cuff(154, 166) + paw(154, 157);
@@ -1082,11 +1329,16 @@ function ghostSVG(opt = {}) {
   if (mood === 'laugh') { eyes = laughEye(LX) + laughEye(RX); mouth = mGrin; }
   if (mood === 'boo') { mouth = `<path d="M96 129 Q112 152 128 129 Z" fill="${PAL.P}" ${S(3.4)}/><path d="M101 131 H123" stroke="${W}" stroke-width="2.6"/>`; }
   if (mood === 'point') { mouth = mGrin; }
+  if (mood === 'sinister') {
+    eyes = [LX, RX].map(x => `<ellipse cx="${x}" cy="${EY}" rx="8" ry="9" fill="${W}" ${S(2.8)}/><circle cx="${x}" cy="${EY + 1}" r="2.6" fill="${PAL.t}"/><circle cx="${x}" cy="${EY + 1}" r="1.1" fill="${O}"/>`).join('') +
+           `<path d="M84 104 L102 110 M138 104 L120 110" fill="none" ${S(3.4)}/>`;
+    mouth = `<path d="M94 130 Q112 152 130 128 Q112 138 94 130 Z" fill="${PAL.P}" ${S(3)}/><path d="M98 132 l3 4 l3 -4 l3 4 l3 -4 l3 4 l3 -4 l3 4" fill="none" stroke="${W}" stroke-width="1.6"/>`;
+  }
 
   const arm = d => `<path d="${d}" fill="none" stroke="${O}" stroke-width="22" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${PAL.T}" stroke-width="13" stroke-linecap="round"/>`;
   const hand = (x, y) => `<circle cx="${x}" cy="${y}" r="8" fill="${SK}" ${S(3.5)}/>`;
   let arms;
-  if (mood === 'point') {
+  if (mood === 'point' || mood === 'sinister') {
     arms = arm('M74 156 Q58 172 62 188') + hand(62, 193) +
            arm('M146 154 Q168 146 184 124') + `<path d="M191 116 l9 -8" stroke="${O}" stroke-width="9" stroke-linecap="round"/><path d="M191 116 l9 -8" stroke="${SK}" stroke-width="3.6" stroke-linecap="round"/>` + hand(188, 120);
   } else if (mood === 'delight' || mood === 'boo') {
@@ -1172,6 +1424,123 @@ function principalSVG(opt = {}) {
   </svg>`;
 }
 
+
+/* ---- The little black cat ---- */
+function catSVG(opt = {}) {
+  const mood = opt.mood || 'normal';
+  const crop = !!opt.crop;
+  const O = '#101313', BODY = '#26282D', RIM = '#5A6068', EYE = PAL.y;
+  const S = w => `stroke="${O}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"`;
+  const EY = 116, LX = 80, RX = 120;
+  const eye = x => `<ellipse cx="${x}" cy="${EY}" rx="11" ry="13" fill="${EYE}" ${S(3)}/><ellipse cx="${x}" cy="${EY}" rx="3" ry="10" fill="${O}"/><circle cx="${x + 4}" cy="${EY - 5}" r="2.6" fill="${PAL.w}"/>`;
+  const sly = x => `<path d="M${x - 12} ${EY + 1} Q${x} ${EY - 9} ${x + 12} ${EY + 1} Q${x} ${EY + 8} ${x - 12} ${EY + 1} Z" fill="${EYE}" ${S(3)}/><ellipse cx="${x}" cy="${EY}" rx="2.2" ry="5" fill="${O}"/>`;
+  let eyes = eye(LX) + eye(RX);
+  let mouth = `<path d="M92 138 Q96 143 100 138 Q104 143 108 138" fill="none" stroke="${RIM}" stroke-width="2.6" stroke-linecap="round"/>`;
+  if (mood === 'smug') eyes = sly(LX) + sly(RX);
+  if (mood === 'grin') {
+    eyes = sly(LX) + sly(RX);
+    mouth = `<path d="M76 134 Q100 160 124 134 Q100 146 76 134 Z" fill="${PAL.w}" ${S(2.4)}/><path d="M84 138 L87 144 M94 141 L96 148 M104 141 L106 148 M116 138 L113 144" stroke="${O}" stroke-width="1.6"/>`;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${crop ? '32 40 136 136' : '0 0 200 240'}" preserveAspectRatio="${crop ? 'xMidYMid' : 'xMidYMax'} meet" aria-hidden="true" focusable="false">
+    <path d="M136 216 C178 210 186 168 170 150 C162 140 150 148 158 158 C168 172 158 198 130 200 Z" fill="${BODY}" ${S(4)}/>
+    <path d="M62 222 C54 186 66 154 100 150 C134 154 146 186 138 222 Z" fill="${BODY}" ${S(4.5)}/>
+    <path d="M92 172 L100 184 L108 172" fill="none" stroke="${RIM}" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="84" cy="222" rx="12" ry="7" fill="${BODY}" ${S(4)}/>
+    <ellipse cx="116" cy="222" rx="12" ry="7" fill="${BODY}" ${S(4)}/>
+    <path d="M56 104 L60 52 L96 82 Z" fill="${BODY}" ${S(4.5)}/>
+    <path d="M144 104 L140 52 L104 82 Z" fill="${BODY}" ${S(4.5)}/>
+    <path d="M65 92 L67 66 L85 81 Z" fill="${PAL.P}" opacity=".75"/>
+    <path d="M135 92 L133 66 L115 81 Z" fill="${PAL.P}" opacity=".75"/>
+    <ellipse cx="100" cy="116" rx="50" ry="42" fill="${BODY}" ${S(4.5)}/>
+    <path d="M57 110 Q61 82 92 76" fill="none" stroke="${RIM}" stroke-width="3" stroke-linecap="round"/>
+    <path d="M70 156 Q100 170 130 156" fill="none" stroke="${PAL.P}" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="100" cy="166" r="6" fill="${PAL.y}" ${S(2.2)}/>
+    ${eyes}
+    <path d="M96 129 h8 l-4 5 z" fill="${PAL.p}"/>
+    ${mouth}
+    <path d="M58 128 L30 122 M58 136 L30 138 M142 128 L170 122 M142 136 L170 138" stroke="${RIM}" stroke-width="2" stroke-linecap="round"/>
+  </svg>`;
+}
+
+/* ---- The boy (the bunny's true form): dark messy hair, round glasses ---- */
+function boySVG(opt = {}) {
+  const mood = opt.mood || 'smile';
+  const crop = !!opt.crop;
+  const O = PAL.o, W = PAL.w, U = '#24302F', R = PAL.r, SK = '#FFF1E2', HAIR = '#26262B', HAIRL = '#4C4C58';
+  const S = w => `stroke="${O}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"`;
+  const EY = 140, LX = 80, RX = 120;
+  const open = x => `<ellipse cx="${x}" cy="${EY}" rx="6.2" ry="8.2" fill="${O}"/><circle cx="${x + 2.2}" cy="${EY - 3.4}" r="2.4" fill="${W}"/>`;
+  const wink = x => `<path d="M${x - 8} ${EY + 2} Q${x} ${EY - 7} ${x + 8} ${EY + 2}" fill="none" ${S(4)}/>`;
+  const soft = x => `<path d="M${x - 8} ${EY - 2} Q${x} ${EY + 6} ${x + 8} ${EY - 2}" fill="none" ${S(4)}/>`;
+  let eyes = open(LX) + open(RX);
+  let mouth = `<path d="M92 164 Q100 171 108 164" fill="none" ${S(3.4)}/>`;
+  if (mood === 'cheeky') {
+    eyes = open(LX) + wink(RX);
+    mouth = `<path d="M89 161 Q101 176 113 159 Z" fill="${PAL.P}" ${S(3.2)}/><path d="M104 165 l3 5 l3 -5" fill="${W}" stroke="${O}" stroke-width="1.4"/>`;
+  }
+  if (mood === 'soft') { eyes = soft(LX) + soft(RX); }
+  const arm = d => `<path d="${d}" fill="none" stroke="${O}" stroke-width="25" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${U}" stroke-width="16" stroke-linecap="round"/>`;
+  const hand = (x, y) => `<circle cx="${x}" cy="${y}" r="9" fill="${SK}" ${S(4)}/>`;
+  const armL = arm('M70 202 Q56 218 57 236') + hand(57, 244);
+  const armR = mood === 'cheeky'
+    ? arm('M130 202 Q160 196 162 168') + `<path d="M158 156 l-3 -14 M166 156 l4 -13" stroke="${O}" stroke-width="7" stroke-linecap="round"/><path d="M158 156 l-3 -14 M166 156 l4 -13" stroke="${SK}" stroke-width="3" stroke-linecap="round"/>` + hand(162, 162)
+    : arm('M130 202 Q144 218 143 236') + hand(143, 244);
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${crop ? '30 42 140 140' : '0 0 200 280'}" preserveAspectRatio="${crop ? 'xMidYMid' : 'xMidYMax'} meet" aria-hidden="true" focusable="false">
+    <path d="M32 140 C22 34 178 34 168 140 L156 132 L160 152 L144 136 L56 136 L40 152 L44 132 Z" fill="${HAIR}" ${S(5)}/>
+    <rect x="74" y="244" width="22" height="22" rx="5" fill="${U}" ${S(4)}/>
+    <rect x="104" y="244" width="22" height="22" rx="5" fill="${U}" ${S(4)}/>
+    <ellipse cx="84" cy="268" rx="15" ry="8" fill="${PAL.x}" ${S(4)}/>
+    <ellipse cx="116" cy="268" rx="15" ry="8" fill="${PAL.x}" ${S(4)}/>
+    <path d="M66 196 Q70 184 86 182 L114 182 Q130 184 134 196 C142 218 142 240 134 256 Q100 266 66 256 C58 240 58 218 66 196 Z" fill="${U}" ${S(5)}/>
+    <path d="M100 210 V256" stroke="#3D504E" stroke-width="2.5"/>
+    <circle cx="100" cy="224" r="4.2" fill="${PAL.y}" stroke="${PAL.Y}" stroke-width="2"/>
+    <circle cx="100" cy="244" r="4.2" fill="${PAL.y}" stroke="${PAL.Y}" stroke-width="2"/>
+    <path d="M80 184 Q100 196 120 184 L118 198 Q100 208 82 198 Z" fill="${U}" ${S(4)}/>
+    ${armL}${armR}
+    <path d="M100 203 L86 195 L86 211 Z M100 203 L114 195 L114 211 Z" fill="${R}" ${S(3)}/>
+    <circle cx="100" cy="203" r="4.5" fill="${R}" ${S(3)}/>
+    <circle cx="42" cy="146" r="10" fill="${SK}" ${S(4)}/>
+    <circle cx="158" cy="146" r="10" fill="${SK}" ${S(4)}/>
+    <circle cx="100" cy="132" r="58" fill="${SK}" ${S(5)}/>
+    <path d="M36 130 C28 38 172 38 164 130 L156 120 L150 134 L138 108 L126 130 L114 104 L102 130 L90 106 L78 130 L66 110 L56 132 L46 120 Z" fill="${HAIR}" ${S(4.5)}/>
+    <path d="M104 62 C110 38 130 38 134 50 C122 44 114 50 110 64 Z" fill="${HAIR}" ${S(3.5)}/>
+    <path d="M58 86 Q76 64 104 64" fill="none" stroke="${HAIRL}" stroke-width="4" stroke-linecap="round"/>
+    <path d="M84 72 L80 98 M122 70 L126 96" fill="none" stroke="${HAIRL}" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="62" cy="164" rx="10" ry="6" fill="${PAL.p}" opacity=".75"/>
+    <ellipse cx="138" cy="164" rx="10" ry="6" fill="${PAL.p}" opacity=".75"/>
+    ${eyes}
+    <g fill="${PAL.b}" fill-opacity=".22" ${S(4.5)}><circle cx="${LX}" cy="${EY - 2}" r="18"/><circle cx="${RX}" cy="${EY - 2}" r="18"/></g>
+    <path d="M96 135 Q100 131 104 135 M62 134 L44 130 M138 134 L156 130" fill="none" ${S(4)}/>
+    <path d="M70 130 l5 -5 M110 130 l5 -5" stroke="${W}" stroke-width="3" stroke-linecap="round"/>
+    ${mouth}
+  </svg>`;
+}
+
+function shadeHex(hex, f) {
+  const n = parseInt(hex.slice(1), 16);
+  const c = v => Math.max(0, Math.min(255, Math.round(v * f))).toString(16).padStart(2, '0');
+  return '#' + c(n >> 16) + c((n >> 8) & 255) + c(n & 255);
+}
+/* rows of muted ball-pit balls between y0 and y1 (radius r0 near the back .. r1 at the front) */
+function pitBalls(y0, y1, r0, r1, light, seed) {
+  const o = '#0B0D0C';
+  const cols = ['#8A5A66', '#3E6A68', '#8C7A44', '#7E776A', '#6B4A5A', '#4E7C79'];
+  let out = '', row = 0, k = seed * 17;
+  for (let y = y0; y <= y1; row++) {
+    const t = (y - y0) / Math.max(1, y1 - y0);
+    const r = r0 + (r1 - r0) * t;
+    const step = r * 1.7;
+    for (let x = -r + ((row % 2) ? step / 2 : 0); x < 400 + r; x += step) {
+      k = (k * 1103515245 + 12345) & 0x7fffffff;
+      const jx = (k % 7) - 3, jy = ((k >> 4) % 5) - 2, rr = r * (0.9 + ((k >> 8) % 3) * 0.07);
+      const lit = Math.max(0, 1 - Math.abs(x - 200) / (90 + t * 40));
+      const fill = shadeHex(cols[k % cols.length], light + lit * 0.45);
+      out += `<circle cx="${(x + jx).toFixed(1)}" cy="${(y + jy).toFixed(1)}" r="${rr.toFixed(1)}" fill="${fill}" stroke="${o}" stroke-width="2"/><circle cx="${(x + jx - rr * 0.35).toFixed(1)}" cy="${(y + jy - rr * 0.35).toFixed(1)}" r="${(rr * 0.24).toFixed(1)}" fill="#FFFFFF" opacity="${(0.08 + lit * 0.14).toFixed(2)}"/>`;
+    }
+    y += r * 1.15;
+  }
+  return out;
+}
 
 /* =============================================================
    5. BACKGROUNDS (inline SVG)
@@ -1299,8 +1668,8 @@ const BG = {
       ${planks}
       <rect x="110" y="32" width="180" height="92" fill="${PAL.Y}" stroke="${o}" stroke-width="3"/>
       <rect x="117" y="39" width="166" height="76" fill="${PAL.T}"/>
-      <text x="126" y="57" font-family="monospace" font-size="9" font-weight="700" fill="${PAL.c}">TODAY'S LESSON:</text>
-      <text x="126" y="76" font-family="monospace" font-size="14" font-weight="700" fill="${PAL.l}">MYSTERIES</text>
+      <text class="chalk-top" x="126" y="57" font-family="monospace" font-size="9" font-weight="700" fill="${PAL.c}">TODAY'S LESSON:</text>
+      <text class="chalk-main" x="126" y="76" font-family="monospace" font-size="14" font-weight="700" fill="${PAL.l}">MYSTERIES</text>
       <path d="M126 84 H198" stroke="${PAL.p}" stroke-width="2" stroke-dasharray="4 3"/>
       <rect x="206" y="70" width="20" height="34" fill="none" stroke="${PAL.c}" stroke-width="2"/>
       <circle cx="221" cy="88" r="1.8" fill="${PAL.c}"/>
@@ -1405,7 +1774,116 @@ const BG = {
     </svg>`;
   },
 
-  /* the cozy secret room (also used for the confession and endings) */
+  /* UNDERGROUND (darker, muted style): a giant kid's ball pit */
+  ballPit() {
+    const o = '#0B0D0C';
+    let bars = '';
+    for (let x = 6; x < 400; x += 19) bars += `<rect x="${x}" y="22" width="7" height="170" fill="#161B19"/><rect x="${x}" y="22" width="2" height="170" fill="#232A27"/>`;
+    // a hanging crib mobile (only on wide screens) and the back rows of balls
+    const mobile = ['#4E3F4A', '#3E5654', '#5A5236'].map((c, i) => {
+      const x = 318 + i * 26, l = 30 + (i % 2) * 18;
+      return `<path d="M${x} 6 V${l}" stroke="#2A2A2A" stroke-width="1.5"/><polygon points="${x},${l} ${x + 7},${l + 12} ${x},${l + 24} ${x - 7},${l + 12}" fill="${c}" stroke="${o}" stroke-width="2"/>`;
+    }).join('');
+    return `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="bpBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#151917"/><stop offset="1" stop-color="#0B0D0C"/></linearGradient>
+        <linearGradient id="bpCone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8C878" stop-opacity=".5"/><stop offset=".75" stop-color="#E8C878" stop-opacity=".08"/><stop offset="1" stop-color="#E8C878" stop-opacity="0"/></linearGradient>
+        <linearGradient id="bpWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A4744"/><stop offset="1" stop-color="#222B29"/></linearGradient>
+        <radialGradient id="bpVig" cx=".5" cy=".55" r=".72"><stop offset=".45" stop-color="#050707" stop-opacity="0"/><stop offset="1" stop-color="#050707" stop-opacity=".88"/></radialGradient>
+      </defs>
+      <rect width="400" height="300" fill="url(#bpBg)"/>
+      <rect x="0" y="16" width="400" height="9" fill="#161B19"/>
+      ${bars}
+      <path d="M318 6 H370" stroke="#2A2A2A" stroke-width="2"/>${mobile}
+      <!-- a giant, one-eyed teddy slumped against the pit -->
+      <g fill="#241F1D" stroke="${o}" stroke-width="3">
+        <circle cx="86" cy="58" r="19"/><circle cx="160" cy="52" r="19"/>
+        <ellipse cx="118" cy="196" rx="70" ry="58"/>
+        <circle cx="122" cy="100" r="52"/>
+      </g>
+      <circle cx="86" cy="58" r="8" fill="#1A1614"/><circle cx="160" cy="52" r="8" fill="#1A1614"/>
+      <ellipse cx="124" cy="116" rx="20" ry="15" fill="#2C2623" stroke="${o}" stroke-width="2"/>
+      <circle cx="102" cy="94" r="9" fill="#6E685C" stroke="${o}" stroke-width="2"/><circle cx="99" cy="91" r="2.5" fill="#A9A293"/>
+      <path d="M137 87 l12 12 M149 87 l-12 12" stroke="#5A3A2A" stroke-width="3"/>
+      <path d="M112 124 Q124 132 136 124" stroke="#5A3A2A" stroke-width="2.5" fill="none" stroke-dasharray="3 3"/>
+      <path d="M100 160 l8 10 M150 150 l-6 11" stroke="#5A3A2A" stroke-width="2.5"/>
+      <!-- an alphabet block, half sunk -->
+      <g transform="rotate(-9 300 168)">
+        <rect x="262" y="128" width="76" height="76" fill="#33332A" stroke="${o}" stroke-width="3"/>
+        <rect x="269" y="135" width="62" height="62" fill="none" stroke="#575035" stroke-width="3"/>
+        <text x="300" y="186" text-anchor="middle" font-family="monospace" font-size="46" font-weight="700" fill="#575035">A</text>
+      </g>
+      <!-- the soft padded wall of the pit -->
+      <rect x="-10" y="174" width="420" height="34" rx="10" fill="url(#bpWall)" stroke="${o}" stroke-width="3"/>
+      <path d="M-10 182 H410" stroke="#4B5A56" stroke-width="2"/>
+      <path d="M40 176 V206 M100 176 V206 M160 176 V206 M220 176 V206 M280 176 V206 M340 176 V206" stroke="#1B2321" stroke-width="2" stroke-dasharray="3 3"/>
+      <!-- one bare bulb, right above you -->
+      <path d="M200 0 V28" stroke="#2A2A2A" stroke-width="2"/>
+      <polygon points="191,36 209,36 300,300 100,300" fill="url(#bpCone)"/>
+      <circle cx="200" cy="34" r="22" fill="#F4D76A" opacity=".14"/>
+      <circle cx="200" cy="34" r="7" fill="#E8C878" stroke="${o}" stroke-width="1.5"/>
+      ${pitBalls(196, 236, 9, 13, 0.62, 1)}
+      <rect width="400" height="300" fill="url(#bpVig)"/>
+    </svg>`;
+  },
+  /* the front rows of the ball pit: same coordinates as ballPit(), drawn in front of the bunny */
+  ballPitFront() {
+    return `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+      <defs><radialGradient id="bpfVig" cx=".5" cy=".2" r=".9"><stop offset=".35" stop-color="#050707" stop-opacity="0"/><stop offset="1" stop-color="#050707" stop-opacity=".7"/></radialGradient></defs>
+      ${pitBalls(222, 312, 13, 19, 0.78, 2)}
+      <rect y="200" width="400" height="100" fill="url(#bpfVig)"/>
+    </svg>`;
+  },
+
+  /* UNDERGROUND: endless yellow "backrooms" hallways with an iron door at the end */
+  backrooms() {
+    const o = '#0E0D08';
+    const FL = 150, FR = 250, FT = 70, FB = 190;
+    const yTop = x => FT * x / FL;
+    const yBot = x => 300 - (300 - FB) * x / FL;
+    const pt = (x, f, right) => `${(right ? 400 - x : x).toFixed(1)},${(yTop(x) + (yBot(x) - yTop(x)) * f).toFixed(1)}`;
+    const quad = (x1, x2, f1, f2, right) => `${pt(x1, f1, right)} ${pt(x2, f1, right)} ${pt(x2, f2, right)} ${pt(x1, f2, right)}`;
+    let stripes = '';
+    for (let i = 1; i < 14; i++) {
+      const x = FL * (1 - Math.pow(0.8, i));
+      stripes += `<polyline points="${pt(x, 0)} ${pt(x, 1)}" stroke="#6A6038" stroke-width="1.4" fill="none"/>`;
+      stripes += `<polyline points="${pt(x, 0, true)} ${pt(x, 1, true)}" stroke="#5E5532" stroke-width="1.4" fill="none"/>`;
+    }
+    let openings = '';
+    [[22, 52], [92, 108], [128, 138]].forEach(([a, b]) => { openings += `<polygon points="${quad(a, b, 0.28, 1)}" fill="#14130C"/>`; });
+    [[34, 62], [104, 118]].forEach(([a, b]) => { openings += `<polygon points="${quad(a, b, 0.28, 1, true)}" fill="#14130C"/>`; });
+    let panels = '';
+    [[0.18, 70, 'a'], [0.45, 44, 'b'], [0.68, 26, 'c'], [0.85, 14, 'd']].forEach(([t, w, k]) => {
+      const y = FT * t;
+      panels += `<rect class="tube tube-${k}" x="${(200 - w / 2).toFixed(1)}" y="${(y - 2).toFixed(1)}" width="${w}" height="${(5 * (1 - t) + 2).toFixed(1)}" fill="#F3EDC2"/>`;
+    });
+    let stains = '';
+    [[150, 270, 34, 8], [262, 238, 22, 5], [196, 214, 16, 3]].forEach(([x, y, rx, ry]) => { stains += `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#3C3723" opacity=".8"/>`; });
+    return `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id="brGlow" cx=".5" cy=".2" r=".7"><stop offset="0" stop-color="#F3EDC2" stop-opacity=".22"/><stop offset="1" stop-color="#F3EDC2" stop-opacity="0"/></radialGradient>
+        <radialGradient id="brVig" cx=".5" cy=".5" r=".72"><stop offset=".4" stop-color="#070705" stop-opacity="0"/><stop offset="1" stop-color="#070705" stop-opacity=".85"/></radialGradient>
+      </defs>
+      <rect width="400" height="300" fill="#58512F"/>
+      <polygon points="0,0 400,0 ${FR},${FT} ${FL},${FT}" fill="#5C5534"/>
+      <polygon points="0,0 ${FL},${FT} ${FL},${FB} 0,300" fill="#7A6F44"/>
+      <polygon points="400,0 ${FR},${FT} ${FR},${FB} 400,300" fill="#6B6139"/>
+      ${stripes}
+      ${openings}
+      <polygon points="0,300 ${FL},${FB} ${FR},${FB} 400,300" fill="#4A4430"/>
+      ${stains}
+      <rect x="${FL}" y="${FT}" width="${FR - FL}" height="${FB - FT}" fill="#6E6440"/>
+      <rect x="178" y="104" width="44" height="86" fill="#3A2A20" stroke="${o}" stroke-width="2.5"/>
+      <rect x="183" y="110" width="34" height="74" fill="#4A3426" stroke="${o}" stroke-width="1.5"/>
+      <g fill="#7A5A40"><circle cx="187" cy="115" r="1.6"/><circle cx="213" cy="115" r="1.6"/><circle cx="187" cy="179" r="1.6"/><circle cx="213" cy="179" r="1.6"/></g>
+      <rect x="208" y="144" width="6" height="10" fill="#7A5A40" stroke="${o}" stroke-width="1"/>
+      ${panels}
+      <rect width="400" height="300" fill="url(#brGlow)"/>
+      <rect width="400" height="300" fill="url(#brVig)"/>
+    </svg>`;
+  },
+
+  /* the cozy secret room (seen again at the very end) */
   secret(romantic) {
     const o = PAL.o;
     let lights = '';
@@ -1496,26 +1974,33 @@ const BG = {
 const CAST = {
   principal: { name: 'PRINCIPAL', tag: 'tag-yellow', sprite: 'principal', portrait: m => principalSVG({ mood: m, crop: true }) },
   bunny:     { name: 'BUNNY',     tag: 'tag-pink',   sprite: 'bunny',     portrait: m => bunnySVG({ mood: m, crop: true }) },
-  revealed:  { name: () => BUNNY_NAME.toUpperCase(), tag: 'tag-pink revealed', sprite: 'bunny', portrait: m => bunnySVG({ mood: m, crop: true }) },
+  boy:       { name: () => BUNNY_NAME.toUpperCase(), tag: 'tag-pink revealed', sprite: 'bunny', portrait: m => boySVG({ mood: m, crop: true }) },
   ghost:     { name: 'GHOST',     tag: 'tag-teal',   sprite: 'ghost',     portrait: m => ghostSVG({ mood: m, crop: true }) },
+  cat:       { name: 'CAT',       tag: 'tag-cat',    sprite: 'cat',       portraitClass: 'dark', portrait: m => catSVG({ mood: m, crop: true }) },
   you:       { name: 'YOU',       tag: 'tag-mint',   portraitClass: 'you', portrait: () => pixelSVG('magnifier') },
-  mystery:   { name: '???', tag: 'tag-teal', portraitClass: 'dark', portrait: () => eyesPortrait() },
+  mystery:   { name: '???',       tag: 'tag-teal',   portraitClass: 'dark', portrait: () => eyesPortrait() },
   narration: { name: '', narration: true }
 };
+const GLITCH_GHOST = 'G̷H̶O̸S̵T̴';   // a "corrupted" name tag
 
-// x / y = center of each clue in the classroom, in percent.
+// x / y = center of each clue in the classroom, in percent. `label` is shown once it is collected.
 const CLUES = [
-  { id: 'mango',    name: 'Mango',         x: 20,   y: 63.5,
-    lines: [{ who: 'you', text: "A sweet clue! Someone seems to like these." }] },
-  { id: 'banana',   name: 'Banana',        x: 89,   y: 39,
-    lines: [{ who: 'you', text: "Another piece of evidence. How suspicious!" }] },
-  { id: 'sticker',  name: 'Heart sticker', x: 65,   y: 17.5,
+  { id: 'mango',    name: 'Mango',         label: 'MANGO',    x: 20,   y: 63.5,
+    lines: [{ who: 'you', text: "A sweet clue! Someone seems to like these." },
+            { who: 'you', text: "...It's perfectly ripe. But the sticker on it is dated twenty years ago." }] },
+  { id: 'banana',   name: 'Banana',        label: 'BANANA',   x: 89,   y: 39,
+    lines: [{ who: 'you', text: "Another piece of evidence. How suspicious!" },
+            { who: 'you', text: "Someone scratched tiny tally marks into the peel. Hundreds of them. Like they were counting days." }] },
+  { id: 'sticker',  name: 'Heart sticker', label: 'STICKER',  x: 65,   y: 17.5,
     lines: [{ who: 'you', text: "A heart? Hm. Strange." },
+            { who: 'you', text: "There's a name scratched out underneath it. You can't read it anymore." },
             { who: 'bunny', mood: 'nervous', text: "Ha ha... yep. Super strange. Let's keep looking!" }] },
-  { id: 'notebook', name: 'Notebook',      x: 62.5, y: 63.5,
-    lines: [{ who: 'you', text: "There's a mysterious note inside: 'The truth is waiting behind the last door.'" }] },
-  { id: 'plushie',  name: 'Bunny plushie', x: 13.5, y: 15.5,
+  { id: 'notebook', name: 'Notebook',      label: 'NOTEBOOK', x: 62.5, y: 63.5,
+    lines: [{ who: 'you', text: "There's a mysterious note inside: 'The truth is waiting behind the last door.'" },
+            { who: 'you', glitch: true, text: "Every page after that says the same thing, over and over: 'Don't forget me.'" }] },
+  { id: 'plushie',  name: 'Bunny plushie', label: 'PLUSHIE',  x: 13.5, y: 15.5,
     lines: [{ who: 'you', text: "Wait... this looks awfully familiar." },
+            { who: 'you', text: "Its stitched smile is torn on one side. For a second, you could swear it blinked." },
             { who: 'bunny', mood: 'nervous', text: "N-never seen it before in my life!" }] }
 ];
 
@@ -1524,11 +2009,15 @@ const SCRIPT = {
     { who: 'principal', mood: 'wave', text: "Welcome, detective! I heard you were interested in the strange rumor spreading around our school.", on: () => playAnim('principal', 'hop', 520) },
     { who: 'principal', mood: 'smile', text: "Apparently, there's a hidden room somewhere in the building." },
     { who: 'principal', mood: 'smile', text: "Some students claim a mysterious bunny guards the entrance." },
-    { who: 'principal', mood: 'wink', text: "Sounds silly, doesn't it?" },
+    { who: 'principal', mood: 'smile', text: "Others say the students who went looking for it... never came back." },
+    { who: 'principal', mood: 'smile', text: "Sounds silly, doesn't it?" },
+    { who: 'narration', text: "She keeps smiling. She doesn't blink. Not even once." },
     { who: 'principal', mood: 'wave', text: "Well, I suppose you'll find out for yourself." },
+    { who: 'principal', mood: 'smile', glitch: true, text: "Oh, and detective? Try to leave before the last bell rings.", on: () => Sound.play('bell') },
     { who: 'narration', text: "The principal gives a little wave and strolls off down the hall...", on: principalLeaves },
     { who: 'bunny', mood: 'excited', text: "Ah! So you're the detective!", on: bunnyAppears },
     { who: 'bunny', mood: 'smug', text: "I was waiting for someone curious enough to investigate." },
+    { who: 'bunny', mood: 'soft', speed: 1.4, text: "...I've been waiting for a really, really long time." },
     { who: 'bunny', mood: 'happy', text: "Don't worry. I'll help you." },
     { who: 'bunny', mood: 'normal', text: "Let's look around, shall we?" }
   ],
@@ -1536,10 +2025,15 @@ const SCRIPT = {
     { who: 'bunny', mood: 'smug', text: "This classroom is where the rumor started. Let's search for clues!" },
     { who: 'bunny', mood: 'happy', text: "Tap anything that sparkles. I bet there are five clues hiding in here." }
   ],
-  allFound: { who: 'bunny', mood: 'excited', text: "That's all five clues! Nice work, detective. Press CONTINUE when you're ready." },
+  allFound: () => [
+    { who: 'bunny', mood: 'excited', text: "That's all five clues! Nice work, detective." },
+    { who: 'narration', glitch: true, text: "For just a second, the chalkboard says something else.", on: chalkGlitch },
+    { who: 'bunny', mood: 'nervous', text: "D-did you see that? ...N-never mind. Press CONTINUE when you're ready." }
+  ],
   bunnyPoke: [
     { who: 'bunny', mood: 'nervous', text: "H-hey! I'm not evidence... probably." },
-    { who: 'bunny', mood: 'smug', text: "Focus, detective! The clues sparkle. I just look cute." }
+    { who: 'bunny', mood: 'smug', text: "Focus, detective! The clues sparkle. I just look cute." },
+    { who: 'bunny', mood: 'soft', text: "Careful. Things in this school have a habit of... staring back." }
   ],
   haunting: () => [
     { who: 'narration', text: "As you close your case file, the lights begin to flicker...", on: () => { hauntLights(1, true); Sound.play('flicker'); } },
@@ -1550,7 +2044,9 @@ const SCRIPT = {
     { who: 'bunny', mood: 'nervous', text: "W-who's there?! Show yourself!", on: () => { ghostEyes(false); Sound.music(null); } },
     { who: 'ghost', mood: 'boo', speed: 0.7, text: "BOO!", on: ghostBoo },
     { who: 'ghost', mood: 'laugh', text: "Ahaha! Sorry, sorry. I couldn't resist.", on: () => { Sound.play('giggle'); Sound.music('haunt'); setSprite('bunny', { mood: 'nervous' }); } },
-    { who: 'ghost', mood: 'point', text: "Now then... let the mini class trial begin!" }
+    { who: 'ghost', mood: 'smirk', text: "You know... this school is hiding a big... dark... secret.", on: () => Sound.play('whisper') },
+    { who: 'ghost', mood: 'delight', text: "Want to know whose secret it is?~" },
+    { who: 'ghost', mood: 'point', text: "Then let the mini class trial begin!" }
   ],
   trialStart: () => [
     { who: 'ghost', mood: 'smirk', text: "Well, well... you've gathered quite a few clues." },
@@ -1562,44 +2058,105 @@ const SCRIPT = {
   },
   trialWin: () => [
     { who: 'ghost', mood: 'delight', text: "Well, well. You figured it out!" },
-    { who: 'ghost', mood: 'smirk', text: "Your final destination awaits." },
+    { who: 'you', text: "Is it really true, bunny?" },
+    { who: 'bunny', mood: 'nervous', text: "Don't listen to him, detective. Why should we trust a ghost?" },
+    { who: 'ghost', mood: 'laugh', text: "Ahaha! Well... you're kinda like a ghost yourself, aren't you, little bunny?~" },
+    { who: 'bunny', mood: 'shock', speed: 2.6, text: "......" },
+    { who: 'ghost', mood: 'smirk', glitch: true, text: "Your final destination awaits.", on: () => { Sound.corrupt(1.2); } },
     { who: 'ghost', mood: 'point', text: "Go on, detective." }
-  ],
-  secret: () => [
-    { who: 'bunny', mood: 'soft', text: "Well... we finally made it." },
-    { who: 'bunny', mood: 'normal', text: "I guess this is where the rumor ends." },
-    { who: 'bunny', mood: 'blush', text: "There's something I've wanted to tell you." },
-    { who: 'narration', speed: 1.6, text: "The bunny takes a deep breath.", on: () => { playAnim('bunny', 'breath', 1700); Sound.play('breath'); } }
-  ],
-  confession: () => [
-    { who: 'bunny', mood: 'soft', text: "You solved the mystery." },
-    { who: 'bunny', mood: 'blush', text: "But there was one secret I couldn't put into a clue." },
-    { who: 'bunny', mood: 'nervous', text: "I guess I should introduce myself properly." },
-    { who: 'bunny', mood: 'happy', speed: 2.2, text: `My name is ${BUNNY_NAME}.`, on: revealName },
-    { who: 'revealed', mood: 'blush', text: "I made this little mystery because I've wanted to tell you how I feel for a while now." },
-    { who: 'revealed', mood: 'blush', speed: 2.4, text: `I like you, ${PLAYER_NAME}!`, on: likeYou },
-    { who: 'revealed', mood: 'hopeful', speed: 1.4, text: "Would you like to go out with me?" }
-  ],
-  happy: () => [
-    { who: 'revealed', mood: 'excited', prop: 'cheer', speed: 0.8, text: "WAIT... REALLY?!", on: () => { playAnim('bunny', 'jump', 1250); Sound.play('yay'); } },
-    { who: 'revealed', mood: 'love', prop: 'cheer', text: "YOU JUST UNLOCKED THE BEST ENDING!", on: () => { playAnim('bunny', 'jump', 1250); heartPulse(); } },
-    { who: 'principal', mood: 'wave', text: `Congratulations, ${PLAYER_NAME} and ${BUNNY_NAME}! So THAT's what the hidden room was for.`, on: castJoin },
-    { who: 'ghost', mood: 'delight', text: "What a wonderful ending! Best case I've ever haunted." }
-  ],
-  honest: () => [
-    { who: 'revealed', mood: 'soft', text: "Thank you for hearing me out." },
-    { who: 'revealed', mood: 'happy', text: "I'm happy I got to tell you how I feel." },
-    { who: 'revealed', mood: 'soft', text: "I hope we can still be friends." },
-    { who: 'principal', mood: 'smile', text: `That took real courage, ${BUNNY_NAME}. And thank you for being honest, ${PLAYER_NAME}.`, on: castJoin },
-    { who: 'ghost', mood: 'smirk', text: "Every good case deserves an honest ending. You two still make a great team." }
   ],
   lastDoor: () => [
     { who: 'narration', text: "The ghost floats ahead, leading you both down a hallway you've never seen before...", on: () => Sound.play('steps') },
     { who: 'ghost', mood: 'point', text: "Every rumor ends somewhere. And this one ends... right over there.", on: () => { doorLevel(1); Sound.play('shimmer'); } },
     { who: 'narration', text: "At the very end of the hall waits a single door. A warm light spills out from underneath it." },
     { who: 'bunny', mood: 'nervous', text: "Th-this is it... the last door." },
-    { who: 'ghost', mood: 'delight', text: "My work here is done. Good luck, you two~", on: ghostVanish },
+    { who: 'ghost', mood: 'smirk', text: "Go on. I'll be right behind you~" },
     { who: 'bunny', mood: 'excited', text: "Okay, detective. Let's open it together. On the count of three!" }
+  ],
+  trap: () => [
+    { who: 'narration', glitch: true, text: "The door swings open... onto nothing. No room. No light. Just a cold, black drop." },
+    { who: 'bunny', mood: 'shock', text: "W-wait... there's no floor! There's nothing in here!" },
+    { who: 'ghost', name: GLITCH_GHOST, mood: 'sinister', text: "Ahaha... You really trusted a ghost? How adorable.", on: ghostLoom },
+    { who: 'ghost', name: GLITCH_GHOST, mood: 'sinister', text: "Sorry, detective. Nobody reaches the REAL last door that easily." },
+    { who: 'ghost', name: GLITCH_GHOST, mood: 'sinister', speed: 1.3, text: "Enjoy the fall~" }
+  ],
+  fall: () => [
+    { who: 'bunny', mood: 'shock', speed: 0.6, text: "AAAAAAAAAAAH!!" },
+    { who: 'narration', text: "You fall. And fall. Past broken desks, old toys, and clocks with no hands..." },
+    { who: 'narration', text: "The colors drain away. The air turns cold and heavy.", on: () => current && current.classList.add('drained') },
+    { who: 'narration', speed: 2.4, text: "Down... down... down..." }
+  ],
+  ballPit: () => [
+    { who: 'narration', speed: 1.4, text: "...THUMP." },
+    { who: 'narration', text: "You land in something soft. Thousands of faded plastic balls. A ball pit... but everything down here is enormous." },
+    { who: 'bunny', mood: 'nervous', text: "Ow, ow, ow... Detective! Are you okay?!" },
+    { who: 'bunny', mood: 'nervous', text: "That ghost tricked us! That door was a trap the whole time!" },
+    { who: 'narration', text: "High above, the hole you fell through quietly seals itself shut." },
+    { who: 'bunny', mood: 'nervous', text: "Where... are we? Everything is so big. And so... quiet." },
+    { who: 'narration', text: "Somewhere in the dark, a giant music box plays a broken lullaby." },
+    { who: 'bunny', mood: 'soft', text: "Let's get out of here. Stay close to me, okay?" }
+  ],
+  backrooms: () => [
+    { who: 'narration', text: "You crawl out of the ball pit, squeeze through a tiny door... and step into endless yellow hallways." },
+    { who: 'narration', text: "The lights buzz. The carpet is damp. Every hallway looks exactly the same." },
+    { who: 'bunny', mood: 'nervous', text: "This place... I've seen it before. I know I have." },
+    { who: 'bunny', mood: 'hurt', prop: 'head', text: "Agh—! My head...!", on: headache },
+    { who: 'narration', glitch: true, text: "— a classroom in warm afternoon light —", on: () => memoryFlash('classroom') },
+    { who: 'narration', glitch: true, text: "— a folded letter, unfolded a hundred times —", on: () => memoryFlash('letter') },
+    { who: 'narration', glitch: true, text: "— a name that was too scary to say out loud —", on: () => memoryFlash('name') },
+    { who: 'bunny', mood: 'hurt', prop: null, text: "I remember... something important. But it keeps slipping away..." },
+    { who: 'narration', text: "Then, deep in the shadows, two little yellow eyes blink open.", on: catEyes },
+    { who: 'cat', mood: 'normal', text: "Mrrrow. Lost, are we?", on: catAppear },
+    { who: 'bunny', mood: 'shock', text: "A t-talking cat?!" },
+    { who: 'cat', mood: 'smug', text: "I know what you're looking for, detective." },
+    { who: 'cat', mood: 'smug', text: "Follow me. And whatever you do... don't look back." },
+    { who: 'narration', text: "The cat pads ahead through hallway after identical hallway... until you reach a heavy iron door.", on: catWalk },
+    { who: 'cat', mood: 'grin', glitch: true, text: "In here. What you want is waiting at the very top." },
+    { who: 'narration', text: "You step inside. The bunny follows close behind you." }
+  ],
+  obbyIntro: () => [
+    { who: 'narration', speed: 1.2, text: "SLAM!", on: () => { Sound.play('slam'); shakeScene(); } },
+    { who: 'bunny', mood: 'shock', text: "The door! It's locked! We're trapped in here!" },
+    { who: 'narration', text: "You look up. A tower of floating blocks climbs high into the dark... and at the very top, a door glows with warm light." },
+    { who: 'cat', mood: 'grin', glitch: true, text: "Climb, little detective. Climb before it's too late~" },
+    { who: 'bunny', mood: 'nervous', text: "There's no other way out. We have to climb." },
+    { who: 'bunny', mood: 'soft', text: "You go first, detective. I'll be right behind you." }
+  ],
+  sacrifice: () => [
+    { who: 'narration', text: "You squeeze up through the narrow gap. Behind you, the stone around it begins to crack.", on: () => Sound.play('crumble') },
+    { who: 'bunny', mood: 'nervous', text: "D-detective... it's too narrow. Only one of us can fit through." },
+    { who: 'bunny', mood: 'soft', speed: 1.3, text: "...It's okay. You should go. This is why you're here, right?" },
+    { who: 'you', speed: 2, text: "..." },
+    { who: 'bunny', mood: 'happy', text: "Hey, don't make that face. Just promise me you won't look back." },
+    { who: 'narration', speed: 1.3, text: "The ledge crumbles. The lava rises to meet him... and the bunny keeps smiling until the very end.", on: () => Obby.engulf() },
+    { who: 'narration', text: "The gap seals shut. There's only one way left to go: up.", on: () => Obby.sealGap() }
+  ],
+  recollect: () => [
+    { who: 'narration', text: "The lock clicks open. But before you step through, you look back on everything..." },
+    { who: 'narration', text: "A strange rumor about a hidden room.", on: () => polaroid('hallway') },
+    { who: 'narration', text: "Five little clues in an empty classroom.", on: () => polaroid('classroom') },
+    { who: 'narration', text: "A ghost, a trial, and a bunny who couldn't keep a secret.", on: () => polaroid('trial') },
+    { who: 'narration', text: "A door that turned out to be a trap.", on: () => polaroid('door') },
+    { who: 'narration', text: "A fall into a world where everything was far too big.", on: () => polaroid('ballpit') },
+    { who: 'narration', text: "A black cat who seemed to know everything.", on: () => polaroid('backrooms') },
+    { who: 'narration', speed: 1.3, text: "And a friend who told you not to look back.", on: () => polaroid('lava') },
+    { who: 'narration', speed: 1.8, text: "You take a deep breath...", on: () => { Sound.play('breath'); current && current.classList.add('breathe'); } },
+    { who: 'narration', speed: 1.5, text: "...and open the door." }
+  ],
+  finale: () => [
+    { who: 'bunny', mood: 'happy', text: "Hi, detective. You made it!", on: bunnyReturns },
+    { who: 'you', speed: 1.6, text: "...?!" },
+    { who: 'bunny', mood: 'soft', text: "Surprised? Lava can't hurt a soul, silly." },
+    { who: 'bunny', mood: 'soft', text: "I owe you the truth. My soul has been trapped inside this school for a long, long time." },
+    { who: 'bunny', mood: 'nervous', text: "Every rumor, every clue, every locked door... I was stuck here, waiting." },
+    { who: 'bunny', mood: 'soft', text: "Waiting for you. You're the only one who could set me free." },
+    { who: 'bunny', mood: 'nervous', text: "There's something I could never fit into a clue. So I wrote it down instead." },
+    { who: 'bunny', mood: 'happy', text: "Here. This is for you.", on: () => Sound.play('paper') }
+  ],
+  // after he transforms, his name finally shows up on his name tag (he never says it)
+  transform: () => [
+    { who: 'boy', mood: 'cheeky', text: "Hehe. Surprise~", on: () => { state.nameRevealed = true; } },
+    { who: 'narration', text: "He gives you one last cheeky smile... and then, just like that, he's gone.", on: boyVanish }
   ]
 };
 
@@ -1617,11 +2174,17 @@ function freshState() {
     trialComplete: false,    // correct answer given
     wrongAnswers: new Set(), // wrong answers tried
     selectedAnswer: null,    // last answer clicked in the trial
-    doorOpened: false,       // the last door has been opened
-    secretRoomSeen: false,   // secret room dialogue finished
-    nameRevealed: false,     // true after the confession reveal
-    confessionAnswered: false,
-    ending: null,            // 'happy' | 'honest'
+    doorOpened: false,       // the (fake) last door has been opened
+    trapSprung: false,       // the ghost pushed you
+    fallen: false,           // the fall is over
+    landed: false,           // ball pit scene finished
+    backroomsDone: false,    // followed the cat into the chamber
+    sacrificed: false,       // the bunny stayed behind in the tower
+    codeTries: 0,            // wrong door codes entered
+    codeOK: false,           // tower door unlocked
+    recollected: false,      // memory montage finished
+    nameRevealed: false,     // true after the name reveal
+    finished: false,         // reached THE END
     busy: false              // true during transitions / short animations
   };
 }
@@ -1655,7 +2218,7 @@ const Sound = (() => {
   let ctx = null, master = null, sfxBus = null, musicBus = null, noiseBuf = null;
   let enabled = true;
   try { if (localStorage.getItem('torei-sound') === 'off') enabled = false; } catch (e) { /* storage may be blocked */ }
-  let track = null, trackName = null, step = 0, nextTime = 0, sched = null;
+  let track = null, trackName = null, step = 0, nextTime = 0, sched = null, corruptUntil = 0;
 
   const SEMI = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
   function nf(name) {
@@ -1787,6 +2350,28 @@ const Sound = (() => {
     count1()   { countHit([220, 277, 330]); },
     count2()   { countHit([247, 311, 370]); },
     count3()   { countHit([277, 349, 415]); noise({ freq: 5000, dur: 1.4, vol: 0.09, attack: 0.01 }); },
+    glitch()   { for (let i = 0; i < 5; i++) { noise({ filter: 'bandpass', freq: 400 + Math.random() * 4000, q: 6, dur: 0.05, vol: 0.11, delay: i * 0.045 }); tone({ type: 'square', freq: 80 + Math.random() * 900, dur: 0.04, vol: 0.025, delay: i * 0.05 }); } },
+    bell()     { tone({ type: 'sine', freq: 659, dur: 1.6, vol: 0.06 }); tone({ type: 'sine', freq: 523, dur: 1.8, vol: 0.06, delay: 0.55 }); tone({ type: 'sine', freq: 1318, dur: 0.8, vol: 0.015 }); },
+    trapdoor() { tone({ type: 'sine', freq: 70, slide: 35, dur: 1.3, vol: 0.4 }); noise({ filter: 'lowpass', freq: 420, slide: 90, dur: 1.5, vol: 0.2, attack: 0.3 }); tone({ type: 'triangle', freq: 150, slide: 90, dur: 0.7, vol: 0.1 }); },
+    push()     { noise({ filter: 'bandpass', freq: 500, slide: 2600, q: 1, dur: 0.35, vol: 0.2 }); tone({ type: 'triangle', freq: 300, slide: 110, dur: 0.3, vol: 0.12 }); },
+    fallwind() { noise({ filter: 'bandpass', freq: 500, slide: 1400, q: 0.7, dur: 4.6, vol: 0.13, attack: 0.6 }); tone({ type: 'sine', freq: 1100, slide: 200, dur: 2.4, vol: 0.035 }); },
+    thump()    { tone({ type: 'sine', freq: 90, slide: 40, dur: 0.5, vol: 0.55 }); noise({ filter: 'lowpass', freq: 600, dur: 0.35, vol: 0.3 }); for (let i = 0; i < 9; i++) tone({ type: 'triangle', freq: 300 + Math.random() * 500, dur: 0.06, vol: 0.05, delay: 0.1 + i * 0.05 }); },
+    headache() { tone({ type: 'sine', freq: 3200, dur: 2.2, vol: 0.03, attack: 0.3 }); [0, 0.5, 1.0].forEach(d => tone({ type: 'triangle', freq: 72, slide: 50, dur: 0.3, vol: 0.4, delay: d })); },
+    memory()   { noise({ filter: 'highpass', freq: 3000, dur: 0.9, vol: 0.05, attack: 0.7 }); arp([1568, 1175, 1397, 988], 0.09, { type: 'sine', dur: 0.6, vol: 0.05 }); },
+    meow()     { tone({ type: 'triangle', freq: 620, slide: 980, dur: 0.18, vol: 0.12 }); tone({ type: 'triangle', freq: 980, slide: 560, dur: 0.32, vol: 0.12, delay: 0.17 }); },
+    slam()     { tone({ type: 'sine', freq: 80, slide: 35, dur: 0.9, vol: 0.6 }); noise({ filter: 'lowpass', freq: 1800, slide: 200, dur: 0.6, vol: 0.4 }); tone({ type: 'square', freq: 210, slide: 190, dur: 0.6, vol: 0.035 }); tone({ type: 'square', freq: 317, slide: 300, dur: 0.6, vol: 0.025 }); },
+    alarm()    { [0, 0.45, 0.9].forEach(d => { tone({ type: 'square', freq: 880, dur: 0.2, vol: 0.055, delay: d }); tone({ type: 'square', freq: 660, dur: 0.2, vol: 0.055, delay: d + 0.21 }); }); },
+    jump()     { tone({ type: 'square', freq: 330, slide: 640, dur: 0.09, vol: 0.04 }); },
+    land()     { noise({ filter: 'lowpass', freq: 500, dur: 0.05, vol: 0.1 }); },
+    burn()     { noise({ filter: 'lowpass', freq: 900, slide: 200, dur: 0.7, vol: 0.22 }); arp([523, 415, 330, 262], 0.12, { type: 'triangle', dur: 0.25, vol: 0.1 }); },
+    crumble()  { for (let i = 0; i < 10; i++) noise({ filter: 'lowpass', freq: 300 + Math.random() * 900, dur: 0.12, vol: 0.16, delay: i * 0.09 }); tone({ type: 'sine', freq: 60, slide: 35, dur: 1, vol: 0.3 }); },
+    crumbleSmall() { for (let i = 0; i < 4; i++) noise({ filter: 'lowpass', freq: 500 + Math.random() * 700, dur: 0.09, vol: 0.12, delay: i * 0.06 }); },
+    rattle()   { [0, 0.11, 0.2, 0.34].forEach(d => { noise({ filter: 'bandpass', freq: 1800, q: 3, dur: 0.05, vol: 0.14, delay: d }); tone({ type: 'square', freq: 190, dur: 0.04, vol: 0.03, delay: d }); }); },
+    beep()     { tone({ type: 'square', freq: 1046, dur: 0.06, vol: 0.045 }); },
+    denied()   { tone({ type: 'square', freq: 180, dur: 0.18, vol: 0.07 }); tone({ type: 'square', freq: 140, dur: 0.3, vol: 0.07, delay: 0.18 }); },
+    unlock()   { tone({ type: 'square', freq: 440, dur: 0.05, vol: 0.05 }); arp([784, 988, 1175, 1568, 2093], 0.07, { type: 'triangle', h: 0.3, dur: 0.45, vol: 0.12, delay: 0.12 }); },
+    paper()    { noise({ filter: 'bandpass', freq: 3500, q: 1.2, dur: 0.35, vol: 0.07, attack: 0.05 }); noise({ filter: 'bandpass', freq: 2500, q: 1.2, dur: 0.25, vol: 0.05, delay: 0.25 }); },
+    transform(){ noise({ filter: 'bandpass', freq: 600, slide: 5000, q: 0.8, dur: 1.6, vol: 0.09, attack: 1.2 }); arp([523, 659, 784, 1047, 1319, 1568, 2093, 2637], 0.11, { type: 'triangle', h: 0.3, dur: 0.6, vol: 0.09 }); },
     doorOpen() {
       tone({ type: 'triangle', freq: 160, slide: 95, dur: 0.6, vol: 0.12 });
       noise({ filter: 'bandpass', freq: 300, slide: 4200, q: 0.9, dur: 1.4, vol: 0.13, attack: 1.0 });
@@ -1828,12 +2413,12 @@ const Sound = (() => {
       { notes: sparse(n, twinkle), type: 'sine', vol: 0.05, len: 3 }
     ] };
   }
+  const TITLE_MELODY = 'E5 - G5 E5 C5 - D5 E5 | C5 - A4 - E5 - D5 C5 | A4 - C5 F5 E5 - C5 A4 | B4 - D5 - G5 - F5 D5 | E5 G5 C6 - B5 G5 E5 G5 | A5 - E5 - C5 E5 A5 G5 | F5 E5 F5 A5 G5 F5 D5 B4 | C5 - G4 - C5 - - -';
   const CONFESS_ARP = { A: 'A2 E3 A3 C#4 A3 E3', A7: 'A2 E3 G3 C#4 G3 E3', D: 'D3 A3 D4 F#4 D4 A3', Dm: 'D3 A3 D4 F4 D4 A3' };
   const CONFESS_CHORDS = ['A', 'A', 'A', 'A7', 'D', 'Dm', 'A', 'A'];   // I  I  I  I7 | IV  iv  I  I
 
   const TRACKS = {
-    title: cheerful(0.22,
-      'E5 - G5 E5 C5 - D5 E5 | C5 - A4 - E5 - D5 C5 | A4 - C5 F5 E5 - C5 A4 | B4 - D5 - G5 - F5 D5 | E5 G5 C6 - B5 G5 E5 G5 | A5 - E5 - C5 E5 A5 G5 | F5 E5 F5 A5 G5 F5 D5 B4 | C5 - G4 - C5 - - -',
+    title: cheerful(0.22, TITLE_MELODY,
       ['C', 'C', 'Am', 'Am', 'F', 'F', 'G', 'G', 'C', 'C', 'Am', 'Am', 'F', 'G', 'C', 'C'],
       { 7: 'G6', 23: 'D6', 39: 'E6', 55: 'B5', 61: 'C7' }),
     school: cheerful(0.24,
@@ -1853,10 +2438,6 @@ const Sound = (() => {
         type: 'sine', vol: 0.03, len: 8, attack: 0.35 },
       { notes: sparse(64, { 15: 'G#6', 47: 'C#7', 62: 'G#6' }), type: 'sine', vol: 0.03, len: 4 }
     ] },
-    room: { step: 0.37, bar: 8, perc: {}, voices: [
-      { notes: seq('F5 A5 C6 A5 F5 A5 C6 A5 | E5 G5 C6 G5 E5 G5 C6 G5 | D5 F5 A5 F5 D5 F5 A5 F5 | C5 E5 G5 B5 C6 - - -'), type: 'triangle', h: 0.2, vol: 0.1, len: 2.6 },
-      { notes: seq('F3 - - - C4 - - - | E3 - - - C4 - - - | D3 - - - A3 - - - | C3 - - - G3 - - -'), type: 'sine', vol: 0.18, len: 6 }
-    ] },
     // 6/8 piano ballad on the I - I - I - I7 - IV - iv - I - I progression, with an original melody
     confess: { step: 0.3, bar: 6, perc: {}, voices: [
       { notes: seq('E5 - - C#5 - D5 | E5 - - A4 - - | C#5 - B4 A4 - B4 | C#5 - - G4 - - | F#5 - - E5 - D5 | F5 - - E5 - D5 | C#5 - - E5 - - | A4 - - - - - | ' +
@@ -1864,13 +2445,31 @@ const Sound = (() => {
         type: 'triangle', h: 0.35, vol: 0.13, len: 3.2 },
       { notes: seq(CONFESS_CHORDS.concat(CONFESS_CHORDS).map(c => CONFESS_ARP[c]).join(' ')), type: 'triangle', h: 0.2, vol: 0.055, len: 2.4 }
     ] },
-    happy: cheerful(0.2,
-      'G5 - B5 G5 D5 - G5 B5 | A5 - F#5 D5 A4 - D5 F#5 | E5 - G5 E5 C5 - E5 G5 | F#5 E5 D5 C5 B4 - A4 - | G4 B4 D5 G5 B5 - A5 G5 | E5 - G5 - C6 - B5 A5 | B5 A5 G5 F#5 E5 - F#5 A5 | G5 - D5 - G5 - - -',
-      ['G', 'G', 'D', 'D', 'C', 'C', 'D', 'D', 'G', 'G', 'C', 'C', 'Em', 'D', 'G', 'G'],
-      { 7: 'D7', 15: 'A6', 39: 'G6', 63: 'B6' }, { hat: true, kick: [0, 4], clap: [2, 6] }),
-    honest: { step: 0.42, bar: 8, perc: {}, voices: [
-      { notes: seq('A4 C5 E5 C5 A4 C5 E5 - | F4 A4 C5 A4 F4 A4 C5 - | C5 E5 G5 E5 C5 E5 G5 - | G4 B4 D5 B4 G4 - - -'), type: 'sine', vol: 0.14, len: 2.6 },
-      { notes: seq('A2 - - - E3 - - - | F2 - - - C3 - - - | C3 - - - G3 - - - | G2 - - - D3 - - -'), type: 'sine', vol: 0.16, len: 6 }
+    // the giant ball pit: a broken, out-of-tune lullaby
+    under: { step: 0.45, bar: 8, perc: {}, voices: [
+      { notes: seq('G5 - E5 - C5 - E5 - | F5 - D5 - B4 - - - | E5 - C5 - A4 - C5 - | D5 - - - G4 - - -'), type: 'triangle', h: 0.3, vol: 0.09, len: 3, wobble: 40 },
+      { notes: seq('C3+G3 - - - - - - - | G2+D3 - - - - - - - | A2+E3 - - - - - - - | G2+D3 - - - - - - -'), type: 'sine', vol: 0.06, len: 8, attack: 0.5 }
+    ] },
+    // the backrooms: fluorescent hum + lonely piano
+    backrooms: { step: 0.5, bar: 8, perc: {}, voices: [
+      { notes: seq('B2 - - - - - - - | B2 - - - - - - - | B2 - - - - - - - | B2 - - - - - - -'), type: 'sawtooth', vol: 0.012, len: 8.3, attack: 0.3 },
+      { notes: seq('D5 - - - - - - - | - - - - C#5 - - - | - - - - - - - - | F5 - - - E5 - - -'), type: 'triangle', h: 0.25, vol: 0.07, len: 5, wobble: 25 },
+      { notes: seq('B3+F4 - - - - - - - | - - - - - - - - | A#3+E4 - - - - - - - | - - - - - - - -'), type: 'sine', vol: 0.035, len: 8, attack: 0.6 }
+    ] },
+    // the tower: tense and fast once the lava starts rising
+    obby: { step: 0.16, bar: 8, perc: { hat: true, kick: [0, 4] }, voices: [
+      { notes: seq('A2 A2 A3 A2 A2 A2 G3 A2 | F2 F2 F3 F2 F2 F2 E3 F2 | G2 G2 G3 G2 G2 G2 F3 G2 | E2 E2 E3 E2 G#2 G#2 B2 E3'), type: 'triangle', vol: 0.15, len: 0.8 },
+      { notes: seq('A4 - C5 - E5 - D5 C5 | F5 - E5 - C5 - A4 - | G4 - B4 - D5 - C5 B4 | E5 - D5 - C5 - B4 G#4'), type: 'square', vol: 0.04, len: 1.4 }
+    ] },
+    // the narrow gap
+    sad: { step: 0.45, bar: 8, perc: {}, voices: [
+      { notes: seq('E5 - - D5 - - C5 - | B4 - - - - - - - | C5 - - B4 - - A4 - | G#4 - - - - - - -'), type: 'triangle', h: 0.35, vol: 0.12, len: 3.5 },
+      { notes: seq('A2+E3 - - - C4 - - - | E2+B2 - - - G#3 - - - | A2+E3 - - - C4 - - - | E2+B2 - - - D4 - - -'), type: 'sine', vol: 0.08, len: 4, attack: 0.05 }
+    ] },
+    // remembering: the title tune, slowed down into a music box
+    memory: { step: 0.42, bar: 8, perc: {}, voices: [
+      { notes: seq(TITLE_MELODY), type: 'sine', h: 0.2, vol: 0.09, len: 3.5 },
+      { notes: seq('C4 - - - - - - - | A3 - - - - - - - | F3 - - - - - - - | G3 - - - - - - - | C4 - - - - - - - | A3 - - - - - - - | F3 - - - G3 - - - | C4 - - - - - - -'), type: 'sine', vol: 0.06, len: 8, attack: 0.3 }
     ] },
     // walking to the last door: driving octave pulse + rising bells
     hall: { step: 0.25, bar: 8, perc: { hat: true, kick: [0, 4] }, voices: [
@@ -1900,7 +2499,15 @@ const Sound = (() => {
       for (const v of track.voices) {
         const tok = v.notes[step % v.notes.length];
         if (tok && tok !== '-') {
-          tok.split('+').forEach(n => tone({ at: nextTime, type: v.type, freq: nf(n), dur: sd * v.len, vol: v.vol, h: v.h, attack: v.attack || 0.006, bus: musicBus }));
+          tok.split('+').forEach(n => {
+            let f = nf(n);
+            if (v.wobble) f *= Math.pow(2, (Math.random() * 2 - 1) * v.wobble / 1200);   // slightly out of tune
+            if (corruptUntil > nextTime) {                                                 // "corrupted" music
+              if (Math.random() < 0.3) return;
+              f *= Math.pow(2, (Math.random() * 2 - 1) * 0.09);
+            }
+            tone({ at: nextTime, type: v.type, freq: f, dur: sd * v.len, vol: v.vol, h: v.h, attack: v.attack || 0.006, bus: musicBus });
+          });
         }
       }
       const p = track.perc || {}, b = step % (track.bar || 8);
@@ -1948,14 +2555,15 @@ const Sound = (() => {
     if (hidden) { stopMusic(); if (ctx.state === 'running') ctx.suspend(); }
     else if (enabled) { ctx.resume(); if (track) startMusic(); }
   }
-  return { play, music, duck, unlock, setEnabled, pageHidden, get enabled() { return enabled; }, _tracks: TRACKS };
+  function corrupt(sec) { if (ctx) corruptUntil = ctx.currentTime + sec; }
+  return { play, music, duck, corrupt, unlock, setEnabled, pageHidden, get enabled() { return enabled; }, _tracks: TRACKS };
 })();
 
 // Which music loop plays in each scene (null = silence).
 const SCENE_MUSIC = {
   title: 'title', intro: 'school', investigation: 'school', haunting: null, trial: 'trial', lastDoor: 'hall',
-  // after the door opens, only the ballad plays (it carries on without restarting)
-  secretRoom: 'confess', confession: 'confess', happyEnding: 'confess', honestEnding: 'confess'
+  fall: null, ballPit: 'under', backrooms: 'backrooms', obby: null, recollect: 'memory',
+  finale: 'confess'   // behind the real last door, only the ballad plays
 };
 
 function soundIcon(on) {
@@ -2102,7 +2710,14 @@ const Dialogue = (() => {
     el.addEventListener('click', e => { if (e.target.closest('.dlg-next')) return; advance(); });
     nextBtn.addEventListener('click', e => { e.stopPropagation(); advance(); });
   }
-  function mount(container) { if (!el) build(); container.appendChild(el); }
+  function mount(container) {
+    if (!el) build();
+    if (!active && !lines.length) {   // don't carry the previous scene's last line into a new scene
+      textEl.textContent = ''; nameTxt.textContent = ''; portraitEl.innerHTML = '';
+      nameEl.className = 'dlg-name'; el.classList.add('narration'); el.classList.add('static');
+    }
+    container.appendChild(el);
+  }
   function unmount() { stop(); if (el) el.remove(); }
   function stop() {
     clearTimeout(timer); timer = null;
@@ -2132,21 +2747,24 @@ const Dialogue = (() => {
   function firePending() { const cb = pendingHold; pendingHold = null; if (cb) cb(); }
   function render(line, advanceable) {
     const cast = CAST[line.who] || CAST.narration;
-    const name = typeof cast.name === 'function' ? cast.name() : cast.name;
+    const name = line.name != null ? line.name : (typeof cast.name === 'function' ? cast.name() : cast.name);
     el.classList.toggle('narration', !!cast.narration);
     el.classList.toggle('static', !advanceable);
-    nameEl.className = 'dlg-name ' + (cast.tag || '');
+    nameEl.className = 'dlg-name ' + (line.tag || cast.tag || '') + (line.glitch || line.name ? ' glitchy' : '');
     nameTxt.textContent = name || '';
     if (cast.sprite && (line.mood || line.prop !== undefined)) setSprite(cast.sprite, { mood: line.mood, prop: line.prop });
     const mood = line.mood || (cast.sprite && sprites[cast.sprite] ? sprites[cast.sprite].mood : undefined);
     portraitEl.className = 'dlg-portrait ' + (cast.portraitClass || '');
     portraitEl.innerHTML = cast.portrait ? cast.portrait(mood) : '';
-    announce((name ? name + ': ' : '') + line.text);
+    announce((name ? name.replace(/[\u0300-\u036f]/g, '') + ': ' : '') + line.text);
     shownAt = performance.now();
-    type(line.text, line.speed || 1);
+    if (line.glitch) { glitchFx(); Sound.play('glitch'); }
+    type(line.text, line.speed || 1, !!line.glitch);
   }
   // Typewriter: one letter at a time, a key click per letter, little pauses after punctuation.
-  function type(str, speed) {
+  const JUNK = '▓▒░#%&@$*';
+  const junk = () => JUNK[Math.floor(Math.random() * JUNK.length)] + JUNK[Math.floor(Math.random() * JUNK.length)];
+  function type(str, speed, glitchy) {
     clearTimeout(timer);
     fullText = str;
     if (REDUCED || TYPE_SPEED_MS <= 0) { textEl.textContent = str; typing = false; el.classList.remove('typing'); return; }
@@ -2158,7 +2776,7 @@ const Dialogue = (() => {
     textEl.textContent = '';
     const tick = () => {
       i++;
-      textEl.textContent = chars.slice(0, i).join('');
+      textEl.textContent = chars.slice(0, i).join('') + (glitchy && i < chars.length ? junk() : '');
       const ch = chars[i - 1], nx = chars[i];
       if (ch.trim() && (speed >= 1.8 || i % 2 === 1)) Sound.play('key');
       if (i >= chars.length) { finishTyping(); return; }
@@ -2230,11 +2848,6 @@ function bunnyAppears() {
   Sound.play('poof');
   later(() => burstAt(s.anim, { n: 12, kinds: ['sparkle', 'star'], spread: 110 }), 120);
 }
-function revealName(line) {
-  state.nameRevealed = true;
-  const at = Dialogue.index;
-  later(() => { if (Dialogue.index === at) Dialogue.flipName(BUNNY_NAME.toUpperCase()); }, 700);
-}
 function likeYou() {
   Sound.play('heartbeat');
   Sound.duck(0.2, 3200);
@@ -2303,7 +2916,7 @@ function inspectClue(id, scene) {
 
   const seq = clue.lines.map(l => Object.assign({}, l));
   if (state.clues.size === CLUES.length) {
-    seq.push(Object.assign({}, SCRIPT.allFound));
+    SCRIPT.allFound().forEach(l => seq.push(l));
     unlockContinue(scene);
   }
   Dialogue.play(seq);
@@ -2313,7 +2926,11 @@ function flyToSlot(btn, id, scene) {
   const clue = CLUES.find(c => c.id === id);
   const fill = () => {
     slot.classList.add('filled');
-    slot.innerHTML = `${pixelSVG(id)}<span class="sr-only">${clue.name}: found</span>`;
+    slot.innerHTML = pixelSVG(id);
+    const lab = scene.querySelector(`[data-slot-label="${id}"]`);
+    if (lab) { lab.textContent = clue.label; lab.classList.add('found'); }
+    const sr = scene.querySelector(`[data-slot-sr="${id}"]`);
+    if (sr) sr.textContent = `${clue.name}: found`;
   };
   if (REDUCED) { fill(); return; }
   const g = root.getBoundingClientRect(), a = btn.getBoundingClientRect(), b = slot.getBoundingClientRect();
@@ -2386,6 +3003,7 @@ function answerTrial(who, scene) {
     setSprite('ghost', { mood: 'laugh' });
     playAnim('ghost', 'giggle', 650);
     Dialogue.say({ who: 'ghost', mood: 'laugh', text: SCRIPT.trialWrong[who] });
+    if (who === 'ghost') later(() => { glitchFx(scene.querySelector('.trial-ghost')); Sound.play('glitch'); }, 1400);
     return;
   }
 
@@ -2416,20 +3034,40 @@ function answerTrial(who, scene) {
   }, 1950);
 }
 
-/* ---- The last door ---- */
+/* ---- Creepy touches ---- */
+function glitchFx(target, ms = 520) {
+  if (REDUCED) return;
+  const t = target || current;
+  if (!t) return;
+  t.classList.remove('glitch'); void t.offsetWidth; t.classList.add('glitch');
+  const bars = document.createElement('div');
+  bars.className = 'glitch-bars';
+  bars.setAttribute('aria-hidden', 'true');
+  root.appendChild(bars);
+  setTimeout(() => { t.classList.remove('glitch'); bars.remove(); }, ms);
+}
+function shakeScene() {
+  if (REDUCED || !current) return;
+  current.classList.remove('shake'); void current.offsetWidth; current.classList.add('shake');
+}
+function chalkGlitch() {
+  Sound.corrupt(1.8);
+  const room = current && current.querySelector('[data-room]');
+  if (!room) return;
+  const top = room.querySelector('.chalk-top'), main = room.querySelector('.chalk-main');
+  if (!top || !main) return;
+  const a = top.textContent, b = main.textContent;
+  top.textContent = 'NO ONE';
+  main.textContent = 'LEAVES.';
+  room.classList.add('chalk-red');
+  later(() => { top.textContent = a; main.textContent = b; room.classList.remove('chalk-red'); }, 1200);
+}
+
+/* ---- The last door (it's a trap!) ---- */
 function doorLevel(n) {
   if (!current) return;
   current.classList.remove('lv1', 'lv2', 'lv3', 'lv4');
   current.classList.add('lv' + n);
-}
-function ghostVanish() {
-  const g = sprites.ghost;
-  if (!g) return;
-  later(() => {
-    burstAt(g.anim, { n: 12, kinds: ['sparkle', 'star'], spread: 120 });
-    Sound.play('vanish');
-    g.el.classList.add('vanish');
-  }, 900);
 }
 function doorCountdown(scene) {
   Sound.music(null);
@@ -2464,92 +3102,273 @@ function openDoor(scene) {
   if (state.busy || state.doorOpened || !scene.classList.contains('ready')) return;
   state.doorOpened = true;
   Sound.music(null);
-  Sound.play('doorOpen');
+  Sound.play('trapdoor');
   scene.querySelector('[data-door-btn]').hidden = true;
   scene.querySelector('[data-door-prompt]').hidden = true;
-  setSprite('bunny', { mood: 'happy' });
-  scene.classList.add('opened');
-  later(() => goTo('secretRoom', 'light'), REDUCED ? 500 : 1500);
+  scene.classList.add('trap');
+  setSprite('bunny', { mood: 'shock' });
+  later(() => {
+    Dialogue.mount(scene.querySelector('[data-dlg]'));
+    Dialogue.play(SCRIPT.trap(), () => springTrap(scene));
+  }, 1300);
+}
+function ghostLoom() {
+  Sound.music('haunt');
+  Sound.corrupt(20);
+  const g = sprites.ghost;
+  if (g) g.el.classList.add('loom');
+}
+function springTrap(scene) {
+  state.trapSprung = true;
+  Sound.play('push');
+  scene.classList.add('pushed');
+  later(() => goTo('fall', 'darkfade'), 650);
 }
 
-/* ---- Confession & endings ---- */
-function castJoin() {
-  let joined = false;
-  ['principal', 'ghost'].forEach((n, i) => {
-    const s = sprites[n];
-    if (!s || !s.el.classList.contains('is-hidden')) return;
-    joined = true;
-    later(() => {
-      s.el.classList.remove('is-hidden');
-      s.el.classList.add('poof');
-      burstAt(s.anim, { n: 10, kinds: ['sparkle', 'star', 'heart'], spread: 90 });
-    }, i * 260);
-  });
-  if (joined) Sound.play('poof');
+/* ---- The fall ---- */
+function debrisSVG(kind) {
+  const o = '#0B0D0C', S = `stroke="${o}" stroke-width="3" stroke-linejoin="round"`;
+  const art = {
+    desk: `<rect x="6" y="16" width="48" height="9" fill="#8C7A44" ${S}/><rect x="11" y="25" width="6" height="28" fill="#3E6A68" ${S}/><rect x="43" y="25" width="6" height="28" fill="#3E6A68" ${S}/>`,
+    chair: `<rect x="14" y="6" width="32" height="22" fill="#6B4A5A" ${S}/><rect x="12" y="28" width="36" height="7" fill="#8A5A66" ${S}/><path d="M16 35 V54 M44 35 V54" ${S}/>`,
+    clock: `<circle cx="30" cy="30" r="23" fill="#7E776A" ${S}/><circle cx="30" cy="30" r="16" fill="#CFC6B2" stroke="${o}" stroke-width="2"/><path d="M30 16 V19 M30 41 V44 M16 30 H19 M41 30 H44" stroke="${o}" stroke-width="2"/>`,
+    block: `<rect x="10" y="10" width="40" height="40" fill="#8A5A66" ${S}/><text x="30" y="40" text-anchor="middle" font-family="monospace" font-size="26" font-weight="700" fill="#3A2630">B</text>`,
+    book: `<rect x="10" y="12" width="40" height="34" fill="#3E6A68" ${S}/><rect x="10" y="12" width="7" height="34" fill="#2B4A48" stroke="${o}" stroke-width="2"/><path d="M22 22 H42 M22 28 H38" stroke="#BFE5DF" stroke-width="2" opacity=".6"/>`,
+    ball: `<circle cx="30" cy="30" r="20" fill="#8C7A44" ${S}/><path d="M12 26 Q30 36 48 26" fill="none" stroke="#5E5638" stroke-width="3"/>`,
+    teddy: `<circle cx="16" cy="16" r="8" fill="#4A3A30" ${S}/><circle cx="44" cy="16" r="8" fill="#4A3A30" ${S}/><circle cx="30" cy="32" r="20" fill="#5A4636" ${S}/><circle cx="23" cy="29" r="3" fill="#CFC6B2"/><path d="M34 26 l6 6 M40 26 l-6 6" stroke="${o}" stroke-width="2"/>`
+  };
+  return `<svg viewBox="0 0 60 60" aria-hidden="true" focusable="false">${art[kind] || art.ball}</svg>`;
 }
-function castRow(o) {
-  const people = [
-    ['principal', principalSVG({ crop: true, mood: o.principal }), 'PRINCIPAL'],
-    ['ghost', ghostSVG({ crop: true, mood: o.ghost }), 'GHOST'],
-    ['bunny', bunnySVG({ crop: true, mood: o.mood }), escapeHTML(BUNNY_NAME.toUpperCase())],
-    ['you', pixelSVG('magnifier'), escapeHTML(PLAYER_NAME.toUpperCase())]
-  ];
-  return `<p class="cast-label">STARRING</p><div class="cast-row" role="list">` +
-    people.map(([k, svg, label]) => `<div class="cast" role="listitem"><span class="cast-face ${k}" aria-hidden="true">${svg}</span><span class="cast-name">${label}</span></div>`).join('') +
-    `</div>`;
+function spawnDebris(fx) {
+  if (!fx) return;
+  const kinds = ['desk', 'clock', 'block', 'book', 'chair', 'ball', 'teddy', 'clock'];
+  let html = '';
+  for (let i = 0; i < 14; i++) {
+    html += `<span class="debris" style="left:${rand(2, 86).toFixed(0)}%;--s:${Math.round(rand(40, 92))}px;--d:${rand(1.8, 3.6).toFixed(2)}s;--dl:${(-rand(0, 3.6)).toFixed(2)}s;--r:${Math.round(rand(-280, 280))}deg">${debrisSVG(kinds[i % kinds.length])}</span>`;
+  }
+  for (let i = 0; i < 18; i++) {
+    html += `<span class="streak" style="left:${rand(0, 100).toFixed(1)}%;--h:${Math.round(rand(60, 160))}px;--d:${rand(0.45, 0.9).toFixed(2)}s;--dl:${(-rand(0, 0.9)).toFixed(2)}s"></span>`;
+  }
+  fx.innerHTML = html;
 }
-function endingScene(cls, label, extra) {
-  return h(`<section class="scene scene-vn scene-end ${cls}" aria-label="${label}">
-      <div class="bg">${BG.secret(true)}</div>
-      ${extra}
+
+/* ---- Underground scenes ---- */
+function lnScene(cls, label, bg, extra = '') {
+  return h(`<section class="scene scene-vn ln ${cls}" aria-label="${label}">
+      <div class="bg">${bg}</div>
       <div class="fx" data-fx></div>
       <div class="stage">
-        <div class="sprite side left is-hidden" data-sprite="principal"><div class="anim"></div></div>
-        <div class="sprite side right is-hidden" data-sprite="ghost"><div class="anim"></div></div>
-        <div class="sprite main" data-sprite="bunny"><div class="anim"></div></div>
+        <div class="sprite bunny" data-sprite="bunny"><div class="anim"></div></div>
+        ${extra}
       </div>
+      <div class="grain" aria-hidden="true"></div>
       <div class="bottom"><div data-dlg></div></div>
     </section>`);
 }
-function showConfessionChoices() {
+function headache() {
+  Sound.play('headache');
+  playAnim('bunny', 'shiver', 900);
+  shakeScene();
+  glitchFx();
+}
+function memoryFlash(kind) {
   if (!current) return;
-  const box = current.querySelector('[data-choices]');
-  box.innerHTML = `<div class="choices" role="group" aria-label="Your answer" tabindex="-1">
-      <button type="button" class="btn pink big" data-choice="yes">YES ♡</button>
-      <button type="button" class="btn cream big" data-choice="no">NO</button>
-    </div>`;
-  box.querySelector('[data-choice="yes"]').addEventListener('click', () => chooseEnding('happy'));
-  box.querySelector('[data-choice="no"]').addEventListener('click', () => chooseEnding('honest'));
-  later(() => focusKb(box.querySelector('.choices')), 60);
+  Sound.play('memory');
+  let host = current.querySelector('[data-mem]');
+  if (!host) {
+    host = document.createElement('div');
+    host.className = 'memflash';
+    host.setAttribute('data-mem', '');
+    host.setAttribute('aria-hidden', 'true');
+    current.appendChild(host);
+  }
+  const ink = '#2A2A2A';
+  const pics = {
+    classroom: `<div class="mem-pic">${BG.classroom('xMidYMid slice')}</div>`,
+    letter: `<div class="mem-pic paper"><svg viewBox="0 0 120 90" preserveAspectRatio="xMidYMid slice"><rect width="120" height="90" fill="#3A342B"/><rect x="24" y="16" width="72" height="58" fill="#EDE4CF" stroke="${ink}" stroke-width="2" transform="rotate(-4 60 45)"/><path d="M30 30 H88 M30 38 H84 M30 46 H86 M30 54 H70" stroke="#8C8476" stroke-width="2" transform="rotate(-4 60 45)"/><path d="M60 16 V74 M24 45 H96" stroke="#CFC4AE" stroke-width="1.5" transform="rotate(-4 60 45)"/></svg></div>`,
+    name: `<div class="mem-pic paper"><svg viewBox="0 0 120 90" preserveAspectRatio="xMidYMid slice"><rect width="120" height="90" fill="#EDE4CF"/><path d="M20 50 q6 -14 12 0 t12 0 t12 0 t12 0 t12 0 t12 0" fill="none" stroke="#5A4E46" stroke-width="3"/><path d="M16 42 L104 58 M16 58 L104 40 M18 50 H102" stroke="${ink}" stroke-width="4"/></svg></div>`
+  };
+  host.innerHTML = pics[kind] || '';
+  host.classList.remove('on'); void host.offsetWidth; host.classList.add('on');
+  glitchFx();
 }
-function chooseEnding(kind) {
-  if (state.busy || state.ending) return;
-  state.ending = kind;
-  state.confessionAnswered = true;
-  Sound.play(kind === 'happy' ? 'yes' : 'gentle');
-  goTo(kind === 'happy' ? 'happyEnding' : 'honestEnding', kind === 'happy' ? 'pink' : 'fade');
+function catEyes() {
+  const e = current && current.querySelector('[data-cateyes]');
+  if (e) e.classList.add('on');
+  Sound.play('whisper');
 }
-function showEndCard(scene, o) {
+function catAppear() {
+  const e = current && current.querySelector('[data-cateyes]');
+  if (e) e.classList.remove('on');
+  const c = sprites.cat;
+  if (c) { c.el.classList.remove('is-hidden'); c.el.classList.add('poof'); }
+  Sound.play('meow');
+}
+function catWalk() {
+  Sound.play('steps');
+  if (current) current.classList.add('walking');
+}
+
+/* ---- Remembering everything ---- */
+let polaroidCount = 0;
+function polaroid(kind) {
+  const host = current && current.querySelector('[data-polaroid]');
+  if (!host) return;
+  const pics = {
+    hallway: BG.hallway(),
+    classroom: BG.classroom('xMidYMid slice'),
+    trial: `<div class="pic-trial"><div class="pic-char">${ghostSVG({ mood: 'point' })}</div></div>`,
+    door: BG.lastDoor(),
+    ballpit: BG.ballPit(),
+    backrooms: BG.backrooms() + `<div class="pic-cat">${catSVG({ mood: 'smug' })}</div>`,
+    lava: `<div class="pic-lava"><div class="pic-bunny">${pixelSVG('bunnyMini')}</div></div>`
+  };
+  host.querySelectorAll('.polaroid').forEach(p => p.classList.add('old'));
+  const n = polaroidCount++;
+  const fig = document.createElement('figure');
+  fig.className = 'polaroid';
+  fig.style.setProperty('--rot', ((n % 2 ? 1 : -1) * rand(3, 9)).toFixed(1) + 'deg');
+  fig.style.setProperty('--dx', Math.round(rand(-26, 26)) + 'px');
+  fig.innerHTML = `<div class="pic">${pics[kind] || ''}</div>`;
+  host.appendChild(fig);
+  Sound.play('paper');
+  const all = host.querySelectorAll('.polaroid');
+  if (all.length > 4) all[0].remove();
+}
+
+/* ---- The real last door: the letter and the goodbye ---- */
+function showLetter(scene) {
   Dialogue.unmount();
-  castJoin();
-  setSprite('bunny', { mood: o.mood, prop: o.prop });
-  setSprite('principal', { mood: o.principal });
-  setSprite('ghost', { mood: o.ghost });
+  const pan = scene.querySelector('[data-pan]');
+  if (pan) pan.classList.add('pan-away');
+  const layer = scene.querySelector('[data-letter]');
+  layer.innerHTML = `<div class="letter-wrap"><div class="letter" role="dialog" aria-modal="true" aria-label="A letter with a pink peony">
+      <div class="letter-seal" aria-hidden="true">${pixelSVG('heart')}</div>
+      <p class="letter-text" aria-hidden="true"><span class="lt-full">${escapeHTML(LETTER_TEXT)}</span><span class="lt-typed"></span></p>
+      <p class="sr-only">${escapeHTML(LETTER_TEXT)}</p>
+      <button type="button" class="btn pink" data-letter-done hidden>FOLD THE LETTER ♡</button>
+    </div><div class="peony" aria-hidden="true">${peonySVG()}</div></div>`;
+  layer.hidden = false;
+  Sound.play('paper');
+  const textEl = layer.querySelector('.lt-typed'), btn = layer.querySelector('[data-letter-done]');
+  const chars = Array.from(LETTER_TEXT);
+  let i = 0, done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    textEl.textContent = LETTER_TEXT;
+    btn.hidden = false;
+    try { btn.scrollIntoView({ block: 'nearest' }); } catch (e) { /* ignore */ }
+    later(() => focusKb(btn), 40);
+  };
+  const tick = () => {
+    if (done) return;
+    i++;
+    textEl.textContent = chars.slice(0, i).join('');
+    const ch = chars[i - 1];
+    if (ch && ch.trim() && i % 2) Sound.play('key');
+    if (i >= chars.length) { finish(); return; }
+    later(tick, '.!?'.indexOf(ch) >= 0 ? 300 : ch === ',' ? 150 : ch === '\n' ? 140 : 40);
+  };
+  if (REDUCED) finish(); else later(tick, 700);
+  layer.querySelector('.letter').addEventListener('click', e => { if (!e.target.closest('[data-letter-done]')) finish(); });
+  const onKey = e => { if (!done && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); finish(); } };
+  document.addEventListener('keydown', onKey);
+  sceneCleanup.push(() => document.removeEventListener('keydown', onKey));
+  btn.addEventListener('click', () => {
+    Sound.play('paper');
+    layer.classList.add('folding');
+    later(() => {
+      layer.hidden = true;
+      layer.classList.remove('folding');
+      if (pan) pan.classList.remove('pan-away');          // the camera pans back to him...
+      later(transformBunny, 1300);                        // ...and he transforms
+      later(() => {
+        Dialogue.mount(scene.querySelector('[data-dlg]'));
+        Dialogue.play(SCRIPT.transform(), () => showTheEnd(scene));
+        focusKb(Dialogue.nextBtn);
+      }, 1300 + 2900);
+    }, 650);
+  });
+}
+/* a pink peony, drawn from rings of soft, ruffled petals */
+function peonySVG() {
+  const O = PAL.o;
+  const ring = (n, r, rx, ry, fill, rot = 0) => Array.from({ length: n }, (_, i) => {
+    const a = rot + i * 360 / n;
+    return `<ellipse cx="60" cy="${60 - r}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${O}" stroke-width="2.4" transform="rotate(${a} 60 60)"/>`;
+  }).join('');
+  return `<svg viewBox="0 0 130 130" aria-hidden="true" focusable="false">
+    <path d="M70 92 Q88 112 112 124" fill="none" stroke="${O}" stroke-width="8" stroke-linecap="round"/>
+    <path d="M70 92 Q88 112 112 124" fill="none" stroke="${PAL.T}" stroke-width="4" stroke-linecap="round"/>
+    <path d="M86 108 C92 92 112 88 122 96 C112 108 98 112 86 108 Z" fill="${PAL.t}" stroke="${O}" stroke-width="2.4"/>
+    <path d="M90 106 Q104 100 116 98" fill="none" stroke="${PAL.T}" stroke-width="1.6"/>
+    <path d="M80 104 C70 112 70 124 78 128 C86 120 86 112 80 104 Z" fill="${PAL.t}" stroke="${O}" stroke-width="2.4"/>
+    ${ring(9, 30, 17, 23, PAL.p)}
+    ${ring(8, 19, 14, 18, '#F6BCD5', 20)}
+    ${ring(7, 10, 11, 14, PAL.k, 8)}
+    <circle cx="60" cy="60" r="11" fill="${PAL.P}" stroke="${O}" stroke-width="2.4"/>
+    <path d="M52 58 q4 -6 8 0 q4 -6 8 0" fill="none" stroke="${PAL.k}" stroke-width="2"/>
+    <circle cx="56" cy="62" r="2" fill="${PAL.y}"/><circle cx="62" cy="57" r="2" fill="${PAL.y}"/><circle cx="64" cy="64" r="2" fill="${PAL.y}"/>
+    <path d="M30 48 q6 -4 10 2 M86 40 q6 2 6 8 M40 86 q-2 -6 4 -10" fill="none" stroke="${PAL.P}" stroke-width="2" stroke-linecap="round"/>
+  </svg>`;
+}
+function transformBunny() {
+  const s = sprites.bunny;
+  if (!s) return;
+  Sound.play('transform');
+  // a soft swirl of light behind him
+  const magic = h('<div class="magic" aria-hidden="true"><i style="--in:4%;--t:5s"></i><i style="--in:16%;--t:3.6s;--dir:reverse"></i><i style="--in:28%;--t:2.6s"></i></div>');
+  s.el.parentNode.insertBefore(magic, s.el);
+  later(() => magic.remove(), 3600);
+  s.el.classList.add('glowing');
+  burstAt(s.anim, { n: 18, kinds: ['sparkle', 'star', 'heart'], spread: 170 });
+  // a white silhouette of him fades in on top... (fading a copy keeps the colors clean, with no gray in between)
+  const glow = () => { const w = document.createElement('div'); w.className = 'white-copy'; w.innerHTML = s.anim.innerHTML; s.anim.appendChild(w); return w; };
+  let white = glow();
+  later(() => white.classList.add('on'), 500);
+  later(() => {
+    s.fn = boySVG;
+    s.opts = {};
+    if (s.mood !== 'cheeky') s.mood = 'smile';
+    s.anim.innerHTML = boySVG({ mood: s.mood });
+    white = glow();                                       // ...he changes shape inside the light...
+    white.classList.add('on', 'instant');
+    burstAt(s.anim, { n: 14, kinds: ['sparkle', 'heart'], spread: 130 });
+    later(() => { white.classList.remove('instant'); void white.offsetWidth; white.classList.remove('on'); s.el.classList.remove('glowing'); }, 350);
+    later(() => white.remove(), 1600);                    // ...and the light fades into someone new
+  }, 1400);
+}
+function bunnyReturns() {
+  const s = sprites.bunny;
+  if (s) { s.el.classList.remove('is-hidden'); s.el.classList.add('poof'); }
+  Sound.play('poof');
+}
+function boyVanish() {
+  const s = sprites.bunny;
+  later(() => {
+    Sound.play('vanish');
+    if (s) { s.el.classList.add('vanish-up'); burstAt(s.anim, { n: 16, kinds: ['sparkle', 'star', 'heart'], spread: 150 }); }
+  }, 1000);
+}
+function showTheEnd(scene) {
+  state.finished = true;
+  try { localStorage.setItem('torei-cleared', '1'); } catch (e) { /* ignore */ }
+  Dialogue.unmount();
   const mount = scene.querySelector('[data-dlg]');
-  const hearts = `<div class="end-hearts" aria-hidden="true"><span>${pixelSVG('heart')}</span><span>${pixelSVG('star')}</span><span>${pixelSVG('heart')}</span></div>`;
-  mount.innerHTML = `<div class="end-card" role="group" aria-labelledby="endTitle">
-      ${hearts}
-      <h2 id="endTitle"><span class="num">${o.num}</span> <span>${o.title}</span></h2>
-      ${castRow(o)}
-      <p class="msg">${escapeHTML(o.msg)}</p>
-      <button type="button" class="btn big ${o.btnClass}" data-action="replay">PLAY AGAIN</button>
+  mount.innerHTML = `<div class="end-card the-end" role="group" aria-labelledby="endTitle">
+      <div class="end-hearts" aria-hidden="true"><span>${pixelSVG('heart')}</span><span>${pixelSVG('star')}</span><span>${pixelSVG('heart')}</span></div>
+      <h2 id="endTitle">THE END</h2>
+      <p class="msg">${escapeHTML(END_MESSAGE)}</p>
+      <button type="button" class="btn big pink" data-action="replay">PLAY AGAIN</button>
     </div>`;
   const b = mount.querySelector('[data-action="replay"]');
   b.addEventListener('click', restart);
-  announce(`${o.num} ${o.title}. Starring the principal, the ghost, ${BUNNY_NAME} and ${PLAYER_NAME}. ${o.msg}`);
-  Sound.play(o.sound);
+  announce('The end. ' + END_MESSAGE);
+  Sound.play('complete');
   later(() => focusKb(b), 90);
 }
+
 function vnScene(cls, label, bg, tag, extra = '', spriteCls = '') {
   return h(`<section class="scene scene-vn ${cls}" aria-label="${label}">
       <div class="bg">${bg}</div>
@@ -2560,9 +3379,771 @@ function vnScene(cls, label, bg, tag, extra = '', spriteCls = '') {
       <div class="bottom"><div data-choices></div><div data-dlg></div></div>
     </section>`);
 }
-function frameCorners() {
-  return `<div class="frame" aria-hidden="true"><span class="c1">${pixelSVG('heart')}</span><span class="c2">${pixelSVG('star')}</span><span class="c3">${pixelSVG('star')}</span><span class="c4">${pixelSVG('heart')}</span></div>`;
-}
+/* =============================================================
+   11b. THE TOWER: a little parkour ("obby") game on a canvas.
+   Arrow keys / A-D to move, Space / W / Up to jump, or the on-screen buttons.
+   ============================================================= */
+const Obby = (() => {
+  const WORLD_W = 240, VIS_H = 300;
+  const GRAV = 1500, JUMP_V = -505, SPEED = 118, MAX_FALL = 900, COYOTE = 0.1, BUFFER = 0.13;
+  const PW = 20, PH = 28;                       // player hitbox (world units)
+  const WALL_L = 10, WALL_R = 230;
+  const FLOOR_Y = 2100, LEDGE_Y = 1060, SLAB_Y = 1000, GAP_X1 = 128, GAP_X2 = 152;   // the gap is only a little wider than you
+  const LAVA_TRIGGER_Y = FLOOR_Y - 150;         // the lava wakes up once you reach the third block
+  const DOOR = { x: 106, y: 127, w: 28, h: 48 };
+  // y = top surface. Ordinary blocks can be jumped through from below.
+  // kinds: block (jump through from below), crumble (falls soon after you land), flag (checkpoint lantern),
+  // ledge / slab (the narrow gap), top. `move` slides a block left and right.
+  const LEVEL = [
+    { x: 10, y: FLOOR_Y, w: 220, h: 60, kind: 'floor' },
+    { x: 160, y: 2045, w: 40 },
+    { x: 90, y: 1990, w: 32 },
+    { x: 26, y: 1935, w: 30 },
+    { x: 92, y: 1880, w: 28, kind: 'crumble' },
+    { x: 160, y: 1825, w: 30 },
+    { x: 196, y: 1770, w: 34 },
+    { x: 92, y: 1715, w: 70, c: 0 },                                   // red brick in the middle
+    { x: 30, y: 1660, w: 30 },
+    { x: 70, y: 1605, w: 34, move: { dx: 60, speed: 1.2 } },
+    { x: 180, y: 1550, w: 34 },
+    { x: 118, y: 1495, w: 28, kind: 'crumble' },
+    { x: 40, y: 1440, w: 50, kind: 'flag' },                     // halfway lantern (checkpoint)
+    { x: 120, y: 1385, w: 26 },
+    { x: 186, y: 1330, w: 30 },
+    { x: 100, y: 1275, w: 30, move: { dx: 60, speed: 1.4 } },
+    { x: 44, y: 1220, w: 32 },
+    { x: 96, y: 1165, w: 70, c: 0 },                                   // red brick in the middle
+    { x: 196, y: 1110, w: 34 },
+    { x: 100, y: LEDGE_Y, w: 76, kind: 'ledge' },                // where the bunny stays behind
+    { x: WALL_L, y: SLAB_Y, w: GAP_X1 - WALL_L, h: 18, kind: 'slab' },
+    { x: GAP_X2, y: SLAB_Y, w: WALL_R - GAP_X2, h: 18, kind: 'slab' },
+    { x: 168, y: 945, w: 30 },
+    { x: 104, y: 890, w: 28, kind: 'crumble' },
+    { x: 36, y: 835, w: 30 },
+    { x: 76, y: 780, w: 30, move: { dx: 74, speed: 1.5 } },
+    { x: 196, y: 725, w: 34 },
+    { x: 110, y: 670, w: 72, c: 0 },                                   // red brick in the middle
+    { x: 46, y: 615, w: 28 },
+    { x: 110, y: 560, w: 24, kind: 'crumble' },
+    { x: 172, y: 505, w: 28 },
+    { x: 60, y: 450, w: 28, move: { dx: 70, speed: 1.7 } },
+    { x: 20, y: 395, w: 30 },
+    { x: 84, y: 340, w: 26 },
+    { x: 150, y: 285, w: 26, kind: 'crumble' },
+    { x: 96, y: 230, w: 28 },
+    { x: 60, y: 175, w: 120, kind: 'top' }
+  ];
+  // glowing red bricks: touching one sends you back
+  const HAZARDS = [
+    { x: 120, y: 1707, w: 14, h: 8 },
+    { x: 128, y: 1157, w: 12, h: 8 },
+    { x: 140, y: 662, w: 12, h: 8 }
+  ];
+  const BLOCK_COLORS = [['#3E8D8B', '#7CCBC8'], ['#B9708F', '#E6A9C2'], ['#BFA54C', '#EBD58A']];
+
+  let scene = null, canvas = null, ctx = null, wrap = null, ro = null, el = {};
+  let raf = 0, lastTs = 0, dpr = 1, cssW = 1, cssH = 1, scale = 1, offX = 0, viewH = VIS_H;
+  let mode = 'off', time = 0, P, B, plats, lava, camY = 0, keys, trail = [], embers = [];
+  let deaths = 0, lavaMul = 1, checkpoint = null, alerted = false, doorOpenT = 0, engulfing = false, shake = 0, code = '', atDoor = false, doorHinted = false;
+  const art = {};
+
+  /* ---- pixel sprites for the canvas ---- */
+  function pixelCanvas(name, flip) {
+    const key = name + (flip ? '-f' : '');
+    if (art[key]) return art[key];
+    const def = PIXELS[name];
+    const g = pixelGrid(def.rows, def.outline || []);
+    const c = document.createElement('canvas');
+    c.width = g[0].length; c.height = g.length;
+    const x = c.getContext('2d');
+    g.forEach((row, yy) => row.forEach((ch, xx) => {
+      if (ch !== '.' && PAL[ch]) { x.fillStyle = PAL[ch]; x.fillRect(flip ? c.width - 1 - xx : xx, yy, 1, 1); }
+    }));
+    art[key] = c;
+    return c;
+  }
+
+  /* ---- setup ---- */
+  function buildLevel() { plats = LEVEL.map((p, i) => Object.assign({ h: 10, kind: 'block', i }, p, { bx: p.x, px: p.x, by: p.y })); }
+  function resetCrumbles() { for (const p of plats) if (p.kind === 'crumble') { p.y = p.by; p.falling = false; p.vy = 0; p.crumbleT = 0; p.respawnT = 0; } }
+  function resetPlayer(atCheckpoint) {
+    const cp = atCheckpoint && checkpoint;
+    P = { x: cp ? cp.x : 34, y: cp ? cp.y : FLOOR_Y - PH, vx: 0, vy: 0, onGround: true, ground: null, coyote: 0, buffer: 0, face: 1, walkT: 0 };
+    trail = [];
+  }
+  function resetBunny() { B = { x: Math.max(WALL_L, P.x - 22), y: P.y, face: 1, alive: !state.sacrificed, sinking: false, alpha: 1, stay: false, say: '', sayT: 0 }; }
+  function resetLava(atCheckpoint) { lava = { y: atCheckpoint && checkpoint ? checkpoint.lava : FLOOR_Y + 90, active: !!(atCheckpoint && checkpoint), stopped: false }; }
+
+  function start(sc) {
+    scene = sc;
+    canvas = sc.querySelector('canvas');
+    ctx = canvas.getContext('2d');
+    wrap = sc.querySelector('.obby-wrap');
+    el = {
+      tip: sc.querySelector('[data-tip]'), lavaMsg: sc.querySelector('[data-lava]'), dead: sc.querySelector('[data-dead]'),
+      deadSub: sc.querySelector('[data-dead-sub]'), keypad: sc.querySelector('[data-keypad]'), pad: sc.querySelector('[data-pad]'),
+      padHint: sc.querySelector('[data-padhint]'), dlg: sc.querySelector('[data-dlg]'), openBtn: sc.querySelector('[data-open]')
+    };
+    atDoor = false; doorHinted = false;
+    el.openBtn.addEventListener('click', tryDoor);
+    deaths = 0; lavaMul = 1; checkpoint = null; alerted = false; doorOpenT = 0; engulfing = false; time = 0; embers = []; shake = 0;
+    keys = { left: false, right: false, jump: false, jumpPressed: false };
+    buildLevel(); resetPlayer(false); resetBunny(); resetLava(false);
+    resize();
+    camY = targetCam();
+    if (window.ResizeObserver) { ro = new ResizeObserver(resize); ro.observe(wrap); }
+    else window.addEventListener('resize', resize);
+    window.addEventListener('keydown', onKey, true);
+    window.addEventListener('keyup', onKey, true);
+    bindPad();
+    el.dead.querySelector('[data-retry]').addEventListener('click', retry);
+    el.keypad.querySelectorAll('[data-d]').forEach(b => b.addEventListener('click', () => press(b.dataset.d)));
+    wrap.addEventListener('click', () => { if (mode === 'intro' || mode === 'cutscene') Dialogue.advance(); });
+    sceneCleanup.push(stop);
+    mode = 'intro';
+    lastTs = 0;
+    raf = requestAnimationFrame(frame);
+    Dialogue.mount(el.dlg);
+    later(() => Dialogue.play(SCRIPT.obbyIntro(), beginPlay), 300);
+  }
+  function stop() {
+    cancelAnimationFrame(raf); raf = 0;
+    if (ro) { ro.disconnect(); ro = null; } else window.removeEventListener('resize', resize);
+    window.removeEventListener('keydown', onKey, true);
+    window.removeEventListener('keyup', onKey, true);
+    mode = 'off';
+  }
+  function beginPlay() {
+    Dialogue.unmount();
+    mode = 'play';
+    el.pad.hidden = false;
+    el.padHint.hidden = false;
+    el.tip.hidden = false;
+    announce('Climb to the glowing door at the top. Left and right arrows move, space jumps.');
+    later(() => { el.tip.hidden = true; }, 4500);
+    later(() => focusKb(el.pad.querySelector('[data-k="jump"]')), 60);
+  }
+  function resize() {
+    const r = wrap.getBoundingClientRect();
+    cssW = Math.max(1, r.width); cssH = Math.max(1, r.height);
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(cssW * dpr); canvas.height = Math.round(cssH * dpr);
+    scale = Math.min(cssW / WORLD_W, cssH / VIS_H);
+    offX = (cssW - WORLD_W * scale) / 2;
+    viewH = cssH / scale;
+  }
+
+  /* ---- input ---- */
+  function onKey(e) {
+    const down = e.type === 'keydown';
+    if (mode === 'door') { if (down) keypadKey(e); return; }
+    if (mode !== 'play') return;
+    const k = e.key;
+    if (down && atDoor && (k === 'Enter' || k === 'e' || k === 'E')) { e.preventDefault(); tryDoor(); return; }
+    let used = true;
+    if (k === 'ArrowLeft' || k === 'a' || k === 'A') keys.left = down;
+    else if (k === 'ArrowRight' || k === 'd' || k === 'D') keys.right = down;
+    else if (k === ' ' || k === 'ArrowUp' || k === 'w' || k === 'W') { if (down && !keys.jump) keys.jumpPressed = true; keys.jump = down; }
+    else used = false;
+    if (used) e.preventDefault();
+  }
+  function bindPad() {
+    el.pad.querySelectorAll('[data-k]').forEach(b => {
+      const k = b.dataset.k;
+      const set = v => {
+        if (k === 'jump') { if (v && !keys.jump) keys.jumpPressed = true; keys.jump = v; } else keys[k] = v;
+        b.classList.toggle('on', v);
+      };
+      b.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        if (mode !== 'play') return;
+        try { b.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+        set(true);
+      });
+      ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(t => b.addEventListener(t, () => set(false)));
+      b.addEventListener('contextmenu', e => e.preventDefault());
+      // keyboard users can also "press" the buttons
+      b.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && mode === 'play') { e.preventDefault(); e.stopPropagation(); set(true); setTimeout(() => set(false), k === 'jump' ? 260 : 180); } });
+    });
+  }
+  function clearKeys() {
+    keys.left = keys.right = keys.jump = keys.jumpPressed = false;
+    if (el.pad) el.pad.querySelectorAll('.on').forEach(b => b.classList.remove('on'));
+  }
+
+  /* ---- loop ---- */
+  function frame(ts) {
+    raf = requestAnimationFrame(frame);
+    const dt = lastTs ? Math.min(0.033, (ts - lastTs) / 1000) : 0;
+    lastTs = ts;
+    time += dt;
+    update(dt);
+    draw();
+  }
+  function update(dt) {
+    for (const p of plats) {
+      p.px = p.x;
+      if (p.move) p.x = p.bx + (Math.sin(time * p.move.speed * 2) + 1) / 2 * p.move.dx;
+      if (p.kind === 'crumble') {
+        if (!p.falling && p.crumbleT > 0) {
+          p.crumbleT += dt;
+          if (p.crumbleT > 0.6) { p.falling = true; p.vy = 0; p.respawnT = 3; Sound.play('crumbleSmall'); }
+        } else if (p.falling) {
+          p.respawnT -= dt;
+          if (p.respawnT <= 0) { p.y = p.by; p.falling = false; p.crumbleT = 0; p.vy = 0; }
+        }
+      }
+      if (p.falling) { p.vy = (p.vy || 0) + 500 * dt; p.y += p.vy * dt; }
+    }
+    if (mode === 'play') physics(dt);
+    placeOpenBtn();
+    updateBunny(dt);
+    updateLava(dt);
+    camY += (targetCam() - camY) * Math.min(1, dt * 5);
+    updateEmbers(dt);
+    if (shake > 0) shake = Math.max(0, shake - dt);
+    if (doorOpenT > 0 && doorOpenT < 1) doorOpenT = Math.min(1, doorOpenT + dt * 0.9);
+  }
+  const solid = p => p.kind === 'floor' || p.kind === 'slab';
+  const overlap = (x, y, w, h, r) => x < r.x + r.w && x + w > r.x && y < r.y + r.h && y + h > r.y;
+
+  function physics(dt) {
+    const dir = (keys.right ? 1 : 0) - (keys.left ? 1 : 0);
+    P.vx = dir * SPEED;
+    if (dir) P.face = dir;
+    P.walkT = dir && P.onGround ? P.walkT + dt : 0;
+    P.coyote = P.onGround ? COYOTE : Math.max(0, P.coyote - dt);
+    if (keys.jumpPressed) { P.buffer = BUFFER; keys.jumpPressed = false; } else P.buffer = Math.max(0, P.buffer - dt);
+    if (P.buffer > 0 && P.coyote > 0) {
+      P.vy = JUMP_V; P.buffer = 0; P.coyote = 0; P.onGround = false; P.ground = null;
+      Sound.play('jump');
+    }
+    if (!keys.jump && P.vy < -120) P.vy += GRAV * 1.6 * dt;     // short hop if jump is let go early
+    P.vy = Math.min(P.vy + GRAV * dt, MAX_FALL);
+    if (P.onGround && P.ground && P.ground.move) P.x += P.ground.x - P.ground.px;   // ride moving blocks
+
+    P.x += P.vx * dt;
+    P.x = Math.max(WALL_L, Math.min(WALL_R - PW, P.x));
+    for (const p of plats) {
+      if (!solid(p) || p.falling || !overlap(P.x, P.y, PW, PH, p)) continue;
+      if (P.x + PW / 2 < p.x + p.w / 2) P.x = p.x - PW; else P.x = p.x + p.w;
+    }
+
+    const prevFeet = P.y + PH, prevHead = P.y;
+    P.y += P.vy * dt;
+    const wasGround = P.onGround;
+    P.onGround = false;
+    for (const p of plats) {
+      if (p.falling) continue;
+      if (!(P.x + PW > p.x + 2 && P.x < p.x + p.w - 2)) continue;
+      if (P.vy >= 0 && prevFeet <= p.y + 0.5 && P.y + PH >= p.y) {
+        P.y = p.y - PH; P.vy = 0; P.onGround = true; P.ground = p;
+      } else if (solid(p) && P.vy < 0 && prevHead >= p.y + p.h - 0.5 && P.y < p.y + p.h) {
+        // corner assist: if you only clip the edge of the narrow gap, slide into it instead of bonking
+        if (p.kind === 'slab' && !p.sealed) {
+          if (p.x + p.w === GAP_X1 && P.x > GAP_X1 - 12) { P.x = GAP_X1 - 2; continue; }
+          if (p.x === GAP_X2 && P.x + PW < GAP_X2 + 12) { P.x = GAP_X2 + 2 - PW; continue; }
+        }
+        P.y = p.y + p.h; P.vy = 0;
+      }
+    }
+    if (!P.onGround) P.ground = null;
+    if (P.onGround && !wasGround) Sound.play('land');
+    if (P.onGround && P.ground && P.ground.kind === 'crumble' && !P.ground.crumbleT) P.ground.crumbleT = 0.001;
+
+    if (!alerted && P.y + PH < LAVA_TRIGGER_Y) startLava();
+    if (!state.sacrificed && P.onGround && P.ground && P.ground.kind === 'slab') { startSacrifice(); return; }
+    if (P.onGround && P.ground && P.ground.kind === 'flag' && !checkpoint) {
+      checkpoint = { x: P.ground.x + 14, y: P.ground.y - PH, lava: P.ground.y + 190 };
+      Sound.play('shimmer');
+      if (B.alive) { B.say = 'Checkpoint!'; B.sayT = 1.6; }
+      announce('Checkpoint! The lantern is lit.');
+    }
+    if (P.onGround && P.ground && P.ground.kind === 'top') lava.stopped = true;
+    for (const k of HAZARDS) if (overlap(P.x + 2, P.y + 3, PW - 4, PH - 3, k)) { die('brick'); return; }
+    const near = overlap(P.x, P.y, PW, PH, DOOR) && P.onGround;
+    if (near !== atDoor) {
+      atDoor = near;
+      el.openBtn.hidden = !near;
+      if (near && !doorHinted) { doorHinted = true; announce('You reached the glowing door. Press Enter or the OPEN button to open it.'); }
+    }
+    if (lava.active && P.y + PH > lava.y + 6) die();
+  }
+
+  /* ---- the bunny follows right behind you ---- */
+  function updateBunny(dt) {
+    if (B.sayT > 0) B.sayT -= dt;
+    if (B.sinking) {
+      B.y += 24 * dt;
+      B.alpha = Math.max(0, B.alpha - dt * 0.45);
+      if (B.alpha <= 0) B.sinking = false;
+      return;
+    }
+    if (!B.alive || B.stay) return;
+    if (mode !== 'play' && mode !== 'intro') return;
+    trail.push({ t: time, x: P.x, y: P.y });
+    while (trail.length > 2 && trail[1].t < time - 0.4) trail.shift();
+    const s = trail[0];
+    let tx = s.x;
+    const ty = s.y;
+    if (Math.abs(ty - P.y) < 4 && Math.abs(tx - P.x) < 18) tx = P.x - P.face * 18;
+    tx = Math.max(WALL_L, Math.min(WALL_R - PW, tx));
+    const k = Math.min(1, dt * 12);
+    if (Math.abs(tx - B.x) > 0.6) B.face = tx > B.x ? 1 : -1; else B.face = P.face;
+    B.x += (tx - B.x) * k;
+    B.y += (ty - B.y) * k;
+    if (lava.active && B.y + PH > lava.y - 2) B.y = lava.y - PH - 2;
+  }
+
+  /* ---- lava ---- */
+  function startLava() {
+    alerted = true;
+    lava.active = true;
+    lava.y = Math.max(lava.y, FLOOR_Y + 60);
+    el.lavaMsg.hidden = false;
+    el.lavaMsg.classList.remove('show'); void el.lavaMsg.offsetWidth; el.lavaMsg.classList.add('show');
+    later(() => { el.lavaMsg.hidden = true; }, 2900);
+    Sound.play('alarm');
+    Sound.music('obby');
+    shake = 0.5;
+    B.say = 'HURRY!!'; B.sayT = 2;
+    announce('Warning! The lava is rising!');
+  }
+  function updateLava(dt) {
+    if (engulfing) { lava.y += ((LEDGE_Y - 20) - lava.y) * Math.min(1, dt * 1.3); return; }
+    if (!lava.active || lava.stopped || mode !== 'play') return;
+    const feet = P.y + PH;
+    const base = (30 + Math.max(0, FLOOR_Y - feet) / (FLOOR_Y - DOOR.y) * 14) * lavaMul;
+    const speed = base + Math.max(0, (lava.y - feet - 120) * 1.1);   // rushes up until it's right behind you
+    lava.y = Math.max(200, lava.y - speed * dt);
+  }
+  function updateEmbers(dt) {
+    if (lava.active || engulfing) {
+      if (embers.length < 28 && Math.random() < dt * 22) embers.push({ x: WALL_L + Math.random() * (WALL_R - WALL_L), y: lava.y, vy: -(20 + Math.random() * 45), life: 0.8 + Math.random() * 1.4 });
+    }
+    for (const e of embers) { e.y += e.vy * dt; e.x += Math.sin(time * 3 + e.y * 0.1) * 8 * dt; e.life -= dt; }
+    embers = embers.filter(e => e.life > 0);
+  }
+  function die(why) {
+    mode = 'dead';
+    atDoor = false; el.openBtn.hidden = true;
+    deaths++;
+    lavaMul = Math.max(0.45, lavaMul * 0.85);
+    clearKeys();
+    Sound.play('burn');
+    shake = 0.4;
+    el.pad.hidden = true;
+    el.lavaMsg.hidden = true;
+    el.dead.querySelector('.dead-title').textContent = why === 'brick' ? 'OUCH! A RED BRICK!' : 'THE LAVA CAUGHT YOU!';
+    el.deadSub.textContent = why === 'brick' ? "Red bricks are bad news. Jump over them! (The lava will be a little slower this time.)" : state.sacrificed
+      ? "You promised you wouldn't look back... so keep going!"
+      : checkpoint ? "Back to the lantern! (The lava will be a little slower this time.)"
+      : "Don't give up, detective. (The lava will be a little slower this time.)";
+    el.dead.hidden = false;
+    announce('The lava caught you. Try again.');
+    later(() => focusKb(el.dead.querySelector('[data-retry]')), 60);
+  }
+  function retry() {
+    if (mode !== 'dead') return;
+    el.dead.hidden = true;
+    const cp = !!checkpoint;
+    resetPlayer(cp);
+    resetBunny();
+    resetCrumbles();
+    if (!cp) { alerted = false; Sound.music(null); }
+    resetLava(cp);
+    camY = targetCam();
+    mode = 'play';
+    el.pad.hidden = false;
+    Sound.play('start');
+    later(() => focusKb(el.pad.querySelector('[data-k="jump"]')), 60);
+  }
+
+  /* ---- the narrow gap: only one can pass ---- */
+  function startSacrifice() {
+    mode = 'cutscene';
+    clearKeys();
+    el.pad.hidden = true; el.padHint.hidden = true;
+    B.x = (GAP_X1 + GAP_X2) / 2 - PW / 2; B.y = LEDGE_Y - PH; B.face = 1; B.stay = true; B.alive = true;
+    lava.y = Math.max(lava.y, LEDGE_Y + 120);
+    Sound.music('sad');
+    Dialogue.mount(el.dlg);
+    Dialogue.play(SCRIPT.sacrifice(), endSacrifice);
+  }
+  function engulf() {
+    if (engulfing || !plats) return;
+    engulfing = true;
+    const ledge = plats.find(p => p.kind === 'ledge');
+    if (ledge) { ledge.falling = true; ledge.vy = 0; }
+    B.sinking = true; B.alive = false;
+    Sound.play('crumble');
+    later(() => Sound.play('burn'), 800);
+    shake = 0.7;
+  }
+  function sealGap() {
+    if (!plats || plats.some(p => p.sealed)) return;
+    plats.push({ x: GAP_X1, y: SLAB_Y, w: GAP_X2 - GAP_X1, h: 16, kind: 'slab', sealed: true, bx: GAP_X1, px: GAP_X1, i: 99 });
+    Sound.play('slam');
+    shake = 0.35;
+  }
+  function endSacrifice() {
+    if (!B.sinking && B.alive) engulf();
+    sealGap();
+    state.sacrificed = true;
+    engulfing = false;
+    B.alive = false; B.sinking = false; B.alpha = 0;
+    checkpoint = { x: 188, y: SLAB_Y - PH, lava: SLAB_Y + 170 };
+    lava.y = SLAB_Y + 170; lava.active = true; lava.stopped = false;
+    Dialogue.unmount();
+    mode = 'play';
+    el.pad.hidden = false;
+    Sound.music('obby');
+    announce('Keep climbing!');
+    later(() => focusKb(el.pad.querySelector('[data-k="jump"]')), 60);
+  }
+
+  /* ---- the locked door at the top ---- */
+  function tryDoor() {
+    if (mode !== 'play' || !atDoor) return;
+    mode = 'locked';
+    clearKeys();
+    el.openBtn.hidden = true;
+    el.pad.hidden = true; el.padHint.hidden = true;
+    Sound.play('rattle');
+    shake = 0.2;
+    Dialogue.mount(el.dlg);
+    Dialogue.play([{ who: 'narration', text: 'It seems that the door is locked with a passcode...' }], () => { Dialogue.unmount(); openKeypad(); });
+    later(() => focusKb(Dialogue.nextBtn), 60);
+  }
+  function placeOpenBtn() {
+    if (!el.openBtn || el.openBtn.hidden) return;
+    el.openBtn.style.left = (offX + (DOOR.x + DOOR.w / 2) * scale) + 'px';
+    el.openBtn.style.top = Math.max(4, (DOOR.y - camY) * scale - 8) + 'px';
+  }
+  function openKeypad() {
+    mode = 'door';
+    clearKeys();
+    lava.stopped = true;
+    el.pad.hidden = true; el.padHint.hidden = true;
+    code = '';
+    renderCode();
+    el.keypad.querySelector('[data-kp-msg]').textContent = '';
+    el.keypad.hidden = false;
+    Sound.play('beep');
+    Sound.music('doorwait');
+    announce('The door is locked. Enter the two-digit code. Hint: ' + DOOR_HINT);
+    later(() => focusKb(el.keypad.querySelector('[data-d="1"]')), 80);
+  }
+  function renderCode() {
+    el.keypad.querySelectorAll('[data-kp-display] span').forEach((s, i) => { s.textContent = code[i] || '_'; });
+  }
+  function keypadKey(e) {
+    if (e.target && e.target.closest && e.target.closest('.keypad button') && (e.key === 'Enter' || e.key === ' ')) return;   // the button handles it
+    if (/^[0-9]$/.test(e.key)) { press(e.key); e.preventDefault(); }
+    else if (e.key === 'Backspace') { press('del'); e.preventDefault(); }
+    else if (e.key === 'Enter') { press('ok'); e.preventDefault(); }
+  }
+  function press(d) {
+    if (mode !== 'door') return;
+    if (d === 'del') code = code.slice(0, -1);
+    else if (d === 'ok') { submit(); return; }
+    else if (code.length < 2) code += d;
+    Sound.play('beep');
+    renderCode();
+    if (code.length === 2) focusKb(el.keypad.querySelector('[data-d="ok"]'));   // so Enter submits for keyboard users
+  }
+  function submit() {
+    if (mode !== 'door') return;
+    const msg = el.keypad.querySelector('[data-kp-msg]');
+    const disp = el.keypad.querySelector('[data-kp-display]');
+    if (code.length < 2) { msg.className = 'kp-msg bad'; msg.textContent = 'Two digits, please!'; return; }
+    const target = String(DOOR_CODE).padStart(2, '0');
+    if (code === target) {
+      mode = 'done';
+      state.codeOK = true;
+      msg.className = 'kp-msg good';
+      msg.textContent = '✓ UNLOCKED';
+      disp.classList.add('ok');
+      Sound.music(null);
+      Sound.play('unlock');
+      doorOpenT = 0.01;
+      announce('Unlocked!');
+      later(() => { el.keypad.hidden = true; }, 1000);
+      later(() => goTo('recollect', 'light'), 2200);
+      return;
+    }
+    state.codeTries++;
+    Sound.play('denied');
+    disp.classList.remove('shake'); void disp.offsetWidth; disp.classList.add('shake');
+    const n = parseInt(code, 10), t = parseInt(target, 10);
+    let text = '✗ WRONG CODE';
+    if (state.codeTries >= 6) text += ` (${code} is too ${n < t ? 'low' : 'high'})`;
+    msg.className = 'kp-msg bad';
+    msg.textContent = text;
+    if (state.codeTries >= 3 && DOOR_EXTRA_HINT) {
+      const ex = el.keypad.querySelector('[data-kp-extra]');
+      ex.textContent = DOOR_EXTRA_HINT;
+      ex.hidden = false;
+    }
+    code = '';
+    renderCode();
+  }
+
+  /* ---- camera ---- */
+  function targetCam() {
+    let focus = P.y + PH / 2;
+    if (mode === 'cutscene') focus = (P.y + LEDGE_Y) / 2;
+    const t = focus - viewH * 0.58;
+    return Math.max(DOOR.y - 100, Math.min(FLOOR_Y + 70 - viewH, t));
+  }
+
+  /* ---- drawing ---- */
+  function draw() {
+    const c = ctx;
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c.imageSmoothingEnabled = false;
+    c.fillStyle = '#090B0A';
+    c.fillRect(0, 0, cssW, cssH);
+    const sx = shake > 0 && !REDUCED ? (Math.random() - 0.5) * 8 * shake : 0;
+    const sy = shake > 0 && !REDUCED ? (Math.random() - 0.5) * 8 * shake : 0;
+    c.save();
+    c.translate(offX + sx, sy);
+    c.scale(scale, scale);
+    c.translate(0, -camY);
+    const top = camY, bot = camY + viewH;
+    drawOutside(c, top, bot);
+    drawBackdrop(c, top, bot);
+    drawDoor(c);
+    for (const p of plats) if (p.y + p.h > top - 20 && p.y < bot + 20) drawPlat(c, p);
+    for (const k of HAZARDS) if (k.y + k.h > top - 20 && k.y < bot + 20) drawBrick(c, k);
+    if (B.alive || B.sinking) drawSprite(c, 'bunnyMini', B.x, B.y, B.face, B.alpha);
+    if (B.sayT > 0 && B.say && B.alive) drawBubble(c, B.x + PW / 2, B.y - 6, B.say);
+    if (mode !== 'off') drawSprite(c, playerFrame(), P.x, P.y, P.face, 1);
+    drawLava(c, bot);
+    for (const e of embers) { c.fillStyle = `rgba(255,${(150 + e.life * 50) | 0},70,${Math.min(1, e.life).toFixed(2)})`; c.fillRect(e.x, e.y, 2, 2); }
+    drawWalls(c, top, bot);
+    c.restore();
+    // darkness around the edges, light around you
+    const px = offX + (P.x + PW / 2) * scale, py = (P.y + PH / 2 - camY) * scale;
+    const g = c.createRadialGradient(px, py, 40 * scale, px, py, Math.max(cssW, cssH) * 0.85);
+    g.addColorStop(0, 'rgba(5,7,7,0)');
+    g.addColorStop(1, 'rgba(5,7,7,0.8)');
+    c.fillStyle = g;
+    c.fillRect(0, 0, cssW, cssH);
+  }
+  function playerFrame() {
+    if (!P.onGround) return 'reiJump';
+    if (P.walkT > 0) return Math.floor(P.walkT * 9) % 2 ? 'reiWalk' : 'rei';
+    return 'rei';
+  }
+  function drawSprite(c, name, x, y, face, alpha) {
+    const img = pixelCanvas(name, face < 0);
+    c.globalAlpha = alpha;
+    c.drawImage(img, x - (img.width * 2 - PW) / 2, y + PH - img.height * 2, img.width * 2, img.height * 2);
+    c.globalAlpha = 1;
+  }
+  function drawBubble(c, x, y, text) {
+    c.font = 'bold 9px monospace';
+    const w = c.measureText(text).width + 10;
+    x = Math.max(WALL_L + w / 2 + 2, Math.min(WALL_R - w / 2 - 2, x));   // keep it inside the tower
+    c.fillStyle = '#FFFAF0'; c.fillRect(x - w / 2, y - 16, w, 13);
+    c.strokeStyle = '#0B0E0D'; c.lineWidth = 1.5; c.strokeRect(x - w / 2, y - 16, w, 13);
+    c.fillStyle = '#A8401F'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText(text, x, y - 9.5);
+  }
+  // the dim far wall on either side of the tower: hanging chains and old chalk drawings
+  const DOODLES = [
+    { x: -46, y: 1420, k: 'pair' }, { x: WORLD_W + 44, y: 1300, k: 'sun' }, { x: -40, y: 1120, k: 'eye' },
+    { x: WORLD_W + 40, y: 960, k: 'house' }, { x: -44, y: 800, k: 'heart' }, { x: WORLD_W + 46, y: 640, k: 'pair' },
+    { x: -42, y: 470, k: 'sun' }, { x: WORLD_W + 42, y: 330, k: 'eye' }, { x: -46, y: 190, k: 'heart' }
+  ];
+  function drawOutside(c, top, bot) {
+    const ext = offX / scale + 2;
+    if (ext < 6) return;
+    c.fillStyle = '#0D100F';
+    c.fillRect(-ext, top, ext, bot - top);
+    c.fillRect(WORLD_W, top, ext, bot - top);
+    c.strokeStyle = 'rgba(255,255,255,0.025)';
+    c.lineWidth = 1;
+    c.beginPath();
+    for (let y = Math.floor(top / 16) * 16; y < bot; y += 16) {
+      c.moveTo(-ext, y); c.lineTo(0, y); c.moveTo(WORLD_W, y); c.lineTo(WORLD_W + ext, y);
+      const off = (Math.round(y / 16) % 2) ? 0 : 20;
+      for (let x = -Math.ceil(ext / 40) * 40 + off; x < 0; x += 40) { c.moveTo(x, y); c.lineTo(x, y + 16); }
+      for (let x = WORLD_W + off; x < WORLD_W + ext; x += 40) { c.moveTo(x, y); c.lineTo(x, y + 16); }
+    }
+    c.stroke();
+    // chains
+    c.strokeStyle = 'rgba(150,160,150,0.18)';
+    c.lineWidth = 1.4;
+    for (const cx of [-22, -88, -150, WORLD_W + 22, WORLD_W + 88, WORLD_W + 150]) {
+      if (cx < -ext || cx > WORLD_W + ext) continue;
+      const sway = REDUCED ? 0 : Math.sin(time * 0.8 + cx) * 1.2;
+      for (let y = Math.floor(top / 10) * 10; y < bot; y += 10) {
+        if ((y / 10) % 2) c.strokeRect(cx - 2 + sway, y, 4, 7); else { c.beginPath(); c.moveTo(cx + sway, y); c.lineTo(cx + sway, y + 9); c.stroke(); }
+      }
+    }
+    // chalk doodles, like a child drew them a long time ago
+    c.strokeStyle = 'rgba(255,240,205,0.13)';
+    c.lineWidth = 1.3;
+    c.lineCap = 'round';
+    for (const d of DOODLES) {
+      if (d.y < top - 40 || d.y > bot + 40 || d.x < -ext + 8 || d.x > WORLD_W + ext - 8) continue;
+      c.beginPath();
+      const { x, y } = d;
+      if (d.k === 'pair') {
+        [-8, 8].forEach((o, i) => {
+          c.moveTo(x + o + 5, y - 20); c.arc(x + o, y - 20, 5, 0, Math.PI * 2);
+          c.moveTo(x + o, y - 15); c.lineTo(x + o, y); c.moveTo(x + o, y); c.lineTo(x + o - 4, y + 9); c.moveTo(x + o, y); c.lineTo(x + o + 4, y + 9);
+          if (i) { c.moveTo(x + o - 4, y - 25); c.lineTo(x + o - 3, y - 33); c.moveTo(x + o + 4, y - 25); c.lineTo(x + o + 3, y - 33); }
+        });
+        c.moveTo(x - 8, y - 9); c.lineTo(x + 8, y - 9);
+      } else if (d.k === 'sun') {
+        c.moveTo(x + 8, y); c.arc(x, y, 8, 0, Math.PI * 2);
+        for (let a = 0; a < 8; a++) { const r = a * Math.PI / 4; c.moveTo(x + Math.cos(r) * 11, y + Math.sin(r) * 11); c.lineTo(x + Math.cos(r) * 16, y + Math.sin(r) * 16); }
+      } else if (d.k === 'eye') {
+        c.moveTo(x - 14, y); c.quadraticCurveTo(x, y - 11, x + 14, y); c.quadraticCurveTo(x, y + 11, x - 14, y);
+        c.moveTo(x + 4, y); c.arc(x, y, 4, 0, Math.PI * 2);
+      } else if (d.k === 'house') {
+        c.rect(x - 10, y - 8, 20, 16); c.moveTo(x - 13, y - 8); c.lineTo(x, y - 20); c.lineTo(x + 13, y - 8); c.rect(x - 3, y, 6, 8);
+      } else if (d.k === 'heart') {
+        c.moveTo(x, y + 9); c.bezierCurveTo(x - 16, y - 2, x - 7, y - 14, x, y - 5); c.bezierCurveTo(x + 7, y - 14, x + 16, y - 2, x, y + 9);
+      }
+      c.stroke();
+    }
+    c.lineCap = 'butt';
+  }
+  function drawBackdrop(c, top, bot) {
+    c.fillStyle = '#141816';
+    c.fillRect(WALL_L, top, WALL_R - WALL_L, bot - top);
+    c.strokeStyle = 'rgba(255,255,255,0.04)';
+    c.lineWidth = 1;
+    c.beginPath();
+    for (let y = Math.floor(top / 16) * 16; y < bot; y += 16) {
+      c.moveTo(WALL_L, y); c.lineTo(WALL_R, y);
+      const off = (Math.round(y / 16) % 2) ? 0 : 20;
+      for (let x = WALL_L + off; x < WALL_R; x += 40) { c.moveTo(x, y); c.lineTo(x, y + 16); }
+    }
+    c.stroke();
+    if (!state.sacrificed && bot > SLAB_Y - 80 && top < LEDGE_Y + 20) {   // a faint light shines down through the narrow gap
+      const sh = c.createLinearGradient(0, SLAB_Y - 70, 0, LEDGE_Y);
+      sh.addColorStop(0, 'rgba(255,240,181,0)'); sh.addColorStop(0.45, 'rgba(255,240,181,0.12)'); sh.addColorStop(1, 'rgba(255,240,181,0)');
+      c.fillStyle = sh; c.fillRect(GAP_X1 + 2, SLAB_Y - 70, GAP_X2 - GAP_X1 - 4, LEDGE_Y - SLAB_Y + 70);
+    }
+    if (top < DOOR.y + 260) {
+      const cx = DOOR.x + DOOR.w / 2, cy = DOOR.y + DOOR.h / 2;
+      const dg = c.createRadialGradient(cx, cy, 6, cx, cy, 170);
+      dg.addColorStop(0, 'rgba(255,236,170,0.55)');
+      dg.addColorStop(1, 'rgba(255,236,170,0)');
+      c.fillStyle = dg;
+      c.fillRect(WALL_L, cy - 170, WALL_R - WALL_L, 340);
+    }
+  }
+  function drawWalls(c, top, bot) {
+    c.fillStyle = '#1E2422';
+    c.fillRect(0, top, WALL_L, bot - top);
+    c.fillRect(WALL_R, top, WORLD_W - WALL_R, bot - top);
+    c.fillStyle = '#34403C';
+    c.fillRect(WALL_L - 2, top, 2, bot - top);
+    c.fillRect(WALL_R, top, 2, bot - top);
+  }
+  function drawPlat(c, p) {
+    let fill, hi;
+    if (p.kind === 'floor') { fill = '#2A302D'; hi = '#3B4440'; }
+    else if (p.kind === 'slab') { fill = p.sealed ? '#4A4540' : '#3A403D'; hi = '#5A635E'; }
+    else if (p.kind === 'ledge') { fill = '#5A4E46'; hi = '#7A6D62'; }
+    else if (p.kind === 'top') { fill = '#BFA54C'; hi = '#F4D76A'; }
+    else { const ci = (p.c != null ? p.c : p.i) % 3; fill = BLOCK_COLORS[ci][0]; hi = BLOCK_COLORS[ci][1]; }
+    c.globalAlpha = p.falling ? Math.max(0, 1 - (p.y - p.by) / 70) : 1;
+    let jig = 0;
+    if (p.kind === 'crumble' && p.crumbleT > 0 && !p.falling && !REDUCED) jig = Math.sin(time * 70) * 1.2;
+    p = jig ? Object.assign({}, p, { x: p.x + jig }) : p;
+    c.fillStyle = '#0B0E0D'; c.fillRect(p.x - 1.5, p.y - 1.5, p.w + 3, p.h + 3);
+    c.fillStyle = fill; c.fillRect(p.x, p.y, p.w, p.h);
+    c.fillStyle = hi; c.fillRect(p.x, p.y, p.w, 2);
+    c.fillStyle = 'rgba(0,0,0,0.28)'; c.fillRect(p.x, p.y + p.h - 2.5, p.w, 2.5);
+    if (p.move) {
+      c.fillStyle = 'rgba(11,14,13,0.55)';
+      c.beginPath(); c.moveTo(p.x + 4, p.y + 5); c.lineTo(p.x + 9, p.y + 2.5); c.lineTo(p.x + 9, p.y + 7.5); c.fill();
+      c.beginPath(); c.moveTo(p.x + p.w - 4, p.y + 5); c.lineTo(p.x + p.w - 9, p.y + 2.5); c.lineTo(p.x + p.w - 9, p.y + 7.5); c.fill();
+    }
+    if (p.kind === 'crumble') {
+      c.strokeStyle = 'rgba(11,14,13,0.6)'; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(p.x + p.w * 0.3, p.y); c.lineTo(p.x + p.w * 0.42, p.y + 5); c.lineTo(p.x + p.w * 0.36, p.y + p.h);
+      c.moveTo(p.x + p.w * 0.7, p.y); c.lineTo(p.x + p.w * 0.62, p.y + 6); c.stroke();
+    }
+    if (p.kind === 'flag') {
+      const lit = !!checkpoint, lx = p.x + p.w - 9;
+      c.fillStyle = '#0B0E0D'; c.fillRect(lx - 0.5, p.y - 17, 2.5, 17);
+      if (lit) { const g = c.createRadialGradient(lx + 1, p.y - 19, 1, lx + 1, p.y - 19, 22); g.addColorStop(0, 'rgba(244,215,106,0.55)'); g.addColorStop(1, 'rgba(244,215,106,0)'); c.fillStyle = g; c.fillRect(lx - 21, p.y - 41, 44, 44); }
+      c.fillStyle = '#0B0E0D'; c.fillRect(lx - 3.5, p.y - 24, 9, 9);
+      c.fillStyle = lit ? '#F4D76A' : '#4A524E'; c.fillRect(lx - 2, p.y - 22.5, 6, 6);
+    }
+    if (p.kind === 'slab' && !p.sealed) {
+      // jagged, broken edges right at the gap
+      const ex = p.x + p.w === GAP_X1 ? p.x + p.w : p.x, dir = p.x + p.w === GAP_X1 ? -1 : 1;
+      c.fillStyle = '#0B0E0D';
+      c.beginPath(); c.moveTo(ex, p.y); c.lineTo(ex + dir * 4, p.y + 5); c.lineTo(ex, p.y + 9); c.lineTo(ex + dir * 3, p.y + 14); c.lineTo(ex, p.y + p.h); c.closePath(); c.fill();
+      c.strokeStyle = 'rgba(0,0,0,0.45)'; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(p.x + p.w * 0.3, p.y + 3); c.lineTo(p.x + p.w * 0.36, p.y + 9); c.lineTo(p.x + p.w * 0.32, p.y + 14); c.stroke();
+    }
+    c.globalAlpha = 1;
+  }
+  function drawBrick(c, k) {
+    const glow = REDUCED ? 0.35 : 0.3 + 0.12 * Math.sin(time * 3);
+    c.fillStyle = `rgba(210,85,106,${glow.toFixed(2)})`; c.fillRect(k.x - 3, k.y - 3, k.w + 6, k.h + 3);
+    c.fillStyle = '#0B0E0D'; c.fillRect(k.x - 1, k.y - 1, k.w + 2, k.h + 1);
+    c.fillStyle = '#D2556A'; c.fillRect(k.x, k.y, k.w, k.h);
+    c.fillStyle = '#F2A7C6'; c.fillRect(k.x, k.y, k.w, 1.5);
+  }
+  function drawDoor(c) {
+    const d = DOOR, cx = d.x + d.w / 2;
+    c.save();
+    c.globalAlpha = 0.18 + 0.08 * Math.sin(time * 2) + doorOpenT * 0.3;
+    c.fillStyle = '#FFF0B5';
+    for (let i = -2; i <= 2; i++) {
+      c.beginPath(); c.moveTo(cx, d.y + 8); c.lineTo(cx + i * 32 - 10, d.y - 80); c.lineTo(cx + i * 32 + 10, d.y - 80); c.closePath(); c.fill();
+    }
+    c.restore();
+    c.fillStyle = '#0B0E0D'; c.fillRect(d.x - 4, d.y - 4, d.w + 8, d.h + 4);
+    c.fillStyle = '#FFF8DE'; c.fillRect(d.x, d.y, d.w, d.h);
+    const pw = d.w * (1 - doorOpenT * 0.85);
+    c.fillStyle = '#C9A83F'; c.fillRect(d.x, d.y, pw, d.h);
+    if (pw > 10) {
+      c.fillStyle = '#A8892F';
+      c.fillRect(d.x + 3, d.y + 4, pw / 2 - 4, 16); c.fillRect(d.x + pw / 2 + 1, d.y + 4, pw / 2 - 4, 16);
+      c.fillRect(d.x + 3, d.y + 24, pw / 2 - 4, 20); c.fillRect(d.x + pw / 2 + 1, d.y + 24, pw / 2 - 4, 20);
+      c.fillStyle = '#F4D76A'; c.fillRect(d.x + pw - 6, d.y + 22, 3, 3);
+    }
+  }
+  function drawLava(c, bot) {
+    if (lava.y > bot + 40) return;
+    const ly = lava.y;
+    const glow = c.createLinearGradient(0, ly - 80, 0, ly);
+    glow.addColorStop(0, 'rgba(255,120,50,0)');
+    glow.addColorStop(1, 'rgba(255,120,50,0.38)');
+    c.fillStyle = glow;
+    c.fillRect(0, ly - 80, WORLD_W, 80);
+    const body = c.createLinearGradient(0, ly, 0, ly + 140);
+    body.addColorStop(0, '#FFB347'); body.addColorStop(0.25, '#E2531F'); body.addColorStop(1, '#4A1406');
+    c.fillStyle = body;
+    c.beginPath();
+    c.moveTo(0, ly);
+    for (let x = 0; x <= WORLD_W; x += 6) c.lineTo(x, ly + Math.sin(x * 0.09 + time * 3) * 2.5 + Math.sin(x * 0.23 - time * 2) * 1.2);
+    c.lineTo(WORLD_W, bot + 60); c.lineTo(0, bot + 60); c.closePath(); c.fill();
+    c.strokeStyle = '#FFE08A'; c.lineWidth = 1.5;
+    c.beginPath();
+    for (let x = 0; x <= WORLD_W; x += 6) { const yy = ly + Math.sin(x * 0.09 + time * 3) * 2.5 + Math.sin(x * 0.23 - time * 2) * 1.2; if (x === 0) c.moveTo(x, yy); else c.lineTo(x, yy); }
+    c.stroke();
+  }
+
+  return {
+    start, engulf, sealGap, press, retry,
+    get info() { return P ? { mode, x: Math.round(P.x), y: Math.round(P.y), feet: Math.round(P.y + PH), lavaY: Math.round(lava.y), lavaActive: lava.active, deaths, bunnyAlive: B.alive, onGround: P.onGround } : null; },
+    warp(x, y) { if (!P) return; P.x = x; P.y = y; P.vy = 0; P.onGround = false; },
+    level: LEVEL, consts: { PW, PH, JUMP_V, GRAV, SPEED, WALL_L, WALL_R }
+  };
+})();
 
 
 /* =============================================================
@@ -2594,6 +4175,17 @@ const SCENES = {
       titleDecor(scene.querySelector('[data-fx]'));
       scene.querySelector('[data-action="start"]').addEventListener('click', () => { if (!state.busy) Sound.play('start'); goTo('intro'); });
       announce(`${TITLE_MAIN} ${TITLE_SUB}. A tiny mystery awaits.`);
+      const sub = scene.querySelector('.subtitle');
+      let cleared = false;
+      try { cleared = localStorage.getItem('torei-cleared') === '1'; } catch (e) { /* ignore */ }
+      if (cleared) sub.textContent = `Welcome back, ${PLAYER_NAME}.`;
+      const normal = sub.textContent;
+      const creepy = cleared ? 'You came back for me?' : "Don't open the last door.";
+      const flicker = () => later(() => {
+        sub.textContent = creepy; sub.classList.add('glitching');
+        later(() => { sub.textContent = normal; sub.classList.remove('glitching'); flicker(); }, 360);
+      }, 7000 + Math.random() * 5000);
+      if (!REDUCED) flicker();
     }
   },
 
@@ -2630,8 +4222,9 @@ const SCENES = {
             <span class="clue-art" aria-hidden="true">${pixelSVG(c.id, '', 'xMidYMax')}</span>
             <span class="clue-spark" aria-hidden="true">${pixelSVG('sparkle')}</span>
             <span class="clue-check" aria-hidden="true">✓</span>
+            <span class="clue-tag" aria-hidden="true">${c.label}</span>
           </button>`).join('');
-      const slots = CLUES.map((c, i) => `<li class="slot" data-slot="${c.id}"><span class="slot-q" aria-hidden="true">?</span><span class="sr-only">Clue ${i + 1}: not found yet</span></li>`).join('');
+      const slots = CLUES.map((c, i) => `<li class="slot-wrap"><div class="slot" data-slot="${c.id}"><span class="slot-q" aria-hidden="true">?</span></div><span class="slot-label" data-slot-label="${c.id}" aria-hidden="true">???</span><span class="sr-only" data-slot-sr="${c.id}">Clue ${i + 1}: not found yet</span></li>`).join('');
       return h(`<section class="scene scene-inv" aria-label="Classroom investigation">
           <div class="bg"></div>
           <div class="top">
@@ -2749,7 +4342,7 @@ const SCENES = {
     }
   },
 
-  /* ---------- 4b. THE LAST DOOR (build-up cutscene) ---------- */
+  /* ---------- 4b. THE LAST DOOR (build-up... and a trap) ---------- */
   lastDoor: {
     build() {
       return h(`<section class="scene scene-vn scene-door" aria-label="The last door">
@@ -2762,7 +4355,6 @@ const SCENES = {
           <div class="countdown" data-countdown aria-live="assertive"></div>
           <p class="door-prompt" data-door-prompt hidden>★ TAP THE DOOR! ★</p>
           <button type="button" class="door-btn" data-door-btn aria-label="Open the door" hidden></button>
-          <div class="flood" aria-hidden="true"></div>
           <div class="bottom"><div data-dlg></div></div>
         </section>`);
     },
@@ -2781,64 +4373,147 @@ const SCENES = {
     }
   },
 
-  /* ---------- 5. SECRET ROOM ---------- */
-  secretRoom: {
-    build() { return vnScene('scene-secret', 'The secret room', BG.secret(), `CASE ${escapeHTML(CASE_NUMBER)} · SECRET ROOM`); },
+  /* ---------- 5. THE FALL (the art style changes from here) ---------- */
+  fall: {
+    build() {
+      return h(`<section class="scene scene-vn scene-fall" aria-label="Falling">
+          <div class="bg fall-bg"><div class="fall-lines"></div></div>
+          <div class="fx" data-fx></div>
+          <div class="stage"><div class="sprite tumble" data-sprite="bunny"><div class="anim"></div></div></div>
+          <div class="grain" aria-hidden="true"></div>
+          <div class="bottom"><div data-dlg></div></div>
+        </section>`);
+    },
     enter(scene) {
-      setupSprite(scene, 'bunny', bunnySVG, 'soft', {}, 'bob');
-      spawnFloaters(scene.querySelector('[data-fx]'), { count: 12, kinds: ['sparkle', 'star'], mode: 'up', min: 10, max: 18, opacity: 0.7 });
+      setupSprite(scene, 'bunny', bunnySVG, 'shock', {}, 'spin');
+      spawnDebris(scene.querySelector('[data-fx]'));
+      Sound.play('fallwind');
+      const wind = setInterval(() => Sound.play('fallwind'), 4300);
+      sceneCleanup.push(() => clearInterval(wind));
       Dialogue.mount(scene.querySelector('[data-dlg]'));
       scene.querySelector('.stage').addEventListener('click', () => Dialogue.advance());
-      Dialogue.play(SCRIPT.secret(), () => {
-        state.secretRoomSeen = true;
-        goTo('confession', 'fade');
-      });
+      Dialogue.play(SCRIPT.fall(), () => { state.fallen = true; goTo('ballPit', 'darkfade'); });
     }
   },
 
-  /* ---------- 6. CONFESSION ---------- */
-  confession: {
-    build() { return vnScene('scene-confess', 'Confession', BG.secret(true), '', '<div class="tint"></div><div class="vignette"></div>'); },
+  /* ---------- 6. THE GIANT BALL PIT ---------- */
+  ballPit: {
+    build() {
+      const sc = lnScene('scene-pit', 'A giant ball pit', BG.ballPit());
+      sc.querySelector('.stage').insertAdjacentHTML('afterend', `<div class="pit-front" aria-hidden="true">${BG.ballPitFront()}</div>`);
+      return sc;
+    },
     enter(scene) {
-      setupSprite(scene, 'bunny', bunnySVG, 'blush', { prop: 'heart' }, 'bob');
-      spawnFloaters(scene.querySelector('[data-fx]'), { count: 18, kinds: ['heart', 'heart', 'sparkle'], mode: 'up', min: 14, max: 28 });
+      setupSprite(scene, 'bunny', bunnySVG, 'nervous', {}, 'bob');
+      spawnFloaters(scene.querySelector('[data-fx]'), { count: 12, kinds: ['sparkle'], mode: 'up', min: 4, max: 8, opacity: 0.35 });
+      Sound.play('thump');
+      shakeScene();
       Dialogue.mount(scene.querySelector('[data-dlg]'));
       scene.querySelector('.stage').addEventListener('click', () => Dialogue.advance());
-      Dialogue.play(SCRIPT.confession(), showConfessionChoices, { holdLast: true });
+      later(() => Dialogue.play(SCRIPT.ballPit(), () => { state.landed = true; goTo('backrooms', 'darkfade'); }), 250);
     }
   },
 
-  /* ---------- 7. YES ENDING ---------- */
-  happyEnding: {
-    build() { return endingScene('scene-happy', 'Happy ending', '<div class="sunburst"></div>' + frameCorners()); },
+  /* ---------- 7. THE BACKROOMS + THE BLACK CAT ---------- */
+  backrooms: {
+    build() {
+      return lnScene('scene-backrooms', 'Endless yellow hallways', BG.backrooms(),
+        '<div class="cat-eyes" data-cateyes aria-hidden="true"><i></i><i></i></div>' +
+        '<div class="sprite cat is-hidden" data-sprite="cat"><div class="anim"></div></div>');
+    },
     enter(scene) {
-      setupSprite(scene, 'bunny', bunnySVG, 'excited', { prop: 'cheer' }, 'bob');
-      setupSprite(scene, 'principal', principalSVG, 'wave', {}, 'bob');
-      setupSprite(scene, 'ghost', ghostSVG, 'delight', {}, 'float');
-      spawnFloaters(scene.querySelector('[data-fx]'), { count: 24, kinds: ['heart', 'star', 'heart', 'sparkle'], mode: 'fall', min: 14, max: 28 });
+      setupSprite(scene, 'bunny', bunnySVG, 'nervous', {}, 'bob');
+      setupSprite(scene, 'cat', catSVG, 'normal', {}, 'bob');
+      spawnFloaters(scene.querySelector('[data-fx]'), { count: 10, kinds: ['sparkle'], mode: 'up', min: 3, max: 6, opacity: 0.3 });
       Dialogue.mount(scene.querySelector('[data-dlg]'));
       scene.querySelector('.stage').addEventListener('click', () => Dialogue.advance());
-      Dialogue.play(SCRIPT.happy(), () => showEndCard(scene, {
-        num: 'ENDING 01:', title: 'THE HAPPY ENDING ♡', msg: HAPPY_ENDING_MESSAGE,
-        btnClass: 'pink', mood: 'shy', prop: 'heart', sound: 'complete', principal: 'wink', ghost: 'delight'
-      }));
+      later(() => Dialogue.play(SCRIPT.backrooms(), () => { state.backroomsDone = true; goTo('obby', 'darkfade'); }), 250);
     }
   },
 
-  /* ---------- 8. NO ENDING ---------- */
-  honestEnding: {
-    build() { return endingScene('scene-honest', 'Honest ending', '<div class="soft-veil"></div>' + frameCorners()); },
+  /* ---------- 8. THE TOWER (parkour + lava) ---------- */
+  obby: {
+    build() {
+      const key = (d, label, cls = '') => `<button type="button" class="${cls}" data-d="${d}" aria-label="${label}">${label === 'Delete' ? '⌫' : label === 'Enter code' ? '✓' : d}</button>`;
+      return h(`<section class="scene scene-obby ln" aria-label="The tower">
+          <div class="obby-wrap"><canvas role="img" aria-label="A tall tower of floating blocks with lava below and a glowing door at the top."></canvas>
+            <button type="button" class="open-btn" data-open hidden>OPEN ▲</button></div>
+          <div class="obby-hud">
+            <p class="obby-tip" data-tip hidden>↑ Climb to the glowing door at the top!</p>
+            <p class="lava-alert" data-lava hidden>⚠ THE LAVA IS RISING! ⚠</p>
+          </div>
+          <div class="ov obby-dead" data-dead hidden><div class="panel" role="alertdialog" aria-labelledby="deadTitle">
+            <p class="dead-title" id="deadTitle">THE LAVA CAUGHT YOU!</p>
+            <p class="dead-sub" data-dead-sub></p>
+            <button type="button" class="btn big pink" data-retry>TRY AGAIN</button>
+          </div></div>
+          <div class="ov keypad" data-keypad hidden><div class="panel" role="dialog" aria-modal="true" aria-labelledby="kpTitle">
+            <div class="kp-lock" aria-hidden="true">${pixelSVG('lock')}</div>
+            <h2 class="kp-title" id="kpTitle">THE DOOR IS LOCKED</h2>
+            <p class="kp-hint">Enter the 2-digit code.<br><b>Hint:</b> ${escapeHTML(DOOR_HINT)}</p>
+            <p class="kp-extra" data-kp-extra hidden></p>
+            <div class="kp-display" data-kp-display aria-live="polite"><span>_</span><span>_</span></div>
+            <div class="kp-keys">
+              ${['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(d => key(d, d)).join('')}
+              ${key('del', 'Delete', 'kp-del')}${key('0', '0')}${key('ok', 'Enter code', 'kp-ok')}
+            </div>
+            <p class="kp-msg" data-kp-msg aria-live="assertive"></p>
+          </div></div>
+          <div class="grain" aria-hidden="true"></div>
+          <div class="bottom">
+            <div data-dlg></div>
+            <div class="pad" data-pad hidden>
+              <div class="pad-move">
+                <button type="button" data-k="left" aria-label="Move left">◀</button>
+                <button type="button" data-k="right" aria-label="Move right">▶</button>
+              </div>
+              <button type="button" class="pad-jump" data-k="jump" aria-label="Jump">JUMP ▲</button>
+            </div>
+            <p class="pad-hint" data-padhint hidden>Keyboard: ← → to move · Space or ↑ to jump</p>
+          </div>
+        </section>`);
+    },
+    enter(scene) { Obby.start(scene); }
+  },
+
+  /* ---------- 9. REMEMBERING EVERYTHING ---------- */
+  recollect: {
+    build() {
+      return h(`<section class="scene scene-vn scene-recollect" aria-label="Remembering">
+          <div class="bg rec-bg"></div>
+          <div class="fx" data-fx></div>
+          <div class="stage"><div class="polaroids" data-polaroid></div></div>
+          <div class="grain" aria-hidden="true"></div>
+          <div class="bottom"><div data-dlg></div></div>
+        </section>`);
+    },
     enter(scene) {
-      setupSprite(scene, 'bunny', bunnySVG, 'soft', {}, 'bob');
-      setupSprite(scene, 'principal', principalSVG, 'smile', {}, 'bob');
-      setupSprite(scene, 'ghost', ghostSVG, 'smirk', {}, 'float');
-      spawnFloaters(scene.querySelector('[data-fx]'), { count: 12, kinds: ['petal', 'sparkle'], mode: 'fall', min: 10, max: 16, opacity: 0.8 });
+      polaroidCount = 0;
+      spawnFloaters(scene.querySelector('[data-fx]'), { count: 14, kinds: ['sparkle', 'star'], mode: 'up', min: 6, max: 12, opacity: 0.5 });
       Dialogue.mount(scene.querySelector('[data-dlg]'));
       scene.querySelector('.stage').addEventListener('click', () => Dialogue.advance());
-      Dialogue.play(SCRIPT.honest(), () => showEndCard(scene, {
-        num: 'ENDING 02:', title: 'THE HONEST ENDING', msg: HONEST_ENDING_MESSAGE,
-        btnClass: '', mood: 'happy', prop: null, sound: 'gentle', principal: 'smile', ghost: 'smirk'
-      }));
+      later(() => Dialogue.play(SCRIPT.recollect(), () => { state.recollected = true; goTo('finale', 'light'); }), 300);
+    }
+  },
+
+  /* ---------- 10. BEHIND THE REAL LAST DOOR ---------- */
+  finale: {
+    build() {
+      return h(`<section class="scene scene-vn scene-finale" aria-label="Behind the last door">
+          <div class="bg">${BG.secret(true)}</div>
+          <div class="tint soft"></div>
+          <div class="fx" data-fx></div>
+          <div class="stage pan" data-pan><div class="sprite is-hidden" data-sprite="bunny"><div class="anim"></div></div></div>
+          <div class="letter-layer" data-letter hidden></div>
+          <div class="bottom"><div data-dlg></div></div>
+        </section>`);
+    },
+    enter(scene) {
+      setupSprite(scene, 'bunny', bunnySVG, 'happy', {}, 'bob');
+      spawnFloaters(scene.querySelector('[data-fx]'), { count: 16, kinds: ['sparkle', 'heart', 'star'], mode: 'up', min: 10, max: 20, opacity: 0.8 });
+      Dialogue.mount(scene.querySelector('[data-dlg]'));
+      scene.querySelector('.stage').addEventListener('click', () => Dialogue.advance());
+      later(() => Dialogue.play(SCRIPT.finale(), () => showLetter(scene)), 400);
     }
   }
 };
@@ -2860,14 +4535,16 @@ function buildWipe() {
 // Scenes can only be entered in story order, so nothing can be skipped.
 function canEnter(name) {
   switch (name) {
-    case 'haunting':     return state.clues.size === CLUES.length;
-    case 'trial':        return state.hauntingSeen;
-    case 'lastDoor':     return state.trialComplete;
-    case 'secretRoom':   return state.doorOpened;
-    case 'confession':   return state.secretRoomSeen;
-    case 'happyEnding':  return state.confessionAnswered && state.ending === 'happy';
-    case 'honestEnding': return state.confessionAnswered && state.ending === 'honest';
-    default:             return true;
+    case 'haunting':   return state.clues.size === CLUES.length;
+    case 'trial':      return state.hauntingSeen;
+    case 'lastDoor':   return state.trialComplete;
+    case 'fall':       return state.trapSprung;
+    case 'ballPit':    return state.fallen;
+    case 'backrooms':  return state.landed;
+    case 'obby':       return state.backroomsDone;
+    case 'recollect':  return state.codeOK;
+    case 'finale':     return state.recollected;
+    default:           return true;
   }
 }
 
@@ -2907,7 +4584,7 @@ function goTo(name, style = 'pixel') {
     Dialogue.stop();
     Object.keys(sprites).forEach(k => delete sprites[k]);
     sceneCleanup.splice(0).forEach(fn => fn());
-    root.querySelectorAll('.scene, .fly, .burst').forEach(n => n.remove());
+    root.querySelectorAll('.scene, .fly, .burst, .glitch-bars').forEach(n => n.remove());
     state.scene = name;
     state.dialogueIndex = 0;
     const def = SCENES[name];
